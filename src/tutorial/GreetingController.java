@@ -31,7 +31,7 @@ public class GreetingController {
     
     @Autowired
 	Neo4jOperations neo4jOperations;
-    Neo4jTemplate temp;
+   
     
     @RequestMapping("/testCypher")
     public Result testCypher() {
