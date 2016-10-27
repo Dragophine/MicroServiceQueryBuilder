@@ -21,7 +21,9 @@ public class ExpertModus {
 		Neo4jTemplate temp;
 
 	    
-	    @RequestMapping(value="/expertModus", method=RequestMethod.GET)
+	  //  @RequestMapping(value="/expertModus", method=RequestMethod.GET)
+	    
+	    @RequestMapping(value="/expertModus")
 	    public Result expertModus(@RequestParam(value="query", defaultValue="Match (n) return distinct labels(n)") String query) {
 
 		Result result = neo4jOperations.query(query, new HashMap<String, String>());
