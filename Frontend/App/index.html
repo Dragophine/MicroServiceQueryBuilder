@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+
+<html lang="de" ng-app="myApp" class="no-js">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>Crowdfunding</title>
+    <meta name="description" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link rel="stylesheet" href="bower_components/angular-material/angular-material.min.css">
+    <link rel="stylesheet" href="bower_components/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="login/login.css">
+    <link rel="stylesheet" href="map/map.css">
+    <link rel="stylesheet" href="app.css">
+  
+  </head>
+  <body >
+    <!-- Our Website Content Goes Here -->
+    <div ng-include='"menu/header.html"'></div>
+    <div ng-view id="popupContainer" class="popupContainer"></div>
+    <!--<div ng-include='"templates/footer.html"' ></div>-->
+    
+    <script src="bower_components/jquery/dist/jquery.min.js"></script>
+    <script src="bower_components/angular/angular.js"></script>
+    <script src="bower_components/angular-route/angular-route.js"></script>
+    <script src="bower_components/angular-aria/angular-aria.min.js"></script>
+    <script src="bower_components/angular-cookies/angular-cookies.min.js"></script>
+    <script src="bower_components/angular-animate/angular-animate.min.js"></script>
+    <script src="bower_components/angular-material/angular-material.min.js"></script>
+    <script src="bower_components/angularjs-geolocation/dist/angularjs-geolocation.min.js"></script>
+    <script src='bower_components/lodash/lodash.min.js'></script>
+    <script src='bower_components/angular-simple-logger/dist/angular-simple-logger.min.js'></script>
+    <script src='bower_components/angular-google-maps/dist/angular-google-maps.min.js'></script>
+    <script src="bower_components/html5-boilerplate/dist/js/vendor/modernizr-2.8.3.min.js"></script>
+    <script src="app.js"></script>
+    <script src="services.js"></script>
+    <script src="dialog/neuesSachmittel/neuesSachmittel.js"></script>
+    <script src="dialog/beschreibungAendern/beschreibung.js"></script>
+    <script src="dialog/unterStuetzenDialog/unterStuetzenDialog.js"></script>
+    <script src="login/login.js"></script>
+    <script src="map/map.js"></script>
+    <script src="meineProjekte/meineProjekte.js"></script>
+    <script src="meineUnterstuetzungen/meineUnterstuetzungen.js"></script>
+    <script src="menu/header.js"></script>
+    <script src="neuesProjekt/neuesProjekt.js"></script>
+    <script src="projektDetailanzeige/projektDetailanzeige.js"></script>
+    <script src="projektUebersicht/projektUebersicht.js"></script>
+    <script src="register/register.js"></script>
+    <script src="bower_components/bootstrap/dist/js/bootstrap.min.js"></script>
+  </body>
+</html>

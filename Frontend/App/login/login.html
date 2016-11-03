@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<div >
+  <form ng-controller="loginCtrl as ctrl" class="loginform">
+
+    <div class="group">
+      <input type="email" ng-model="ctrl.email"/>
+      <span class="highlight"></span>
+      <span class="bar"></span>
+      <label>Email</label>
+    </div>
+        <div class="group">
+        <input type="password" ng-model="ctrl.passwort"/>
+        <span class="highlight"></span><span class="bar"></span>
+      <label>Passwort</label>
+    </div>
+    <button type="button" class="button buttonBlue" ng-click="ctrl.login($event)">Login
+    </button>
+  </form>
+</div>

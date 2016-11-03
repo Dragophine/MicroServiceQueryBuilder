@@ -1,0 +1,62 @@
+
+<!DOCTYPE html>
+<md-content class="md-padding" ng-controller="projektUebersichtCtrl as ctrl">
+  <md-autocomplete
+      ng-disabled="ctrl.isDisabled"
+      md-no-cache="ctrl.noCache"
+      md-selected-item="ctrl.selectedItem"
+      md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
+      md-search-text="ctrl.searchText"
+      md-selected-item-change="ctrl.selectedItemChange(item)"
+      md-items="item in ctrl.querySearch(ctrl.searchText)"
+      md-item-text="item.postleitzahl"
+      md-min-length="0"
+      ng-enter="ctrl.enterPressed(ctrl.searchText)"
+      placeholder="Bitte geben Sie eine Postleitzahl ein."
+      style="margin:-5px 8px 5px 8px">
+    <md-item-template>
+      <span class="item-title">
+        <strong>{{item.postleitzahl}}</strong>
+      </span>
+    </md-item-template>
+    <md-not-found>
+      Keine Einträge wurden gefunden: "{{ctrl.searchText}}".
+    </md-not-found>
+  </md-autocomplete>
+
+
+  <div ng-repeat="projekt in ctrl.projekte"  ng-if="$index % 2 == 0">
+    <div layout="row" layout-sm="column" layout-fill>
+      <md-card ng-if="ctrl.projekte[$index] != null">
+        <md-card-content>
+          <h2 class="md-title">{{ctrl.projekte[$index].name}}</h2>
+          <p>
+           {{ctrl.projekte[$index].beschreibung}}
+          </p>
+        </md-card-content>
+        <div class="md-actions" layout="row" layout-align="end center">
+           <md-button 
+           ng-click="ctrl.showProject(ctrl.projekte[$index].id)">
+           Mehr zu diesem Projekt?</md-button>
+        </div>
+      </md-card>
+      <md-card ng-if="ctrl.projekte[$index + 1] != null">
+        <md-card-content>
+          <h2 class="md-title">{{ctrl.projekte[$index + 1].name}}</h2>
+          <p>
+           {{ctrl.projekte[$index + 1].beschreibung}}
+          </p>
+        </md-card-content>
+        <div class="md-actions" layout="row" layout-align="end center">
+          <md-button  
+          ng-click="ctrl.showProject(ctrl.projekte[$index + 1].id)">
+          Mehr zu diesem Projekt?</md-button>
+        </div>
+      </md-card>
+    </div>
+  </div>
+</md-content>
+
+
+
+

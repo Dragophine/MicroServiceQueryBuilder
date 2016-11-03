@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<div  ng-controller="registerCtrl as ctrl">
+  <form class="loginform">
+    <div class="group" >
+      <select  ng-model="ctrl.geschlecht"
+      style="width: 100%; display:block; margin-bottom: 5px">
+        <option value="Frau">Frau</option>
+        <option value="Mann">Mann</option>
+      </select>
+      <label>Geschlecht*</label>
+    </div>
+    <div class="group">
+      <input type="text" ng-model="ctrl.anrede">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Anrede</label>
+    </div>
+    <div class="group">
+      <input type="text" ng-model="ctrl.vorname">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Vorname*</label>
+    </div>
+    <div class="group">
+      <input type="text" ng-model="ctrl.nachname">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Nachname*</label>
+    </div>
+    <div class="group">
+      <input type="email" ng-model="ctrl.email">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Email*</label>
+    </div>
+    <div class="group">
+      <input type="text" ng-model="ctrl.strasse">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Straße*</label>
+    </div>
+    <div class="group">
+      <input type="number" ng-model="ctrl.hausnummer">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Hausnummer*</label>
+    </div>
+    <div class="group">
+      <input type="number" ng-model="ctrl.plz">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Postleitzahl*</label>
+    </div>
+    <div class="group">
+      <input type="text" ng-model="ctrl.ort">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Ort*</label>
+    </div>
+    <div class="group">
+      <input type="password" ng-model="ctrl.password">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Passwort*</label>
+    </div>
+    <div class="group">
+      <input type="password" ng-model="ctrl.passwordRepeat">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Passwort wiederholen*</label>
+    </div>
+    <button type="button" class="button buttonBlue" ng-click="ctrl.register($event)">Register
+     
+    </button>
+  </form>
+</div>
