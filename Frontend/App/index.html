@@ -4,7 +4,7 @@
   <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>Crowdfunding</title>
+    <title>Querybuilder</title>
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
@@ -16,7 +16,10 @@
   <body >
     <!-- Our Website Content Goes Here -->
     <div ng-include='"menu/header.html"'></div>
-    <div ng-view id="popupContainer" class="popupContainer"></div>
+    <div class="container">
+        <div ng-view id="popupContainer" class="popupContainer"></div>
+    </div>
+    
     <!--<div ng-include='"templates/footer.html"' ></div>-->
     
     <script src="bower_components/jquery/dist/jquery.min.js"></script>

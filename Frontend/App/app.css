@@ -1,87 +1,24 @@
-/* app css stylesheet */
-
-html, body {
-    height: 100%;
-    color: #777777;
-}
-
-
-/*Set global fontfamily*/
-
-
-html *
-{
-  font-family: "proxima-nova","Helvetica Neue",helvetica,sans-serif;
-}
-
-md-content{
-  color: #777777;
-}
-
-.md-toolbar-tools{
-  font-size: 18px;
-}
-
-body {
-    padding-top: 50px;
-    padding-bottom: 0px;
-}
-
-.mdButtonSmallFront{
-  font-size: 11px;
-  font-weight: 450;
-  color: #777777;
-  box-shadow: 0 2px 5px 0 rgba(0, 0, 0, 0.26);
-}
-
-
-.popupContainer{
-  position: absolute;
-  bottom: 0px;
-  top:50px;
-  width: 100%;
-}
-
-/*
-//css for menu
+/**
+Menu 
 */
-.menuPadding {
-	padding-left: 16px;
-	padding-right: 24px;
+.menuPadding{
+  padding: 0px 20px 0px 10px;
 }
 
-.navbar-toggle {
-  margin-right: 0;
+/**
+Container .css
+*/
+.container{
+  margin-top: 40px;
 }
 
-.navbar-default .navbar-toggle:focus,
-.navbar-default .navbar-toggle:hover{
-   background-color:#5e5e5e;
+@media (min-width: 1200px) {
+    .container{
+        max-width: 970px;
+    }
 }
 
-
-
-.navbar-default {
-  background-color:#41A4D6;
-  border-color: #41A4D6;
+.top-buffer { 
+  margin-top: 30px; 
 }
-.navbar-default .navbar-brand{
-  color:#F0F0F0;
-}
-
-.navbar-default .navbar-nav > li > a{
-  color:#F0F0F0;
-}
-
-.navbar-default .navbar-nav > li >
-a:focus, .navbar-default .navbar-nav>
-li > a:hover {
-  background-color:transparent;
-  color: #5e5e5e;
-}
-
-.navbar-default .navbar-toggle .icon-bar {
-    background-color: #F0F0F0;
-}
-
 

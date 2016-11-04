@@ -1,62 +1,64 @@
 
 <!DOCTYPE html>
-<md-content class="md-padding" ng-controller="expertModeCtrl as ctrl">
-  <md-autocomplete
-      ng-disabled="ctrl.isDisabled"
-      md-no-cache="ctrl.noCache"
-      md-selected-item="ctrl.selectedItem"
-      md-search-text-change="ctrl.searchTextChange(ctrl.searchText)"
-      md-search-text="ctrl.searchText"
-      md-selected-item-change="ctrl.selectedItemChange(item)"
-      md-items="item in ctrl.querySearch(ctrl.searchText)"
-      md-item-text="item.postleitzahl"
-      md-min-length="0"
-      ng-enter="ctrl.enterPressed(ctrl.searchText)"
-      placeholder="Bitte geben Sie eine Postleitzahl ein."
-      style="margin:-5px 8px 5px 8px">
-    <md-item-template>
-      <span class="item-title">
-        <strong>{{item.postleitzahl}}</strong>
-      </span>
-    </md-item-template>
-    <md-not-found>
-      Keine Einträge wurden gefunden: "{{ctrl.searchText}}".
-    </md-not-found>
-  </md-autocomplete>
-
-
-  <div ng-repeat="projekt in ctrl.projekte"  ng-if="$index % 2 == 0">
-    <div layout="row" layout-sm="column" layout-fill>
-      <md-card ng-if="ctrl.projekte[$index] != null">
-        <md-card-content>
-          <h2 class="md-title">{{ctrl.projekte[$index].name}}</h2>
-          <p>
-           {{ctrl.projekte[$index].beschreibung}}
-          </p>
-        </md-card-content>
-        <div class="md-actions" layout="row" layout-align="end center">
-           <md-button 
-           ng-click="ctrl.showProject(ctrl.projekte[$index].id)">
-           Mehr zu diesem Projekt?</md-button>
-        </div>
-      </md-card>
-      <md-card ng-if="ctrl.projekte[$index + 1] != null">
-        <md-card-content>
-          <h2 class="md-title">{{ctrl.projekte[$index + 1].name}}</h2>
-          <p>
-           {{ctrl.projekte[$index + 1].beschreibung}}
-          </p>
-        </md-card-content>
-        <div class="md-actions" layout="row" layout-align="end center">
-          <md-button  
-          ng-click="ctrl.showProject(ctrl.projekte[$index + 1].id)">
-          Mehr zu diesem Projekt?</md-button>
-        </div>
-      </md-card>
+<div class="container" ng-controller="expertModeCtrl as ctrl">
+  
+  <div class="row">
+    <div class="col-md-11">
+      <input type="text" class="form-control" id="query" placeholder="Query" ng-model="ctrl.query" />
+    </div>
+    <div class="col-md-1">
+      <button type="submit" class="btn btn-default" ng-click="ctrl.submitQuery()">Submit</button>
     </div>
   </div>
-</md-content>
+  <div class="row top-buffer">
+    <table class="table"  ng-if="!ctrl.hasError">
+       <thead>
+        <tr>
+          <th>Relationships</th>
+          <th>Nodes</th>
+          <th>Directions</th>
+          <th>Length</th>
+          <th>Start</th>
+          <th>End</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="row in ctrl.table">
+          <td>
+            <p  ng-repeat="relationship in row['p']['relationships']">
+              <a href="relationship">{{relationship}}</a>
+            </p>
+          </td>
+          <td>
+            <p  ng-repeat="node in row['p']['nodes']">
+              <a href="node">{{node}}</a>
+            </p>
+          </td>
+          <td>
+            <p ng-repeat="direction in row['p']['directions']">{{direction}}</p>
+          </td>
+          <td>{{row['p']['length']}}</td>
+          <td>{{row['p']['start']}}</td>
+          <td>{{row['p']['end']}}</td>
+        </tr>
+      </tbody>
+    </table>
 
+    <div ng-if="ctrl.hasError">
+        <div class="row">
+            <div class="col-md-3">Error</div>
+            <div class="col-md-9">{{ctrl.error['error']}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">Exception</div>
+            <div class="col-md-9">{{ctrl.error['exception']}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">Message</div>
+            <div class="col-md-9">{{ctrl.error['message']}}</div>
+        </div>
+    </div>
 
-
-
+  </div>
+ 
+</div>

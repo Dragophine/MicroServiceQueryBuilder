@@ -21,42 +21,7 @@ angular.module('queryBuilder.register', ['ngRoute'])
 	this.password = "";
 	this.passwordRepeat = "";
 
-	function sendData (server, controller) {
-     	$http({
-     		method : 'POST',
-     		url : server, 
-     		headers: { 'Content-Type':'application/json'},
-     		data: { 
-     			"geschlecht" : controller.geschlecht, 
-     			"anrede" : controller.anrede, 
-     			"vorname" : controller.vorname, 
-     			"nachname" : controller.nachname, 
-     			"email" : controller.email, 
-     			"strasse" : controller.strasse, 
-     			"hausnummer" : controller.hausnummer, 
-     			"plz" : controller.plz,
-     			"ort" : controller.ort,
-     			"password" : controller.password,
-                "passwordRepeat": controller.passwordRepeat
-     		}
-     	})
-        .success(function(data, status) {
-            controller.projekte = data;
-            $location.path('/login');
-         })
-        .error(function(data, status) {
-            if(status === 404){
-                okDialog($mdDialog, 'Fehler beim Registrieren', 'Bitte überprüfen Sie die Adresse.', null);
-            }
-            if(status === 409){
-                okDialog($mdDialog, 'Fehler beim Registrieren', 'Den Benutzer mit dieser E-Mail Adresse gibt es bereits.', null);
-            }
-            else if(status === 500){
-                okDialog($mdDialog, 'Es tut uns leid', 'Ein unbekannter Fehler ist aufgetreten.', null);
-            }
-        });
-    };
-
+	
     this.register = function (ev) {
         this.text = "";
         if(this.vorname === null || this.vorname === ""){

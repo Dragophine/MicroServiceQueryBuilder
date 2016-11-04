@@ -2,6 +2,7 @@
 
 angular.module('queryBuilder.header',[])
 .controller('headerCtrl',  [ function(){
-	this.userData = $userData;
+	
+	var self = this;
 
 }]);

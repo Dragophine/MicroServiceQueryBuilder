@@ -8,4 +8,9 @@ angular.module('queryBuilder', [
   'queryBuilder.login',
   'queryBuilder.expertMode',
   'queryBuilder.register'
-]);
+])
+.config(['$routeProvider', function($routeProvider) {
+  $routeProvider.when('/', {
+    templateUrl: 'expertMode/expertMode.html'
+  });
+}]);
