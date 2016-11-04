@@ -1,15 +1,30 @@
 {
-  "name": "angular-seed",
-  "description": "A starter project for AngularJS",
+  "name": "queryBuilder",
+  "description": "A query builder for university",
   "version": "0.0.0",
   "homepage": "https://github.com/angular/angular-seed",
   "license": "MIT",
   "private": true,
   "dependencies": {
-    "angular": "~1.5.0",
-    "angular-route": "~1.4.0",
-    "angular-loader": "~1.4.0",
-    "angular-mocks": "~1.4.0",
-    "bootstrap": "^3.3.7"
-  }
+    "angular": "^1.5.8",
+    "angular-cookies": "^1.5.8",
+    "angular-route": "^1.5.8",
+    "bootstrap": "^1.5.8",
+    "jquery": "^1.5.8"
+  },
+  "authors": [
+    "Johann Stöbich",
+    "Weisensteiner Martin",
+    "Dragomira Pepic",
+    "Crhistan Reiter",
+    "Roman Sumereder"
+  ],
+  "main": "App/index.html",
+  "keywords": [
+    "queryBuilder",
+    "Johannes",
+    "Kepler",
+    "Univesrität",
+    "neo4j"
+  ]
 }

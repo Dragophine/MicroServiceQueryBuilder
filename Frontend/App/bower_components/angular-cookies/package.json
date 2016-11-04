@@ -1,8 +1,8 @@
 {
-  "name": "angular-mocks",
-  "version": "1.4.14",
-  "description": "AngularJS mocks for testing",
-  "main": "angular-mocks.js",
+  "name": "angular-cookies",
+  "version": "1.5.8",
+  "description": "AngularJS module for cookies",
+  "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -14,8 +14,7 @@
     "angular",
     "framework",
     "browser",
-    "mocks",
-    "testing",
+    "cookies",
     "client-side"
   ],
   "author": "Angular Core Team <angular-core+npm@google.com>",
@@ -26,7 +25,7 @@
   "homepage": "http://angularjs.org",
   "jspm": {
     "shim": {
-      "angular-mocks": {
+      "angular-cookies": {
         "deps": ["angular"]
       }
     }
