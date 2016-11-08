@@ -27,6 +27,6 @@ public class Neo4JConfig extends Neo4jConfiguration {
 	@Bean
 	public SessionFactory getSessionFactory() {
 		// TODO Auto-generated method stu
-		return new SessionFactory(getConfiguration(), "tutorial", "expertQueryBuilder");
+		return new SessionFactory(getConfiguration(), "application.entity");
 	}
 }
