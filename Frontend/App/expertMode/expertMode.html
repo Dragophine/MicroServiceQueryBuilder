@@ -1,45 +1,62 @@
-
 <!DOCTYPE html>
 <div class="container" ng-controller="expertModeCtrl as ctrl">
   
   <div class="row">
     <div class="col-md-11">
       <input type="text" class="form-control" id="query" placeholder="Query" ng-model="ctrl.query" />
+	  <!-- <span ng-bind-html="highlight(ctrl.query)"></span> -->
     </div>
     <div class="col-md-1">
       <button type="submit" class="btn btn-default" ng-click="ctrl.submitQuery()">Submit</button>
-    </div>
+    </div>	
+		  <button type="saveQuery" class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
+		  <button type="loadQuery" class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button>
+	
+<!--  <li>
+	Category:
+	<input class="form-control" type="text" ng-model="ctrl.category" id="category">
+  </li>
+  <li>
+	Parameter:
+	<input class="form-control" type="text" ng-model="ctrl.parameter" id="parameter">
+  </li>
+  -->
   </div>
+  
+<!--   <h1>TEST: {{ctrl.table}}</h1> -->
+  
   <div class="row top-buffer">
     <table class="table"  ng-if="!ctrl.hasError">
        <thead>
         <tr>
-          <th>Relationships</th>
-          <th>Nodes</th>
-          <th>Directions</th>
-          <th>Length</th>
-          <th>Start</th>
-          <th>End</th>
+          <th>ID</th>
+          <th>Label</th>
+          <th>Key</th>
+          <th>Value</th>
         </tr>
       </thead>
       <tbody>
         <tr ng-repeat="row in ctrl.table">
-          <td>
-            <p  ng-repeat="relationship in row['p']['relationships']">
-              <a href="relationship">{{relationship}}</a>
+		  <td>
+            <p  ng-repeat="node in row.n.propertyList">
+              <a href="node">{{row.n.id}}</a>
+            </p>
+          </td>
+		  <td>
+            <p  ng-repeat="node in row.n.propertyList">
+              <a href="node">{{row.n.labels[0]}}</a>
             </p>
           </td>
           <td>
-            <p  ng-repeat="node in row['p']['nodes']">
-              <a href="node">{{node}}</a>
+            <p  ng-repeat="node in row.n.propertyList">
+              <a href="node">{{node.key}}</a>
             </p>
           </td>
           <td>
-            <p ng-repeat="direction in row['p']['directions']">{{direction}}</p>
+            <p  ng-repeat="node in row.n.propertyList">
+              <a href="node">{{node.value}}</a>
+            </p>
           </td>
-          <td>{{row['p']['length']}}</td>
-          <td>{{row['p']['start']}}</td>
-          <td>{{row['p']['end']}}</td>
         </tr>
       </tbody>
     </table>

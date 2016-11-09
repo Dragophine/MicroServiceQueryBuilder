@@ -11,10 +11,26 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	function($requests) {
     var self = this;
 	
+    /**
+     * Words to highlight
+     */
+    self.highlightWords = ["MATCH", "WHERE", "WITH", "RETURN"];
+    
 	/** 
-		Query
+		Query fields
 	*/
 	self.query = "";
+	self.parameter = [];
+	self.name = "";
+	self.description = "";
+	self.category = "";	
+	
+	/**
+	 * Parameter fields
+	 */
+	self.key = "";
+	self.value = "";
+	self.type = "";
 
 	/** 
 		Table json (simply the result)
@@ -48,5 +64,15 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	self.submitQuery = function() {
 		$requests.getResultFromQuery(self.query, self.callback);
 	}
+	
+
+//	$scope.highlight = function(haystack) {
+//
+//		for (var i = 0; i < self.highlightWords.length; i++) {
+//			$scope.trustAsHtml(haystack.replace(new RegExp(self.highlightWords[i], "gi"), function(match) {
+//			        return '<span class="highlightedText">' + match + '</span>';
+//			}
+//	    }));
+//	};
 
 }]);

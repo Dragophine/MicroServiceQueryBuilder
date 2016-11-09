@@ -23,7 +23,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
         $http({
             method : 'GET',
             url : $serverRestLocation.getValue() + '/expertModus?query=' + $query, 
-            headers: {  'Content-Type':'application/json'}
+            headers: {  'Content-Type':'application/json'},
         })
         .success(function(data, status) {
             $callback(true, data, status);
