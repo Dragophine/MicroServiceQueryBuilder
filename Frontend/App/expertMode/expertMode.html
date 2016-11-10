@@ -22,6 +22,25 @@
   </li>
   -->
   </div>
+  <div>
+    <div ng-repeat="param in ctrl.params">
+        <p ng-repeat="(key, val) in param">
+          <select ng-if="key == 'type'" ng-model="val" ng-options="o as o for o in ctrl.paramoptions">
+          <!--  <option>Integer</option>
+            <option>String</option> -->
+          </select>
+          <input ng-if="key == 'value'" ng-model ="val" type="text" />
+        </p>
+    </div>
+    <!--
+    <div ng-repat= "param in ctrl.params"> 
+          <p ng-repat= "(key, val) in param">
+            {{key}}: {{val}}
+            <select  ng-model = "val"  ></select>
+            <input ng-if="key == 'value'" ng-model ="val" type="text" />
+          </p>
+    </div>-->
+  </div>  
   
 <!--   <h1>TEST: {{ctrl.table}}</h1> -->
   

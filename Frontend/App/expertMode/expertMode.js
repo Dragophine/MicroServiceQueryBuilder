@@ -16,6 +16,18 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
      */
     self.highlightWords = ["MATCH", "WHERE", "WITH", "RETURN"];
     
+	self.paramoptions = ["Integer", "String"];
+
+	self.params = [
+		{
+				type : "Integer",
+				value : ""
+		},
+		{
+			type : "String",
+			value : ""
+		}
+	];
 	/** 
 		Query fields
 	*/
