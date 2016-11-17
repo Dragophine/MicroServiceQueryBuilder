@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<div class="container" ng-controller="queryBuilderCtrl as ctrl">
+  
+  <div class="row">
+    <div class="col-md-11">
+      <input type="text" class="form-control" id="query" placeholder="Query" ng-model="ctrl.query" />
+	  <!-- <span ng-bind-html="highlight(ctrl.query)"></span> -->
+    </div>
+    <div class="col-md-1">
+      <button type="submit" class="btn btn-default" ng-click="ctrl.submitQuery()">Submit</button>
+    </div>	
+		  <button type="saveQuery" class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
+		  <button type="loadQuery" class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button>
+	
+<!--  <li>
+	Category:
+	<input class="form-control" type="text" ng-model="ctrl.category" id="category">
+  </li>
+  <li>
+	Parameter:
+	<input class="form-control" type="text" ng-model="ctrl.parameter" id="parameter">
+  </li>
+  -->
+  </div>
+  <div>
+    <div ng-repeat="param in ctrl.params">
+        <p ng-repeat="(key, val) in param">
+          <select ng-if="key == 'type'" ng-model="val" ng-options="o as o for o in ctrl.paramoptions">
+          <!--  <option>Integer</option>
+            <option>String</option> -->
+          </select>
+          <input ng-if="key == 'value'" ng-model ="val" type="text" />
+        </p>
+    </div>
+    <!--
+    <div ng-repat= "param in ctrl.params"> 
+          <p ng-repat= "(key, val) in param">
+            {{key}}: {{val}}
+            <select  ng-model = "val"  ></select>
+            <input ng-if="key == 'value'" ng-model ="val" type="text" />
+          </p>
+    </div>-->
+  </div>  
+  
+<!--   <h1>TEST: {{ctrl.table}}</h1> -->
+  
+  <div class="row top-buffer">
+    <table class="table"  ng-if="!ctrl.hasError">
+       <thead>
+        <tr>
+          <th>ID</th>
+          <th>Label</th>
+          <th>Key</th>
+          <th>Value</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="row in ctrl.table">
+		  <td>
+            <p  ng-repeat="node in row.n.propertyList">
+              <a href="node">{{row.n.id}}</a>
+            </p>
+          </td>
+		  <td>
+            <p  ng-repeat="node in row.n.propertyList">
+              <a href="node">{{row.n.labels[0]}}</a>
+            </p>
+          </td>
+          <td>
+            <p  ng-repeat="node in row.n.propertyList">
+              <a href="node">{{node.key}}</a>
+            </p>
+          </td>
+          <td>
+            <p  ng-repeat="node in row.n.propertyList">
+              <a href="node">{{node.value}}</a>
+            </p>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div ng-if="ctrl.hasError">
+        <div class="row">
+            <div class="col-md-3">Error</div>
+            <div class="col-md-9">{{ctrl.error['error']}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">Exception</div>
+            <div class="col-md-9">{{ctrl.error['exception']}}</div>
+        </div>
+        <div class="row">
+            <div class="col-md-3">Message</div>
+            <div class="col-md-9">{{ctrl.error['message']}}</div>
+        </div>
+    </div>
+
+  </div>
+ 
+</div>

@@ -7,7 +7,8 @@ angular.module('queryBuilder', [
   'queryBuilder.services',
   'queryBuilder.login',
   'queryBuilder.expertMode',
-  'queryBuilder.register'
+  'queryBuilder.register',
+  'queryBuilder.querybuilder'
 ])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/', {
