@@ -84,9 +84,8 @@ public class ExpertModus {
 	    public ResponseEntity<Result> expertModus(@RequestBody ExpertQuery expertQuery) throws Exception {
 	    	Map<String,Object> paramsMap = new HashMap<String,Object>();
 	    	
-	    	
 	    	for (Parameter p:expertQuery.getParameter()){
-	    	
+
 					testTypes(p);
 				
 	    		parameterRepository.save(p);  		
