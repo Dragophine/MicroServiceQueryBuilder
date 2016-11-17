@@ -15,19 +15,10 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
      * Words to highlight
      */
     self.highlightWords = ["MATCH", "WHERE", "WITH", "RETURN"];
-    
-	self.paramoptions = ["Integer", "String"];
+    self.param = "";
+	self.paramoptions = ["int", "String"];
 
-	self.params = [
-		{
-				type : "Integer",
-				value : ""
-		},
-		{
-			type : "String",
-			value : ""
-		}
-	];
+	self.params = [	];
 	/** 
 		Query fields
 	*/
@@ -59,6 +50,16 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	*/
 	self.hasError = false;
 
+	self.ButtonClick = function() {
+		self.params.push({
+			key :"",
+			type : "String",
+			value : ""
+		});
+		
+
+	}
+
 	self.callback = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
@@ -74,7 +75,7 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		Start request
 	*/
 	self.submitQuery = function() {
-		$requests.getResultFromQuery(self.query, self.callback);
+		$requests.getResultFromQuery(self.query, self.params, self.callback);
 	}
 	
 
