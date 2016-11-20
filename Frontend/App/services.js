@@ -32,10 +32,16 @@ angular.module('queryBuilder.services', ['ngCookies'])
                 "category" : "abc" }
         })
         .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
             $callback(true, data, status);
+            }
         })
         .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
            $callback(false, data, status);
+            }
         });
     };
 

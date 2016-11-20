@@ -10,23 +10,57 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 .controller('expertModeCtrl', ['$requests',
 	function($requests) {
     var self = this;
+    
+    // textArea mit syntax highlighting
+    self.myCodeMirror = CodeMirror.fromTextArea(document.getElementById('query'), {
+        mode: 'cypher',
+        indentWithTabs: true,
+        smartIndent: true,
+        lineNumbers: true,
+        matchBrackets : true,
+        autofocus: true,
+        theme: 'neo'
+      });
+    
+	self.paramcnt = -1;
 	
-    /**
-     * Words to highlight
-     */
-    self.highlightWords = ["MATCH", "WHERE", "WITH", "RETURN"];
-    self.param = "";
-	self.paramoptions = ["int", "String"];
+	self.params = [];
+	
+	/**
+	 * Immer wenn sich bei der Query etwas ändert, sollen sich die Parameter automatisch anpassen.
+	 */
+    self.myCodeMirror.on('change',function(cMirror){
+    	  	// Parameter werden aktuell durch {{ erkannt, eventuell gibt es noch ein schönere Lösung...
+    		var query = cMirror.getValue();
+    		self.paramcnt = query.split("{{").length - 1;
+    		
+    		if(self.params.length < self.paramcnt)
+			{
+        		var i;
+        		for(i = 0; self.params.length < self.paramcnt; i++)
+        		{
+            		self.params.push.apply(self.params, [{type : "Integer", value : ""}]);
+        		}
+			}
+    		else if(self.params.length > self.paramcnt)
+			{
+        		var i;
+        		for(i = 0; self.params.length > self.paramcnt; i++)
+        		{
+        			self.params.pop();
+        		}
+			}
+    	});
+    
+	self.paramoptions = ["Integer", "String"];
 
-	self.params = [	];
 	/** 
 		Query fields
 	*/
 	self.query = "";
-	self.parameter = [];
 	self.name = "";
 	self.description = "";
-	self.category = "";	
+	self.category = "";
 	
 	/**
 	 * Parameter fields
@@ -50,16 +84,6 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	*/
 	self.hasError = false;
 
-	self.ButtonClick = function() {
-		self.params.push({
-			key :"",
-			type : "String",
-			value : ""
-		});
-		
-
-	}
-
 	self.callback = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
@@ -75,17 +99,7 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		Start request
 	*/
 	self.submitQuery = function() {
-		$requests.getResultFromQuery(self.query, self.params, self.callback);
+		$requests.getResultFromQuery(self.myCodeMirror.getValue(), self.params, self.callback);
 	}
-	
-
-//	$scope.highlight = function(haystack) {
-//
-//		for (var i = 0; i < self.highlightWords.length; i++) {
-//			$scope.trustAsHtml(haystack.replace(new RegExp(self.highlightWords[i], "gi"), function(match) {
-//			        return '<span class="highlightedText">' + match + '</span>';
-//			}
-//	    }));
-//	};
 
 }]);

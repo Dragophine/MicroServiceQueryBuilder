@@ -1,16 +1,23 @@
 <!DOCTYPE html>
+<meta charset="utf-8"/>
+ 
+<style>
+.CodeMirror {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+</style>
 <div class="container" ng-controller="expertModeCtrl as ctrl">
-  
+
   <div class="row">
     <div class="col-md-11">
-      <input type="text" class="form-control" id="query" placeholder="Query" ng-model="ctrl.query" />
-	  <!-- <span ng-bind-html="highlight(ctrl.query)"></span> -->
+      <input type="textarea" class="form-control" id="query" placeholder="Query" ng-model="ctrl.query" />
     </div>
     <div class="col-md-1">
       <button type="submit" class="btn btn-default" ng-click="ctrl.submitQuery()">Submit</button>
     </div>	
 		  <button type="saveQuery" class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
-		  <button type="loadQuery" class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button>
+		  <button type="loadQuery" class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button> 
 	
 <!--  <li>
 	Category:
