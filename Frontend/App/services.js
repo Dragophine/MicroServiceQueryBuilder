@@ -19,17 +19,29 @@ angular.module('queryBuilder.services', ['ngCookies'])
 })
 .service('$requests', ['$serverRestLocation', '$http', function($serverRestLocation, $http) {
     //execute query
-    this.getResultFromQuery = function($query, $callback) {
+    this.getResultFromQuery = function($query, $params, $callback) {
         $http({
-            method : 'GET',
-            url : $serverRestLocation.getValue() + '/expertModus?query=' + $query, 
+            method : 'POST',
+            url : $serverRestLocation.getValue() + '/expertModus', 
             headers: {  'Content-Type':'application/json'},
+            data: { 
+              "query" : $query,
+              "parameter" :  $params,
+                "name" : "Query1",
+                "description" : "Query 11",
+                "category" : "abc" }
         })
         .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
             $callback(true, data, status);
+            }
         })
         .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
            $callback(false, data, status);
+            }
         });
     };
 

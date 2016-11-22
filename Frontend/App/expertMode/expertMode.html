@@ -1,16 +1,23 @@
 <!DOCTYPE html>
+<meta charset="utf-8"/>
+ 
+<style>
+.CodeMirror {
+    border-top: 1px solid black;
+    border-bottom: 1px solid black;
+}
+</style>
 <div class="container" ng-controller="expertModeCtrl as ctrl">
-  
+
   <div class="row">
     <div class="col-md-11">
-      <input type="text" class="form-control" id="query" placeholder="Query" ng-model="ctrl.query" />
-	  <!-- <span ng-bind-html="highlight(ctrl.query)"></span> -->
+      <input type="textarea" class="form-control" id="query" placeholder="Query" ng-model="ctrl.query" />
     </div>
     <div class="col-md-1">
       <button type="submit" class="btn btn-default" ng-click="ctrl.submitQuery()">Submit</button>
     </div>	
 		  <button type="saveQuery" class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
-		  <button type="loadQuery" class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button>
+		  <button type="loadQuery" class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button> 
 	
 <!--  <li>
 	Category:
@@ -21,17 +28,25 @@
 	<input class="form-control" type="text" ng-model="ctrl.parameter" id="parameter">
   </li>
   -->
+
   </div>
+  <form novalidate class="simple-form">
   <div>
     <div ng-repeat="param in ctrl.params">
         <p ng-repeat="(key, val) in param">
-          <select ng-if="key == 'type'" ng-model="val" ng-options="o as o for o in ctrl.paramoptions">
+          <select ng-if="key == 'type'" ng-model="param.type" ng-options="o as o for o in ctrl.paramoptions">
           <!--  <option>Integer</option>
             <option>String</option> -->
           </select>
-          <input ng-if="key == 'value'" ng-model ="val" type="text" />
+          <input ng-if="key == 'key'" type="text" name="key_value" ng-model="param.key" />
+          
+          <input ng-if="key == 'value'" ng-model ="param.value" name="value_value"  type="text" />
         </p>
     </div>
+
+    <button ng-click="ctrl.ButtonClick()">
+      Add parameter
+    </button>
     <!--
     <div ng-repat= "param in ctrl.params"> 
           <p ng-repat= "(key, val) in param">
@@ -41,10 +56,11 @@
           </p>
     </div>-->
   </div>  
+  </form>
   
 <!--   <h1>TEST: {{ctrl.table}}</h1> -->
   
-  <div class="row top-buffer">
+   <!-- <div class="row top-buffer">
     <table class="table"  ng-if="!ctrl.hasError">
        <thead>
         <tr>
@@ -78,7 +94,29 @@
           </td>
         </tr>
       </tbody>
-    </table>
+    </table> -->
+
+    <!-- <span ng-repeat= "(property, value) in ctrl.table">
+      {{property}} : {{value}}
+      </span> -->
+
+      <script type="text/ng-template" id="categoryTree">
+        <tr ng-repeat= "cell in row">
+        <td ng-repeat="abc in cell">
+          {{cell}}
+        </td>
+        </tr>
+       </script>
+
+    <table class="table"  ng-if="!ctrl.hasError">
+       <tbody >
+         <tr ng-repeat = "row in ctrl.table"> 
+             <td ng-repeat = "cell in row">
+               {{cell}}
+          </td>
+          </tr>
+      </tbody>
+      </table>
 
     <div ng-if="ctrl.hasError">
         <div class="row">

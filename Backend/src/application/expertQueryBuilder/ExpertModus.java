@@ -51,20 +51,20 @@ public class ExpertModus {
 		ParameterRepository parameterRepository;
 		
 		
-		  //  @RequestMapping(value="/expertModus", method=RequestMethod.GET)
-			@CrossOrigin 
-			//CrossOrigin request allow to call a different server from
-			//a certain frontend hosted on a certain address.
-			//This means that the adress of the server and 
-			//the adress of client must not be the same.
-			//Pleas add @CrossOrigin to every request.
-		    @RequestMapping(value="/expertModus")
-		    public Result expertModus(@RequestParam(value="query", defaultValue="Match (n) return distinct labels(n)") String query) {
-
-			Result result = neo4jOperations.query(query, new HashMap<String, String>());
-			
-			return result;
-		    }
+//		  //  @RequestMapping(value="/expertModus", method=RequestMethod.GET)
+//			@CrossOrigin 
+//			//CrossOrigin request allow to call a different server from
+//			//a certain frontend hosted on a certain address.
+//			//This means that the adress of the server and 
+//			//the adress of client must not be the same.
+//			//Pleas add @CrossOrigin to every request.
+//		    @RequestMapping(value="/expertModus")
+//		    public Result expertModus(@RequestParam(value="query", defaultValue="Match (n) return distinct labels(n)") String query) {
+//
+//			Result result = neo4jOperations.query(query, new HashMap<String, String>());
+//			
+//			return result;
+//		    }
 			
 
 		/**	
@@ -72,32 +72,31 @@ public class ExpertModus {
 		 * bis wir frontendseitig Parameter können.
 		 */
 			
-//	  //  @RequestMapping(value="/expertModus", method=RequestMethod.GET)
-//		@CrossOrigin 
-//		//CrossOrigin request allow to call a different server from
-//		//a certain frontend hosted on a certain address.
-//		//This means that the adress of the server and 
-//		//the adress of client must not be the same.
-//		//Pleas add @CrossOrigin to every request.
-//	    @RequestMapping(value="/expertModus")
-////	    public String expertModus(@RequestParam(value="query", defaultValue="Match (n) return distinct labels(n)") String query, @RequestParam(value="parameter") List params) {	 
-//	    public ResponseEntity<Result> expertModus(@RequestBody ExpertQuery expertQuery) throws Exception {
-//	    	Map<String,Object> paramsMap = new HashMap<String,Object>();
-//	    	
-//	    	
-//	    	for (Parameter p:expertQuery.getParameter()){
-//	    	
-//					testTypes(p);
-//				
-//	    		parameterRepository.save(p);  		
-//	    		paramsMap.put(p.getKey(), p.getValue());
-//	    	}
-//	    	expertQueryRepository.save(expertQuery);
-//	    	
-//		Result result = neo4jOperations.query(expertQuery.getQuery(), paramsMap,true);
-//	
-//		return new ResponseEntity<Result>(result, HttpStatus.OK);
-//	    }
+	  //  @RequestMapping(value="/expertModus", method=RequestMethod.GET)
+		@CrossOrigin 
+		//CrossOrigin request allow to call a different server from
+		//a certain frontend hosted on a certain address.
+		//This means that the adress of the server and 
+		//the adress of client must not be the same.
+		//Pleas add @CrossOrigin to every request.
+	    @RequestMapping(value="/expertModus",  method=RequestMethod.POST)
+//	    public String expertModus(@RequestParam(value="query", defaultValue="Match (n) return distinct labels(n)") String query, @RequestParam(value="parameter") List params) {	 
+	    public ResponseEntity<Result> expertModus(@RequestBody ExpertQuery expertQuery) throws Exception {
+	    	Map<String,Object> paramsMap = new HashMap<String,Object>();
+	    	
+	    	for (Parameter p:expertQuery.getParameter()){
+
+					testTypes(p);
+				
+	    		parameterRepository.save(p);  		
+	    		paramsMap.put(p.getKey(), p.getValue());
+	    	}
+	    	expertQueryRepository.save(expertQuery);
+	    	
+		Result result = neo4jOperations.query(expertQuery.getQuery(), paramsMap,true);
+	
+		return new ResponseEntity<Result>(result, HttpStatus.OK);
+	    }
 	    
 	    
 	    private void testTypes(Parameter p) throws Exception{
