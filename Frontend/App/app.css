@@ -18,11 +18,35 @@ Container .css
     }
 }
 
+.top-buffer-small { 
+  margin-top: 15px; 
+}
+
+
 .top-buffer { 
-  margin-top: 30px; 
+  margin-top: 25px; 
+}
+
+.top-buffer-large { 
+  margin-top: 35px; 
 }
 
 .highlightedText {
     background: yellow;
 }
 
+
+/**
+Bootstrap hacks
+*/
+.col-center{
+  margin:0 auto;
+}
+
+.center-block {
+   margin-left:auto;
+   margin-top:auto;
+   margin-right:auto;
+   margin-bottom:auto;
+   display:block;
+}

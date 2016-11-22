@@ -1,5 +1,5 @@
 {
-  "name": "queryBuilder",
+  "name": "querybuilder",
   "description": "A query builder for university",
   "version": "0.0.0",
   "homepage": "https://github.com/angular/angular-seed",
@@ -9,7 +9,7 @@
     "angular": "^1.5.8",
     "angular-cookies": "^1.5.8",
     "angular-route": "^1.5.8",
-    "bootstrap": "^1.5.8",
+    "bootstrap": "^3.3.7",
     "jquery": "^1.5.8"
   },
   "authors": [
