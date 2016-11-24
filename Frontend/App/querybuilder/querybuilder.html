@@ -9,6 +9,33 @@
     </div>
   </div>
 
+  <div class="row">
+      <h1>Name</h1>
+      <input type="textarea" class="form-control" id="query" placeholder="Query" />
+  </div>
+  <div class="row">
+      <h1>Description</h1>
+      <input type="textarea" class="form-control" id="query" placeholder="Query" />
+  </div>
+  <div class="row">
+      <h1>LimitCount</h1>
+      <input type="textarea" class="form-control" id="query" placeholder="Query" />
+  </div>
+  <h1 class="row">Paramenter</h1>
+  <div ng-repeat="param in ctrl.params">
+    <div class="row">
+      <div ng-repeat="(key, val) in param" >
+           <div class="col-md-2" ng-if="key == 'type'">
+                <select  ng-model="val" ng-options="o as o for o in ctrl.paramoptions" class="center-block">
+                </select>
+           </div>
+           <div class="col-md-10" ng-if="key == 'value'">
+              <input  ng-model ="val" type="text" class="form-control"/>
+            </div>
+      </div>
+    </div>
+  </div>
+  <h1>Nodes</h1>
   <div  ng-repeat="nodeInfo in ctrl.selectedNodesAndRelation">
     <div class="row">
        <h2>Node</h2>
@@ -82,20 +109,7 @@
       </div>
   </div>
 
-  <h1 class="row top-buffer">Paramenter</h1>
-  <div ng-repeat="param in ctrl.params">
-    <div class="row">
-      <div ng-repeat="(key, val) in param" >
-           <div class="col-md-2" ng-if="key == 'type'">
-                <select  ng-model="val" ng-options="o as o for o in ctrl.paramoptions" class="center-block">
-                </select>
-           </div>
-           <div class="col-md-10" ng-if="key == 'value'">
-              <input  ng-model ="val" type="text" class="form-control"/>
-            </div>
-      </div>
-    </div>
-  </div>
+  
   
 
 
