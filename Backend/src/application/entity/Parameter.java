@@ -10,11 +10,15 @@ public class Parameter {
 private String key;
 private Object value;
 private String type;
+private boolean changeable;
 
 public Parameter(){
 
 }
 
+public boolean getChangeable(){
+	return this.changeable;
+}
 
 public String getKey(){
 	return this.key;
@@ -38,6 +42,10 @@ public void setValue(Object v){
 
 public void setType(String t){
 	this.type=t;
+}
+
+public void setChangeable(boolean c){
+	this.changeable=c;
 }
 
 

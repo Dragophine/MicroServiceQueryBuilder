@@ -13,7 +13,7 @@ public class ExpertQuery {
 
 	private String name;
 private String query;
-private List<Parameter> parameter;
+private List<Parameter> hasParameter;
 
 
 
@@ -32,7 +32,7 @@ public String getQuery(){
 }
 
 public List<Parameter> getParameter(){
-	return this.parameter;
+	return this.hasParameter;
 }
 
 public String getName(){
@@ -52,7 +52,7 @@ public void setQuery(String q){
 }
 
 public void setParameter(List<Parameter> p){
-	this.parameter=p;
+	this.hasParameter=p;
 }
 
 public void setName(String n){
@@ -68,9 +68,9 @@ public void setCategory(String c){
 }
 
 public void hasParameter(Parameter p){
-	if (parameter==null)
-		parameter = new ArrayList<Parameter>();
-	parameter.add(p);
+	if (hasParameter==null)
+		hasParameter = new ArrayList<Parameter>();
+	hasParameter.add(p);
 }
 
 
