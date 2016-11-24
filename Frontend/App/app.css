@@ -19,12 +19,16 @@ Container .css
 }
 
 .top-buffer-small { 
-  margin-top: 15px; 
+  margin-top: 17px; 
 }
 
 
 .top-buffer { 
   margin-top: 25px; 
+}
+
+.left-buffer {
+  margin-left: 20px;
 }
 
 .top-buffer-large { 

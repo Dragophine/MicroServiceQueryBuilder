@@ -2,7 +2,7 @@
 <div class="container" ng-controller="queryBuilderCtrl as ctrl">
   
   <div class="row top-buffer-small">
-    <div class="col-md-12">
+    <div>
       <button class="btn btn-default" ng-click="ctrl.executeQuery()">Execute Query</button>
       <button class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
       <button class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button>
@@ -21,89 +21,82 @@
       <h1>LimitCount</h1>
       <input type="textarea" class="form-control" id="query" placeholder="Query" />
   </div>
-  <h1 class="row">Paramenter</h1>
-  <div ng-repeat="param in ctrl.params">
-    <div class="row">
-      <div ng-repeat="(key, val) in param" >
-           <div class="col-md-2" ng-if="key == 'type'">
-                <select  ng-model="val" ng-options="o as o for o in ctrl.paramoptions" class="center-block">
-                </select>
-           </div>
-           <div class="col-md-10" ng-if="key == 'value'">
-              <input  ng-model ="val" type="text" class="form-control"/>
-            </div>
-      </div>
-    </div>
-  </div>
+  
   <h1 class="row">Nodes</h1>
-  <div  ng-repeat="nodeInfo in ctrl.selectedNodesAndRelation" class="top-buffer">
-    <div class="row" >
-      <div class="col-md-3" >
-        {{nodeInfo['node']}}
-      </div>
-      <div class="col-md-3" >
-          <div ng-repeat="keyNode in nodeInfo['keys']">
-             <div ng-repeat="key in keyNode['Keys']">
-                  Filter {{key}}
-                  <input type="textarea" class="form-control" id="query" />
-              </div>
-          </div>
-      </div>
-      <div class="col-md-3" >   
-          <table>
-              <tbody ng-repeat="keyNode in nodeInfo['keys']">
-                 <tr ng-repeat="key in keyNode['Keys']">
-                    <td>
-                      <input type="checkbox" />
-                    </td>
-                    <td>
-                      <label>ORDER {{key}}</label>
-                    </td>
-                     <td>
-                        <input type="checkbox" />
-                     </td>
-                      <td>
-                        <label>ASC</label>
-                     </td>
-                </tr>
-            </tbody>
-          </table>
-      </div>
-      <div class="col-md-3" >
-            <table>
-              <tbody ng-repeat="keyNode in nodeInfo['keys']">
-                 <tr ng-repeat="key in keyNode['Keys']">
-                    <td>
-                      <input type="checkbox" />
-                    </td>
-                    <td>
-                      <label> RETURN {{key}}</label>
-                    </td>
-            </tbody>
-          </table>
+  <div  ng-repeat="nodeInfo in ctrl.selectedNodesAndRelation track by $index" class="top-buffer">
+    <div class="panel panel-default" >
+      <div class="row panel-body">
+        <div class="col-md-2" >
+          {{nodeInfo['node']}}
+        </div>
+        <div class="col-md-10" >
+            <div ng-repeat="keyNode in nodeInfo['keys']">
+               <div ng-repeat="key in keyNode['Keys']">
+                  <div class="row">
+                    <div class="col-md-4">
+                       Filter {{key}}
+                        <input type="textarea" class="form-control" id="query" />
+                    </div>
+                    <div class="col-md-4">
+                       <div class="row top-buffer-small">
+                         <input id="inlineradio1" type="checkbox" class="col-md-1">
+                         <div  class="col-md-11">
+                            RETURN {{key}}
+                         </div>
+                       </div>
+                    </div>
+                    <div class="col-md-2">
+                      <div class="row top-buffer-small">
+                        <input  type="radio"  class="col-md-1">
+                        <div class="col-md-11" >
+                            ORDER ASC
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-2"  >
+                      <div class="row top-buffer-small">
+                        <input  type="radio" class="col-md-1">
+                        <div class="col-md-11" >
+                            ORDER DSC
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+            </div>
+        </div>
       </div>
     </div>
-    <div class="row" ng-if="nodeInfo['relation'] != ''">
-      <div class="col-md-12" >
-        {{nodeInfo['relation']}}
+
+    <div  ng-if="nodeInfo['relationship'] != ''">
+      <div class="row">
+        <div class="left-buffer">
+          {{nodeInfo['relationship']['relationshipType']}}
+          <button class="btn btn-default left-buffer"  ng-click="ctrl.changeDirection($index)">
+            <span ng-if="nodeInfo['relationship']['direction'] == 'up'"
+                class="glyphicon glyphicon-arrow-up"></span>
+            <span ng-if="nodeInfo['relationship']['direction'] == 'down'"
+                class="glyphicon glyphicon-arrow-down"></span>
+            <span ng-if="nodeInfo['relationship']['direction'] == 'both'"
+                class="glyphicon glyphicon-resize-vertical"></span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
 
   <div class="row" ng-if="ctrl.availableNodes.length > 0">
       <h1>Choose Node</h1>
-      <div ng-repeat="node in ctrl.availableNodes">
-        <div ng-repeat="nodeText in node['Label']" >
-          <button ng-click="ctrl.addNode(nodeText)">
+        <div ng-repeat="node in ctrl.availableNodes" style="display: inline;">
+          <button ng-repeat="nodeText in node['Label']" ng-click="ctrl.addNode(nodeText)" class="btn btn-default">
           {{nodeText}}
           </button>
         </div>
-      </div>
   </div>
   <div class="row" ng-if="ctrl.availableRelationships.length > 0">
       <h1>Choose Relationsships</h1>
-      <div ng-repeat="relationship in ctrl.availableRelationships">
-        <button ng-click="ctrl.addRelation(relationship['Relation'])">
+      <div ng-repeat="relationship in ctrl.availableRelationships" style="display: inline;">
+        <button ng-click="ctrl.addRelation(relationship['Relation'])" class="btn btn-default">
           {{relationship['Relation']}}
         </button>
       </div>

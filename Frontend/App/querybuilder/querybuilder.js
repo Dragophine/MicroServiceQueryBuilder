@@ -14,29 +14,12 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     self.selectedNodesAndRelation = [];
 
 
-
-
-    /**
-     * Initial Properties
-     */
-    self.highlightWords = ["MATCH", "WHERE", "WITH", "RETURN"];
-    self.paramoptions = ["Integer", "String"];
-	self.params = [
-		{
-				type : "Integer",
-				value : ""
-		},
-		{
-			type : "String",
-			value : ""
-		}
-	];
-
 	/**
 		Query Properties
 	*/
 	self.availableNodes = "";
 	self.availableRelationships = "";
+
 	/**
 		Result Properties
 	*/
@@ -130,7 +113,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	self.addNode = function($node){
 		self.selectedNodesAndRelation.push({
 			"node" : $node,
-			"relation" : "",
+			"relationship" : "",
 			"keys" : ""
 		});
 		
@@ -141,9 +124,14 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	}
 
 	self.addRelation = function($relation){
-		self.selectedNodesAndRelation[self.selectedNodesAndRelation.length - 1]["relation"] = $relation;
+		self.selectedNodesAndRelation[self.selectedNodesAndRelation.length - 1]["relationship"] = {
+		 	"relationshipType" : $relation,
+		 	"direction" : 'down',
+		 	"optional" : false
+		}
 
 		$requests.getNodes(self.getNodesCB);
+
 		self.availableRelationships = [];
 
 	}
@@ -155,5 +143,21 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 //			}
 //	    }));
 //	};
+
+	/*
+	View oprerations
+	*/
+	self.changeDirection = function(i){
+		if(self.selectedNodesAndRelation[i]["relationship"]['direction'] == 'up'){
+			self.selectedNodesAndRelation[i]["relationship"]['direction'] = 'down';
+		}
+		else if(self.selectedNodesAndRelation[i]["relationship"]['direction'] == 'down'){
+			self.selectedNodesAndRelation[i]["relationship"]['direction'] = 'both';
+		}
+		else if(self.selectedNodesAndRelation[i]["relationship"]['direction'] == 'both'){
+			self.selectedNodesAndRelation[i]["relationship"]['direction'] = 'up';
+		}	
+
+	}
 
 }]);
