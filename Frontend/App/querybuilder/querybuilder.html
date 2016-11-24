@@ -1,24 +1,89 @@
 <!DOCTYPE html>
 <div class="container" ng-controller="queryBuilderCtrl as ctrl">
   
-  <div class="row">
-    <div class="col-md-11">
-      <input type="text" class="form-control" id="query" placeholder="Query" ng-model="ctrl.query" />
-	  <!-- <span ng-bind-html="highlight(ctrl.query)"></span> -->
-    </div>
-    <div class="col-md-1">
-      <button type="submit" class="btn btn-default" ng-click="ctrl.submitQuery()">Submit</button>
-    </div>
-  </div>
   <div class="row top-buffer-small">
     <div class="col-md-12">
-      <button type="saveQuery" class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
-       <button type="loadQuery" class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button>
+      <button class="btn btn-default" ng-click="ctrl.executeQuery()">Execute Query</button>
+      <button class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
+      <button class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button>
     </div>
   </div>
 
+  <div  ng-repeat="nodeInfo in ctrl.selectedNodesAndRelation">
+    <div class="row">
+       <h2>Node</h2>
+      <div class="col-md-3" >
+        {{nodeInfo['node']}}
+      </div>
+      <div class="col-md-3" >
+          <div ng-repeat="keyNode in nodeInfo['keys']">
+             <div ng-repeat="key in keyNode['Keys']">
+                  Filter {{key}}
+                  <input type="textarea" class="form-control" id="query" />
+              </div>
+          </div>
+      </div>
+      <div class="col-md-3" >   
+          <table>
+              <tbody ng-repeat="keyNode in nodeInfo['keys']">
+                 <tr ng-repeat="key in keyNode['Keys']">
+                    <td>
+                      <input type="checkbox" />
+                    </td>
+                    <td>
+                      <label>ORDER {{key}}</label>
+                    </td>
+                     <td>
+                        <input type="checkbox" />
+                     </td>
+                      <td>
+                        <label>ASC</label>
+                     </td>
+                </tr>
+            </tbody>
+          </table>
+      </div>
+      <div class="col-md-3" >
+            <table>
+              <tbody ng-repeat="keyNode in nodeInfo['keys']">
+                 <tr ng-repeat="key in keyNode['Keys']">
+                    <td>
+                      <input type="checkbox" />
+                    </td>
+                    <td>
+                      <label> RETURN {{key}}</label>
+                    </td>
+            </tbody>
+          </table>
+      </div>
+    </div>
+    <div class="row" ng-if="nodeInfo['relation'] != ''">
+        <h2>Relationship</h2>
+        {{nodeInfo['relation']}}
+    </div>
+  </div>
 
-  <div ng-repeat="param in ctrl.params" class="top-buffer">
+  <div class="row" ng-if="ctrl.availableNodes.length > 0">
+      <h1>Choose Node</h1>
+      <div ng-repeat="node in ctrl.availableNodes">
+        <div ng-repeat="nodeText in node['Label']" >
+          <button ng-click="ctrl.addNode(nodeText)">
+          {{nodeText}}
+          </button>
+        </div>
+      </div>
+  </div>
+  <div class="row" ng-if="ctrl.availableRelationships.length > 0">
+      <h1>Choose Relationsships</h1>
+      <div ng-repeat="relationship in ctrl.availableRelationships">
+        <button ng-click="ctrl.addRelation(relationship['Relation'])">
+          {{relationship['Relation']}}
+        </button>
+      </div>
+  </div>
+
+  <h1 class="row top-buffer">Paramenter</h1>
+  <div ng-repeat="param in ctrl.params">
     <div class="row">
       <div ng-repeat="(key, val) in param" >
            <div class="col-md-2" ng-if="key == 'type'">
@@ -32,6 +97,8 @@
     </div>
   </div>
   
+
+
 <!--   <h1>TEST: {{ctrl.table}}</h1> -->
   
   <div class="row top-buffer">

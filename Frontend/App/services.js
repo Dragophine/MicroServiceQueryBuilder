@@ -49,7 +49,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
     this.sendLogin = function($email, $passwort, $callback) {
         $http({
             method : 'POST',
-            url : $serverRestLocation + '/login', 
+            url : $serverRestLocation.getValue() + '/login', 
             headers: { 
                     'Content-Type':'application/json'
             },
@@ -65,5 +65,64 @@ angular.module('queryBuilder.services', ['ngCookies'])
             $callback(false, data, status);
         });
     };
+
+
+     //sample method to send login data
+    this.getNodes = function($callback) {
+        $http({
+            method : 'GET',
+            url : $serverRestLocation.getValue() + '/listNodes', 
+            headers: { 
+                    'Content-Type':'application/json'
+            }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };
+
+    //sample method to send login data
+    this.getKeys = function($label, $callback) {
+        $http({
+            method : 'POST',
+            url : $serverRestLocation.getValue() + '/listKeys', 
+            headers: { 
+                    'Content-Type':'application/json'
+            },
+            data: { 
+              "label" : $label
+            }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };
+
+     //sample method to send login data
+    this.getRelations = function($label, $callback) {
+        $http({
+            method : 'POST',
+            url : $serverRestLocation.getValue()+ '/listRelations', 
+            headers: { 
+                    'Content-Type':'application/json'
+            },
+            data: { 
+              "label" : $label
+            }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };
+
 
 }]);

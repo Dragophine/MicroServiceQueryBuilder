@@ -10,14 +10,17 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 .controller('queryBuilderCtrl', ['$requests',
 	function($requests) {
     var self = this;
-	
+
+    self.selectedNodesAndRelation = [];
+
+
+
+
     /**
-     * Words to highlight
+     * Initial Properties
      */
     self.highlightWords = ["MATCH", "WHERE", "WITH", "RETURN"];
-    
-	self.paramoptions = ["Integer", "String"];
-
+    self.paramoptions = ["Integer", "String"];
 	self.params = [
 		{
 				type : "Integer",
@@ -28,38 +31,23 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 			value : ""
 		}
 	];
-	/** 
-		Query fields
-	*/
-	self.query = "";
-	self.parameter = [];
-	self.name = "";
-	self.description = "";
-	self.category = "";	
-	
-	/**
-	 * Parameter fields
-	 */
-	self.key = "";
-	self.value = "";
-	self.type = "";
 
-	/** 
-		Table json (simply the result)
+	/**
+		Query Properties
+	*/
+	self.availableNodes = "";
+	self.availableRelationships = "";
+	/**
+		Result Properties
 	*/
 	self.table = "";
-
-	/**
-		Refres to the json response when an error occured
-	*/
+	self.hasError = false;
 	self.error = "";
 
 	/**
-		Bolean which concludes if the query has errors
+	Query Operations
 	*/
-	self.hasError = false;
-
-	self.callback = function($success, $data, $status) {
+	self.executeQueryCB = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
 			self.table = $data;
@@ -70,14 +58,95 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		}
 	}
 
-	/**
-		Start request
-	*/
+	self.saveQuery = function(){
+		$requests.getResultFromQuery(self.query, self.executeQueryCB);
+	}
+
+	self.loadQuery = function(){
+
+	}
+
 	self.submitQuery = function() {
-		$requests.getResultFromQuery(self.query, self.callback);
+		
 	}
 	
+	/**
 
+	This method requests the required items from 
+	a certain 
+	*/
+	self.getNodesCB = function($success, $data, $status){
+		self.hasError = !$success;
+		if($success){
+			self.availableNodes = $data;
+		}
+		else
+		{
+			self.error = $data;
+		}
+	}
+
+	$requests.getNodes(self.getNodesCB);
+
+
+	/***
+	This methods load the relationships for a specific node.
+	*/
+	self.loadRelationshipForNodeCB = function($success, $data, $status){
+		self.hasError = !$success;
+		if($success){
+			self.availableRelationships = $data;
+		}
+		else
+		{
+			self.error = $data;
+		}
+	}
+
+	self.loadRelationshipForNode = function($node){
+
+		$requests.getRelations($node, self.loadRelationshipForNodeCB);
+	}
+
+
+	/***
+	This methods load the relationships for a specific node.
+	*/
+	self.loadKeysForNodeCB = function($success, $data, $status){
+		self.hasError = !$success;
+		if($success){
+			self.selectedNodesAndRelation[self.selectedNodesAndRelation.length - 1]["keys"] = $data; 
+		}
+		else
+		{
+			self.error = $data;
+		}
+	}
+
+	self.loadKeysForNode = function($node){
+		$requests.getKeys($node, self.loadKeysForNodeCB);
+	}
+
+	self.addNode = function($node){
+		self.selectedNodesAndRelation.push({
+			"node" : $node,
+			"relation" : "",
+			"keys" : ""
+		});
+		
+
+		self.availableNodes = [];
+		self.loadRelationshipForNode($node);
+		self.loadKeysForNode($node);
+	}
+
+	self.addRelation = function($relation){
+		self.selectedNodesAndRelation[self.selectedNodesAndRelation.length - 1]["relation"] = $relation;
+
+		$requests.getNodes(self.getNodesCB);
+		self.availableRelationships = [];
+
+	}
 //	$scope.highlight = function(haystack) {
 //
 //		for (var i = 0; i < self.highlightWords.length; i++) {
