@@ -35,10 +35,9 @@
       </div>
     </div>
   </div>
-  <h1>Nodes</h1>
-  <div  ng-repeat="nodeInfo in ctrl.selectedNodesAndRelation">
-    <div class="row">
-       <h2>Node</h2>
+  <h1 class="row">Nodes</h1>
+  <div  ng-repeat="nodeInfo in ctrl.selectedNodesAndRelation" class="top-buffer">
+    <div class="row" >
       <div class="col-md-3" >
         {{nodeInfo['node']}}
       </div>
@@ -85,8 +84,9 @@
       </div>
     </div>
     <div class="row" ng-if="nodeInfo['relation'] != ''">
-        <h2>Relationship</h2>
+      <div class="col-md-12" >
         {{nodeInfo['relation']}}
+      </div>
     </div>
   </div>
 
