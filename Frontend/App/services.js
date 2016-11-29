@@ -123,6 +123,51 @@ angular.module('queryBuilder.services', ['ngCookies'])
             $callback(false, data, status);
         });
     };
+    
+    // save query
+    this.saveQuery = function($query, $params, $name, $description, $category, $callback) {
+        $http({
+            method : 'POST',
+            url : $serverRestLocation.getValue() + '/saveQuery', 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+              "query" : $query,
+              "parameter" :  $params,
+                "name" : $name,
+                "description" : $description,
+                "category" : $category }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    };
+    
+    
+    //load query
+    this.loadQuery = function($callback) {
+        $http({
+            method : 'GET',
+            url : $serverRestLocation.getValue() + '/loadQuery', 
+            headers: { 
+                    'Content-Type':'application/json'
+            }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };
 
 
 }]);

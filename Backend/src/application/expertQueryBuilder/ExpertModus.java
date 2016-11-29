@@ -65,12 +65,7 @@ public class ExpertModus {
 //			
 //			return result;
 //		    }
-			
 
-		/**	
-		 * Martin: Hab die Methode einstweilen auskommentiert und wieder den alten Stand hergestellt, 
-		 * bis wir frontendseitig Parameter können.
-		 */
 			
 	  //  @RequestMapping(value="/expertModus", method=RequestMethod.GET)
 		@CrossOrigin 
@@ -88,15 +83,43 @@ public class ExpertModus {
 
 					testTypes(p);
 				
-	    		parameterRepository.save(p);  		
+//	    		parameterRepository.save(p);  		
 	    		paramsMap.put(p.getKey(), p.getValue());
 	    	}
-	    	expertQueryRepository.save(expertQuery);
+
+//	    	expertQueryRepository.save(expertQuery);
 	    	
 		Result result = neo4jOperations.query(expertQuery.getQuery(), paramsMap,true);
 	
 		return new ResponseEntity<Result>(result, HttpStatus.OK);
 	    }
+		
+		
+		@CrossOrigin 
+	    @RequestMapping(value="/saveQuery",  method=RequestMethod.POST)	 
+	    public ResponseEntity<Result> saveQuery(@RequestBody ExpertQuery expertQuery) throws Exception
+		{
+	    	for (Parameter p : expertQuery.getParameter())
+	    	{
+				testTypes(p);				
+	    		parameterRepository.save(p);  		
+	    	}
+	    	expertQueryRepository.save(expertQuery);
+	
+		return new ResponseEntity<Result>(HttpStatus.OK);
+	    }
+		
+		@CrossOrigin 
+	    @RequestMapping(value="/loadQuery",  method=RequestMethod.GET)	 
+	    public ResponseEntity<Result> loadQuery() throws Exception
+		{
+			// Martin: Das LIMIT kann man mal raustun, aber aktuell haben wir noch sehr viele Einträge
+			String queryNodes = "MATCH (n:ExpertQuery) RETURN n LIMIT 25";			
+			Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
+	
+		return new ResponseEntity<Result>(result, HttpStatus.OK);
+	    }
+		
 	    
 	    
 	    private void testTypes(Parameter p) throws Exception{

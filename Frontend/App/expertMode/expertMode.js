@@ -22,7 +22,7 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
         theme: 'neo'
       });
     
-	self.paramcnt = -1;
+//	self.paramcnt = -1;
 	
 	self.params = [];
 	
@@ -30,22 +30,23 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	 * Immer wenn sich bei der Query etwas ändert, sollen sich die Parameter automatisch anpassen.
 	 */
     self.myCodeMirror.on('change',function(cMirror){
-    	  	// Parameter werden aktuell durch {{ erkannt, eventuell gibt es noch ein schönere Lösung...
+    	  	// Parameter werden aktuell durch { erkannt, eventuell gibt es noch ein schönere Lösung...
     		var query = cMirror.getValue();
-    		self.paramcnt = query.split("{{").length - 1;
+//    		var keys = query.split(/[{}]/);
+    		var paramcnt = query.split("{").length - 1;
     		
-    		if(self.params.length < self.paramcnt)
+    		if(self.params.length < paramcnt)
 			{
         		var i;
-        		for(i = 0; self.params.length < self.paramcnt; i++)
+        		for(i = 0; self.params.length < paramcnt; i++)
         		{
-            		self.params.push.apply(self.params, [{type : "Integer", value : ""}]);
+            		self.params.push.apply(self.params, [{key: "", type : "Integer", value : ""}]);
         		}
 			}
-    		else if(self.params.length > self.paramcnt)
+    		else if(self.params.length > paramcnt)
 			{
         		var i;
-        		for(i = 0; self.params.length > self.paramcnt; i++)
+        		for(i = 0; self.params.length > paramcnt; i++)
         		{
         			self.params.pop();
         		}
@@ -57,7 +58,7 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	/** 
 		Query fields
 	*/
-	self.query = "";
+//	self.query = "";
 	self.name = "";
 	self.description = "";
 	self.category = "";
@@ -65,9 +66,9 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	/**
 	 * Parameter fields
 	 */
-	self.key = "";
-	self.value = "";
-	self.type = "";
+//	self.key = "";
+//	self.value = "";
+//	self.type = "";
 
 	/** 
 		Table json (simply the result)
@@ -83,11 +84,48 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		Bolean which concludes if the query has errors
 	*/
 	self.hasError = false;
-
+	
+	// save query dialog
+	var saveButton = document.getElementById("saveQuery"),
+	dialogSaveQuery = document.getElementById('dialogSaveQuery'),
+	saveAbbruch = document.getElementById("saveAbbruch");
+	saveButton.addEventListener('click', zeigeFenster);
+	saveAbbruch.addEventListener('click', schließeFensterSave);
+	
+	function zeigeFenster() {
+		dialogSaveQuery.showModal();
+	}
+	
+	function schließeFensterSave() {
+		dialogSaveQuery.close();
+	}
+	
+	// load query dialog
+	self.queries = [];
+	var dialogLoadQuery = document.getElementById('dialogLoadQuery'),
+	loadAbbruch = document.getElementById("loadAbbruch");
+	loadAbbruch.addEventListener('click', schließeFensterLoad);
+	
+	function schließeFensterLoad() {
+		dialogLoadQuery.close();
+	}
+	
+		
 	self.callback = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
 			self.table = $data;
+		}
+		else
+		{
+			self.error = $data;
+		}
+	}
+	
+	self.queriesCB = function($success, $data, $status){
+		self.hasError = !$success;
+		if($success){
+			self.queries = $data;
 		}
 		else
 		{
@@ -100,6 +138,23 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	*/
 	self.submitQuery = function() {
 		$requests.getResultFromQuery(self.myCodeMirror.getValue(), self.params, self.callback);
+	}
+	
+	self.saveQuery = function() {
+		$requests.saveQuery(self.myCodeMirror.getValue(), self.params, 
+				self.name, self.description, self.category, self.callback);
+		schließeFensterSave();
+		// Zurücksetzen der Werte sonst werden sie beim nächsten Öffnen vom Save-Dialog gleich wieder angezeigt.
+		self.name, self.description, self.category = "";
+	}
+	
+	self.loadQuery = function() {
+		self.queries = $requests.loadQuery(self.queriesCB);
+		dialogLoadQuery.showModal();
+	}
+	
+	self.select = function($query) {		
+		self.myCodeMirror.setValue($query.query);
 	}
 
 }]);
