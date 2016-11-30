@@ -126,7 +126,8 @@ public class ExpertModus {
 	    	switch(p.getType()){
     		case "int":
     			try{
-    			int i=(int) p.getValue();
+    			int i = Integer.parseInt((String)p.getValue());
+    			p.setValue(i);
     			}catch (Exception e){
     				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
     				
@@ -135,7 +136,8 @@ public class ExpertModus {
     		
     		case "double":
     			try{
-	    			double i=(double) p.getValue();
+	    			double i = Double.parseDouble((String)p.getValue());
+	    			p.setValue(i);
 	    			}catch (Exception e){
 	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
@@ -144,6 +146,7 @@ public class ExpertModus {
     		case "char":
     			try{
 	    			char i=(char) p.getValue();
+	    			p.setValue(i);
 	    			}catch (Exception e){
 	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
@@ -152,6 +155,7 @@ public class ExpertModus {
     		case "boolean":
     			try{
 	    			boolean i=(boolean) p.getValue();
+	    			p.setValue(i);
 	    			}catch (Exception e){
 	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
@@ -159,7 +163,8 @@ public class ExpertModus {
     			
     		case "float":
     			try{
-	    			float i=(float) p.getValue();
+	    			float i = Float.parseFloat((String)p.getValue());
+	    			p.setValue(i);
 	    			}catch (Exception e){
 	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
@@ -167,7 +172,8 @@ public class ExpertModus {
     		
     		case "long":
     			try{
-	    			long i=(long) p.getValue();
+	    			long i = Long.parseLong((String)p.getValue());
+	    			p.setValue(i);
 	    			}catch (Exception e){
 	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
@@ -175,7 +181,8 @@ public class ExpertModus {
     			
     		case "short":
     			try{
-	    			short i=(short) p.getValue();
+	    			short i = Short.parseShort((String)p.getValue());
+	    			p.setValue(i);
 	    			}catch (Exception e){
 	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
@@ -183,7 +190,8 @@ public class ExpertModus {
     			
     		case "byte":
     			try{
-	    			byte i=(byte) p.getValue();
+	    			byte i = Byte.parseByte((String)p.getValue());
+	    			p.setValue(i);
 	    			}catch (Exception e){
 	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}

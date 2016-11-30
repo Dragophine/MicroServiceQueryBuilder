@@ -40,7 +40,7 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
         		var i;
         		for(i = 0; self.params.length < paramcnt; i++)
         		{
-            		self.params.push.apply(self.params, [{key: "", type : "Integer", value : ""}]);
+            		self.params.push.apply(self.params, [{key: "", type : "int", value : ""}]);
         		}
 			}
     		else if(self.params.length > paramcnt)
@@ -53,7 +53,7 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 			}
     	});
     
-	self.paramoptions = ["Integer", "String"];
+	self.paramoptions = ["int", "String"];
 
 	/** 
 		Query fields
