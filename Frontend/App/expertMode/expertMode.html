@@ -130,20 +130,34 @@
       {{property}} : {{value}}
       </span> -->
 
-      <div type="text/ng-template" id="categoryTree">
-        <tr ng-repeat= "cell in row">
-        <td ng-repeat="abc in cell">
-          {{cell}}
-        </td>
+      <script type="text/ng-template" id="categoryTree">
+      <!--<div ng-if="ctrl.isObject(row)"> -->
+        <table class="table">
+        <tbody>
+         <tr > 
+           <td ng-repeat = "cell in table" ng-if="!ctrl.isObject(cell)">
+                {{cell}} 
+                </td>
+        <td ng-repeat = "cell in table"  ng-if="ctrl.isObject(cell)" ng-include="'categoryTree'" ng-init="table=cell" >
+         </td> 
         </tr>
-       </div>
+        </tbody>
+          </table>
+       <!-- </div> -->
+       </script>
+
+<!-- ng-include="'categoryTree'" ng-init="row=cell" ng-if="angular.isObject(cell)" -->
 
     <table class="table"  ng-if="!ctrl.hasError">
        <tbody >
          <tr ng-repeat = "row in ctrl.table"> 
-             <td ng-repeat = "cell in row">
-               {{cell}}
-          </td>
+              <td ng-repeat = "cell in row" ng-if="!ctrl.isObject(cell)">
+                {{cell}} 
+                </td>
+                <td ng-repeat = "cell in row" ng-if="ctrl.isObject(cell)"> 
+               <table class="table"  ng-if="ctrl.isObject(cell)" ng-include="'categoryTree'" ng-init="table=row">
+                 </table>
+                   </td> 
           </tr>
       </tbody>
       </table>

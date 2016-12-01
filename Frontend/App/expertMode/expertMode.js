@@ -84,6 +84,11 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		Bolean which concludes if the query has errors
 	*/
 	self.hasError = false;
+
+
+		self.isObject = function ($obj) {
+  		return $obj === Object($obj);
+	}
 	
 	// save query dialog
 	var saveButton = document.getElementById("saveQuery"),
