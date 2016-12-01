@@ -7,12 +7,21 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     templateUrl: 'querybuilder/querybuilder.html'
   });
 }])
-.controller('queryBuilderCtrl', ['$requests',
-	function($requests) {
+.controller('queryBuilderCtrl', ['$requests', '$scope',
+	function($requests, $scope) {
     var self = this;
 
-    self.selectedNodesAndRelation = [];
+    self.query = {
+    	"name":"",
+    	"description":"",
+    	"category":"",
+    	"limitcount": "",
+    	"query": {
+    		
+    	}                
+    }
 
+    
 
 	/**
 		Query Properties
@@ -54,9 +63,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	}
 	
 	/**
-
-	This method requests the required items from 
-	a certain 
+	Methods on node
 	*/
 	self.getNodesCB = function($success, $data, $status){
 		self.hasError = !$success;
@@ -71,6 +78,21 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 	$requests.getNodes(self.getNodesCB);
 
+	self.addNode = function($node){
+		/**
+		Add initial node
+		*/
+		self.query['query']['node'] = {
+			"type": $node,
+			"returnAttributes": [],
+			"filterAttributes": [],
+			"orderByAttributes": [],
+			"relationship":[]
+		}
+		
+
+		self.availableNodes = [];
+	}
 
 	/***
 	This methods load the relationships for a specific node.
@@ -110,31 +132,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		$requests.getKeys($node, self.loadKeysForNodeCB);
 	}
 
-	self.addNode = function($node){
-		self.selectedNodesAndRelation.push({
-			"node" : $node,
-			"relationship" : "",
-			"keys" : ""
-		});
-		
+	
 
-		self.availableNodes = [];
-		self.loadRelationshipForNode($node);
-		self.loadKeysForNode($node);
-	}
-
-	self.addRelation = function($relation){
-		self.selectedNodesAndRelation[self.selectedNodesAndRelation.length - 1]["relationship"] = {
-		 	"relationshipType" : $relation,
-		 	"direction" : 'down',
-		 	"optional" : false
-		}
-
-		$requests.getNodes(self.getNodesCB);
-
-		self.availableRelationships = [];
-
-	}
 //	$scope.highlight = function(haystack) {
 //
 //		for (var i = 0; i < self.highlightWords.length; i++) {
@@ -159,5 +158,71 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		}	
 
 	}
+
+	/**
+	Vis settings
+	*/
+	self.nodes = new vis.DataSet();
+    self.edges = new vis.DataSet();
+
+    self.network_data = {
+        nodes: self.nodes,
+        edges: self.edges
+    };
+
+    self.network_options = {
+    	
+    	width:  '100%',
+    	height: '400px',
+		edges:{
+		    arrows: {
+		      to:     {enabled: true, scaleFactor:1, type:'arrow'},
+		      middle: {enabled: false, scaleFactor:1, type:'arrow'},
+		      from:   {enabled: false, scaleFactor:1, type:'arrow'}
+		    }
+		},
+		layout: {
+
+			hierarchical: {
+		      enabled:true,
+		      levelSeparation: 150,
+		      nodeSpacing: 100,
+		      treeSpacing: 200,
+		      blockShifting: true,
+		      edgeMinimization: true,
+		      parentCentralization: true,
+		      direction: 'UD',        // UD, DU, LR, RL
+		      sortMethod: 'hubsize'   // hubsize, directed
+		    }
+		}
+	};
+
+   self.onNodeClick = function(params) {
+        alert(params["nodes"][0]);
+        
+    };
+
+    self.onEdgeClick = function(params) {
+        
+        alert(params["edges"][0]);
+    };
+
+
+    self.nodes.add([
+    	 {id: 1, label: 'Node 4'},
+        
+        {id: 2, label: 'Node 2'},
+        {id: 3, label: 'Node 3'},
+
+        {id: 5, label: 'Node 5'},
+        {id: 6, label: 'Node 1'}]);
+
+
+    self.edges.add([
+    	{id: 1, from: 1, to: 6, label: 'Edge 1'},
+        {id: 2, from: 6, to: 2, label: 'Edge 1'},
+        {id: 3, from: 6, to: 3, label: 'Edge 1'}
+
+    ]);
 
 }]);
