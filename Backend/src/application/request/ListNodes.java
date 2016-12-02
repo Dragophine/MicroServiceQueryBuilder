@@ -23,11 +23,12 @@ public class ListNodes {
 	@CrossOrigin
 	@RequestMapping(value="/listNodes", method=RequestMethod.GET)
 	public ResponseEntity<Result> listNodes() throws Exception {
+
 		
 		String queryNodes = "MATCH (n) WHERE labels(n) <> \"ExpertQuery\" AND labels(n) <> \"Parameter\" return DISTINCT labels(n) AS Label";
 	
 		Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
-		
+	
 		return new ResponseEntity<Result>(result, HttpStatus.OK);
 	}
 }

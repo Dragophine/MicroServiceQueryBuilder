@@ -1,4 +1,4 @@
-package application.expertQueryBuilder;
+package application.QueryBuilder;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -78,18 +78,25 @@ public class ExpertModus {
 //	    public String expertModus(@RequestParam(value="query", defaultValue="Match (n) return distinct labels(n)") String query, @RequestParam(value="parameter") List params) {	 
 	    public ResponseEntity<Result> expertModus(@RequestBody ExpertQuery expertQuery) throws Exception {
 	    	Map<String,Object> paramsMap = new HashMap<String,Object>();
-	    	
-	    	for (Parameter p:expertQuery.getParameter()){
-
-					testTypes(p);
-				
-//	    		parameterRepository.save(p);  		
-	    		paramsMap.put(p.getKey(), p.getValue());
+	    	Result result=null;
+	    	if (expertQuery.getParameter() !=null){
+	
+	    		
+	    		for (Parameter p:expertQuery.getParameter()){
+	
+						testTypes(p);
+					
+	//	    		parameterRepository.save(p);  		
+		    		paramsMap.put(p.getKey(), p.getValue());
+		    		System.out.println(p.getKey() + " "+p.getValue());
+		    	}
+	
+	//	    	expertQueryRepository.save(expertQuery);
+		    	
+	    		 result= neo4jOperations.query(expertQuery.getQuery(), paramsMap,true);
+	    	} else{
+	    		 result = neo4jOperations.query(expertQuery.getQuery(),new HashMap<String, String>(), true);
 	    	}
-
-//	    	expertQueryRepository.save(expertQuery);
-	    	
-		Result result = neo4jOperations.query(expertQuery.getQuery(), paramsMap,true);
 	
 		return new ResponseEntity<Result>(result, HttpStatus.OK);
 	    }
