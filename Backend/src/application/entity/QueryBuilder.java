@@ -1,39 +1,34 @@
 package application.entity;
 
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.NodeEntity;
-import org.neo4j.ogm.annotation.Relationship;
 
 
-@NodeEntity
-public class ExpertQuery{
-
-	@GraphId private Long id;
-
-	private String name;
-private String query;
-@Relationship(type = "HAS_PARAMETER", direction = Relationship.OUTGOING)
-private Set<Parameter> parameter = new HashSet<Parameter>(0);
+public class QueryBuilder {
 
 
 
+private String name;
 private String description;
 
 //later to change to type Category
 private String category;
+private String limitCount;
+private Set<Parameter> parameter = new HashSet<Parameter>(0);
+private Node node;
 
 
-public ExpertQuery(){
+public QueryBuilder(){
 	
 }
 
-public String getQuery(){
-	return this.query;
+public Node getNode(){
+	return this.node;
+}
+
+public String getLimitCount(){
+	return this.limitCount;
 }
 
 public Set<Parameter> getParameter(){
@@ -52,8 +47,12 @@ public String getCategory(){
 	return this.category;
 }
 
-public void setQuery(String q){
-	this.query=q;
+public void setNode(Node n){
+	this.node=n;
+}
+
+public void setLimitcount(String l){
+	this.limitCount=l;
 }
 
 public void setParameter(Set<Parameter> p){
@@ -77,6 +76,5 @@ public void addParameter(Parameter p){
 		parameter = new HashSet<Parameter>(0);
 	parameter.add(p);
 }
-
 
 }
