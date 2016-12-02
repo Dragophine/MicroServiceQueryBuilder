@@ -11,79 +11,26 @@
 
   <div class="row">
       <h1>Name</h1>
-      <input type="textarea" class="form-control" id="query" placeholder="Query" />
+      <input type="textarea" class="form-control" id="query" 
+            ng-model="ctrl.query['name']"   placeholder="Name" />
   </div>
   <div class="row">
       <h1>Description</h1>
-      <input type="textarea" class="form-control" id="query" placeholder="Query" />
+      <input type="textarea" class="form-control" id="query" 
+            ng-model="ctrl.query['description']"  placeholder="Description" />
   </div>
   <div class="row">
-      <h1>LimitCount</h1>
-      <input type="textarea" class="form-control" id="query" placeholder="Query" />
+      <h1>Category</h1>
+      <input type="textarea" class="form-control" id="query"
+            ng-model="ctrl.query['category']"  placeholder="Category" />
   </div>
   
-  <h1 class="row">Nodes</h1>
-  <div  ng-repeat="nodeInfo in ctrl.selectedNodesAndRelation track by $index" class="top-buffer">
-    <div class="panel panel-default" >
-      <div class="row panel-body">
-        <div class="col-md-2" >
-          {{nodeInfo['node']}}
-        </div>
-        <div class="col-md-10" >
-            <div ng-repeat="keyNode in nodeInfo['keys']">
-               <div ng-repeat="key in keyNode['Keys']">
-                  <div class="row">
-                    <div class="col-md-4">
-                       Filter {{key}}
-                        <input type="textarea" class="form-control" id="query" />
-                    </div>
-                    <div class="col-md-4">
-                       <div class="row top-buffer-small">
-                         <input id="inlineradio1" type="checkbox" class="col-md-1">
-                         <div  class="col-md-11">
-                            RETURN {{key}}
-                         </div>
-                       </div>
-                    </div>
-                    <div class="col-md-2">
-                      <div class="row top-buffer-small">
-                        <input  type="radio"  class="col-md-1">
-                        <div class="col-md-11" >
-                            ORDER ASC
-                        </div>
-                      </div>
-                    </div>
-                    <div class="col-md-2"  >
-                      <div class="row top-buffer-small">
-                        <input  type="radio" class="col-md-1">
-                        <div class="col-md-11" >
-                            ORDER DSC
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-            </div>
-        </div>
-      </div>
-    </div>
-
-    <div  ng-if="nodeInfo['relationship'] != ''">
-      <div class="row">
-        <div class="left-buffer">
-          {{nodeInfo['relationship']['relationshipType']}}
-          <button class="btn btn-default left-buffer"  ng-click="ctrl.changeDirection($index)">
-            <span ng-if="nodeInfo['relationship']['direction'] == 'up'"
-                class="glyphicon glyphicon-arrow-up"></span>
-            <span ng-if="nodeInfo['relationship']['direction'] == 'down'"
-                class="glyphicon glyphicon-arrow-down"></span>
-            <span ng-if="nodeInfo['relationship']['direction'] == 'both'"
-                class="glyphicon glyphicon-resize-vertical"></span>
-          </button>
-        </div>
-      </div>
-    </div>
+  <div class="row">
+      <h1>LimitCount</h1>
+      <input type="textarea" class="form-control" id="query"
+            ng-model="ctrl.query['limitcount']"  placeholder="LimitCount" />
   </div>
+  
 
   <div class="row" ng-if="ctrl.availableNodes.length > 0">
       <h1>Choose Node</h1>
@@ -93,15 +40,13 @@
           </button>
         </div>
   </div>
-  <div class="row" ng-if="ctrl.availableRelationships.length > 0">
-      <h1>Choose Relationsships</h1>
-      <div ng-repeat="relationship in ctrl.availableRelationships" style="display: inline;">
-        <button ng-click="ctrl.addRelation(relationship['Relation'])" class="btn btn-default">
-          {{relationship['Relation']}}
-        </button>
-      </div>
-  </div>
-
+  <vis-network ng-if="ctrl.availableNodes.length == 0"
+        ng-model="ctrl.network_data"
+        options="ctrl.network_options" 
+        on-node-click="ctrl.onNodeClick(params)" 
+        on-edge-click="ctrl.onEdgeClick(params)" 
+        id="previewNetwork">
+  </vis-network>
   
   
 
@@ -143,6 +88,8 @@
         </tr>
       </tbody>
     </table>
+
+  
 
     <div ng-if="ctrl.hasError">
         <div class="row">
