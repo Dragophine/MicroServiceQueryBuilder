@@ -21,7 +21,40 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	}                
     }
 
-    
+    /**
+	Transfair changes to graph
+    */
+    //$scope.$watch('query', self.transfairToGraph, true);
+
+    self.transfairToGraph = function(){
+    	//reset
+
+    	if(self.query["query"] !== undefined &&
+    		self.query["query"]["node"] !== undefined){
+    		 self.nodes.add([
+    		 	 {id: 1, label: self.query["query"]["type"]}]);
+
+    	}
+    }
+
+    /**
+	 self.nodes.add([
+    	 {id: 1, label: 'Node 4'},
+        
+        {id: 2, label: 'Node 2'},
+        {id: 3, label: 'Node 3'},
+
+        {id: 5, label: 'Node 5'},
+        {id: 6, label: 'Node 1'}]);
+
+
+    self.edges.add([
+    	{id: 1, from: 1, to: 6, label: 'Edge 1'},
+        {id: 2, from: 6, to: 2, label: 'Edge 1'},
+        {id: 3, from: 6, to: 3, label: 'Edge 1'}
+
+    ]);
+    */
 
 	/**
 		Query Properties
@@ -92,6 +125,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		
 
 		self.availableNodes = [];
+
+		self.transfairToGraph();
 	}
 
 	/***
@@ -207,22 +242,5 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
         alert(params["edges"][0]);
     };
 
-
-    self.nodes.add([
-    	 {id: 1, label: 'Node 4'},
-        
-        {id: 2, label: 'Node 2'},
-        {id: 3, label: 'Node 3'},
-
-        {id: 5, label: 'Node 5'},
-        {id: 6, label: 'Node 1'}]);
-
-
-    self.edges.add([
-    	{id: 1, from: 1, to: 6, label: 'Edge 1'},
-        {id: 2, from: 6, to: 2, label: 'Edge 1'},
-        {id: 3, from: 6, to: 3, label: 'Edge 1'}
-
-    ]);
 
 }]);
