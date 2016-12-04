@@ -26,8 +26,17 @@ public class ListRelations {
 	@CrossOrigin
 	@RequestMapping(value="/listRelations", method=RequestMethod.POST)
 	public ResponseEntity<Result> listNodes(@RequestBody ListEntity entity) throws Exception {
+		String queryRelations="";
 		
-		String queryRelations = "MATCH (n:" + entity.getLabel() + ") -[r] -> () return distinct type(r) AS Relation";
+		
+		if (entity.getDirection().equals("ingoing")){
+			queryRelations = "MATCH (n:" + entity.getLabel() + ")<-[r]- () return distinct type(r) AS Relation";	
+		} else if (entity.getDirection().equals("outgoing")) {
+			 queryRelations = "MATCH (n:" + entity.getLabel() + ") -[r] -> () return distinct type(r) AS Relation";	
+		} else {
+			queryRelations="match (n:"+entity.getLabel()+")-[r]->() return distinct type(r) As Relation, 'OUTGOING' as Direction union OPTIONAL MATCH (n:"+entity.getLabel()+")<-[k]-() return distinct type(k) as Relation, 'INGOING' as Direction";
+		}
+		
 
 		Result result = neo4jOperations.query(queryRelations, new HashMap<String, String>());
 		
