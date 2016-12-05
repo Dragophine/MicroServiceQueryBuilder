@@ -50,8 +50,8 @@
 		<h2>Query laden</h2>
 	    <table class="table">
      				<tbody >
-      				<tr ng-repeat = "row in ctrl.queries"> 
-           				<td ng-repeat = "cell in row">
+      				<tr ng-repeat = "cell in ctrl.queries"> 
+           				<td>
            				<label>Name: </label>
              				<button ng:click="ctrl.select(cell)" >{{cell.name}}</button>
              				<label>Beschreibung: {{cell.description}}</label>
@@ -75,8 +75,8 @@
 		<h2>Query löschen</h2>
 	    <table class="table">
      				<tbody >
-      				<tr ng-repeat = "row in ctrl.queries"> 
-           				<td ng-repeat = "cell in row">
+      				<tr ng-repeat = "cell in ctrl.queries"> 
+           				<td>
            				<label>Name: </label>
              				<button ng:click="ctrl.deleteSelectedQuery(cell)" >{{cell.name}}</button>
              				<label>Beschreibung: {{cell.description}}</label>

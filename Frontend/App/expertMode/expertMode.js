@@ -173,13 +173,55 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	
 	self.queriesCB = function($success, $data, $status){
 		self.hasError = !$success;
-		if($success){
-			self.queries = $data;
+		if($success)
+		{
+//			self.queries = $data;
+			
+			/**
+			 * Da die Query auch Parameter, etc. returniert
+			 * müssen die Queries rausgesucht werden.
+			 */
+			if(self.queries == undefined)
+			{
+				self.queries = [];
+			}
+			var i;
+			// queries mit Parameter
+			for(i = 0; i < $data.length; i++)
+			{
+				if($data[i].n != null && !contains(self.queries, $data[i].n))
+				{
+					self.queries.push($data[i].n);
+				}
+			}
+			
+			// queries ohne Parameter
+			for(i = 0; i < $data.length; i++)
+			{
+				if($data[i].m != null && !contains(self.queries, $data[i].m))
+				{
+					self.queries.push($data[i].m);
+				}
+			}
 		}
 		else
 		{
 			self.error = $data;
 		}
+	}
+	
+	function contains(a, obj)
+	{
+	    for (var i = 0; i < a.length; i++)
+	    {
+	        if (a[i].category === obj.category &&
+	        		a[i].description === obj.description &&
+	        		a[i].name === obj.name)
+	        {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 
 	/**
