@@ -5,15 +5,16 @@ import java.util.Set;
 
 public class Relationship {
 
-	private String relationshipType;
-	private String direction;
-	private String optional;
+	private String relationshipType="";
+	private String direction ="";
+	private String optional="";
 	private Set<ReturnAttribute> returnAttributes = new HashSet<ReturnAttribute>(0);
 	private Set<FilterAttribute> filterAttributes = new HashSet<FilterAttribute>(0);
 	private Set<OrderByAttribute> orderByAttributes = new HashSet<OrderByAttribute>(0);
 	private Node node;
 	
 	public String getRelationshipType(){
+
 		return this.relationshipType;
 	}
 	

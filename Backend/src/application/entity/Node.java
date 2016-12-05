@@ -19,10 +19,12 @@ public class Node {
 	}
 	
 	public String getType(){
+		if (this.type==null) return "";
 		return this.type;
 	}
 	
 	public Set<ReturnAttribute> getReturnAttributes(){
+		
 		return this.returnAttributes;
 	}
 	public Set<FilterAttribute> getFilterAttributes(){

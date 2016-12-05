@@ -2,11 +2,11 @@ package application.entity;
 
 public class FilterAttribute {
 
-	private String attributeName;
-	private String filterType;
+	private String attributeName="";
+	private String filterType="";
 //	private String key;
-	private String type;
-	private String value;
+	private String type="";
+	private String value="";
 	private Boolean changeable;
 	
 	public FilterAttribute(){

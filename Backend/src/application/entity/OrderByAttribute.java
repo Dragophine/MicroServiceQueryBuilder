@@ -2,8 +2,8 @@ package application.entity;
 
 public class OrderByAttribute {
 	
-	private String attributeName;
-	private String direction;
+	private String attributeName="";
+	private String direction="";
 	
 	
 	public OrderByAttribute(){
