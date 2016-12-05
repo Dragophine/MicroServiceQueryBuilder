@@ -100,8 +100,7 @@ public class ExpertModus {
 	
 		return new ResponseEntity<Result>(result, HttpStatus.OK);
 	    }
-		
-		
+				
 		@CrossOrigin 
 	    @RequestMapping(value="/saveQuery",  method=RequestMethod.POST)	 
 	    public ResponseEntity<Result> saveQuery(@RequestBody ExpertQuery expertQuery) throws Exception
@@ -112,6 +111,38 @@ public class ExpertModus {
 	    		parameterRepository.save(p);  		
 	    	}
 	    	expertQueryRepository.save(expertQuery);
+	
+		return new ResponseEntity<Result>(HttpStatus.OK);
+	    }
+		
+		@CrossOrigin 
+	    @RequestMapping(value="/deleteQuery",  method=RequestMethod.DELETE)	 
+	    public ResponseEntity<Result> deleteQuery(@RequestBody ExpertQuery expertQuery) throws Exception
+		{
+	    	for (Parameter p : expertQuery.getParameter())
+	    	{
+		    	/**
+		    	 *  Alle Parameter bei denen der Key, der Value und der Type übereinstimmen 
+		    	 *  werden gelöscht.
+		    	 */
+//	    		parameterRepository.delete(p);
+				String queryNodes = "MATCH (a) WHERE a.key IN [\"" + p.getKey() + 
+						"\"] AND a.value IN [\"" + p.getValue() + "\"] AND "
+								+ "a.type IN [\"" + p.getType() + "\"] DETACH DELETE a";			
+				Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
+	    	}
+	    	
+	    	
+//	    	expertQueryRepository.delete(expertQuery);
+	    	
+	    	/**
+	    	 *  Alle Queries bei denen der Name, die Description und die Category übereinstimmen 
+	    	 *  werden gelöscht.
+	    	 */
+			String queryNodes = "MATCH (a) WHERE a.name IN [\"" + expertQuery.getName() + 
+					"\"] AND a.description IN [\"" + expertQuery.getDescription() + "\"] AND "
+							+ "a.category IN [\"" + expertQuery.getCategory() + "\"] DETACH DELETE a";			
+			Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
 	
 		return new ResponseEntity<Result>(HttpStatus.OK);
 	    }
