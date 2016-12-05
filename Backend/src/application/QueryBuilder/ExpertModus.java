@@ -3,6 +3,7 @@ package application.QueryBuilder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -49,23 +50,6 @@ public class ExpertModus {
 		ExpertQueryRepository expertQueryRepository;
 		@Autowired
 		ParameterRepository parameterRepository;
-		
-		
-//		  //  @RequestMapping(value="/expertModus", method=RequestMethod.GET)
-//			@CrossOrigin 
-//			//CrossOrigin request allow to call a different server from
-//			//a certain frontend hosted on a certain address.
-//			//This means that the adress of the server and 
-//			//the adress of client must not be the same.
-//			//Pleas add @CrossOrigin to every request.
-//		    @RequestMapping(value="/expertModus")
-//		    public Result expertModus(@RequestParam(value="query", defaultValue="Match (n) return distinct labels(n)") String query) {
-//
-//			Result result = neo4jOperations.query(query, new HashMap<String, String>());
-//			
-//			return result;
-//		    }
-
 			
 	  //  @RequestMapping(value="/expertModus", method=RequestMethod.GET)
 		@CrossOrigin 
@@ -79,23 +63,19 @@ public class ExpertModus {
 	    public ResponseEntity<Result> expertModus(@RequestBody ExpertQuery expertQuery) throws Exception {
 	    	Map<String,Object> paramsMap = new HashMap<String,Object>();
 	    	Result result=null;
-	    	if (expertQuery.getParameter() !=null){
-	
-	    		
-	    		for (Parameter p:expertQuery.getParameter()){
-	
-						testTypes(p);
-					
-	//	    		parameterRepository.save(p);  		
+	    	if (expertQuery.getParameter() !=null)
+	    	{
+	    		for (Parameter p:expertQuery.getParameter())
+	    		{
+	    			testTypes(p); 		
 		    		paramsMap.put(p.getKey(), p.getValue());
 		    		System.out.println(p.getKey() + " "+p.getValue());
 		    	}
-	
-	//	    	expertQueryRepository.save(expertQuery);
-		    	
-	    		 result= neo4jOperations.query(expertQuery.getQuery(), paramsMap,true);
-	    	} else{
-	    		 result = neo4jOperations.query(expertQuery.getQuery(),new HashMap<String, String>(), true);
+	    		result= neo4jOperations.query(expertQuery.getQuery(), paramsMap,true);	    		
+	    	}
+	    	else
+	    	{
+	    		result = neo4jOperations.query(expertQuery.getQuery(),new HashMap<String, String>(), true);
 	    	}
 	
 		return new ResponseEntity<Result>(result, HttpStatus.OK);
@@ -108,7 +88,7 @@ public class ExpertModus {
 	    	for (Parameter p : expertQuery.getParameter())
 	    	{
 				testTypes(p);				
-	    		parameterRepository.save(p);  		
+	    		parameterRepository.save(p);
 	    	}
 	    	expertQueryRepository.save(expertQuery);
 	
@@ -132,13 +112,11 @@ public class ExpertModus {
 				Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
 	    	}
 	    	
-	    	
-//	    	expertQueryRepository.delete(expertQuery);
-	    	
 	    	/**
 	    	 *  Alle Queries bei denen der Name, die Description und die Category übereinstimmen 
 	    	 *  werden gelöscht.
 	    	 */
+//	    	expertQueryRepository.delete(expertQuery);
 			String queryNodes = "MATCH (a) WHERE a.name IN [\"" + expertQuery.getName() + 
 					"\"] AND a.description IN [\"" + expertQuery.getDescription() + "\"] AND "
 							+ "a.category IN [\"" + expertQuery.getCategory() + "\"] DETACH DELETE a";			
@@ -151,11 +129,17 @@ public class ExpertModus {
 	    @RequestMapping(value="/loadQuery",  method=RequestMethod.GET)	 
 	    public ResponseEntity<Result> loadQuery() throws Exception
 		{
-			// Martin: Das LIMIT kann man mal raustun, aber aktuell haben wir noch sehr viele Einträge
-			String queryNodes = "MATCH (n:ExpertQuery) RETURN n LIMIT 25";			
-			Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
-	
-		return new ResponseEntity<Result>(result, HttpStatus.OK);
+			/**
+			 * Workaround: Wenn auch die Parameter aufgelöst und returniert werden in der Query,
+			 * dann sind die dazugehörigen Parameter aller Queries die returniert werden auch sichtbar.
+			 */
+			String queryNodesQuery = "MATCH (n:ExpertQuery) OPTIONAL MATCH (m:ExpertQuery)-[e:HAS_PARAMETER]-(x) RETURN n,m,e,x";			
+			Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
+
+//			String queryNodesQuery = "MATCH (n:ExpertQuery) RETURN n";			
+//			Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
+
+		return new ResponseEntity<Result>(resultQuery, HttpStatus.OK);
 	    }
 		
 	    
