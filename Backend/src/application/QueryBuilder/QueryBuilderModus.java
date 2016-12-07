@@ -70,7 +70,7 @@ public class QueryBuilderModus {
 		query += buildNode(node);
 		
 		query += " WHERE ";
-		
+		//TODO funktioniert momentan nur mit AND!! Vllt benötigen wir ein neues attribut im json objekt?!
 		Iterator<String> it = filterStatements.iterator();
 		while (it.hasNext()){
 			query += it.next();
