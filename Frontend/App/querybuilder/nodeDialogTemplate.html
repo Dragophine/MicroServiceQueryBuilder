@@ -1,42 +1,69 @@
 <!DOCTYPE html>
 <div >
   <h1>{{ctrl.name}}</h1>
-  <div class="row">
-    <div class="col-md-10" >
-        <div ng-repeat="keyNode in ctrl.keys">
-           <div ng-repeat="key in keyNode['Keys']">
-              <div class="row">
-                <div class="col-md-4">
-                   Filter {{key}}
-                    <input type="textarea" class="form-control" id="query" />
-                </div>
-                <div class="col-md-4">
-                   <div class="row top-buffer-small">
-                     <input id="inlineradio1" type="checkbox" class="col-md-1">
-                     <div  class="col-md-11">
-                        RETURN {{key}}
-                     </div>
+      <div ng-repeat="keyNode in ctrl.keys" >
+         <div ng-repeat="key in keyNode['Keys']">
+            <h2>{{key}}</h2>
+            <div class="row panel" >
+              <div class="col-md-3">
+                 FILTER TYPE
+                 <select name="singleSelect" id="singleSelect" >
+                    <option value="in">IN</option> 
+                    <option value="like">LIKE</option> 
+                    <option value="<">GREATER</option>
+                    <option value=">">SMALLER</option>
+                    <option value="<=">GREATER EQUAL</option>
+                    <option value=">=">SMALLER EQUAL</option>
+                </select>
+              </div>
+              <div class="col-md-3">
+                  FILTER
+                  <input type="textarea" class="form-control" id="query" />
+              </div>
+              <div class="col-md-2">
+                 <div class="row top-buffer-small">
+                   <input id="inlineradio1" type="checkbox" class="col-md-1"
+                           ng-checked="ctrl.isReturnAttributesChecked(key)"
+                           ng-click="ctrl.setReturnAttributes(key)">
+                   <div  class="col-md-11">
+                      RETURN
                    </div>
-                </div>
-                <div class="col-md-2">
-                  <div class="row top-buffer-small">
-                    <input  type="radio"  class="col-md-1">
-                    <div class="col-md-11" >
-                        ORDER ASC
-                    </div>
+                 </div>
+              </div>
+              <div class="col-md-4">
+                <div class="row top-buffer-small">
+                  <input  type="checkbox"  class="col-md-1"
+                          ng-checked="ctrl.isOrderByAttributesChecked(key)"
+                          ng-click="ctrl.setOrderByAttributes(key)">
+                  <div class="col-md-2" >
+                      ORDER
                   </div>
                 </div>
-                <div class="col-md-2"  >
-                  <div class="row top-buffer-small">
-                    <input  type="radio" class="col-md-1">
-                    <div class="col-md-11" >
-                        ORDER DSC
-                    </div>
+                
+                <div class="row top-buffer-small" ng-if="ctrl.isOrderByAttributesChecked(key)">
+                  <input  type="radio" class="col-md-1" 
+                          name="{{'radio' + key}}"
+                          ng-model="fancyModel"
+                          ng-change="ctrl.setOrderByAttributesValue(key, 'asc')"
+                          value="asc"
+                          ng-checked="ctrl.getOrderByAttributesValue(key, 'asc')" >
+                  <div class="col-md-2" >
+                      ASC
+                  </div>
+                </div> 
+                <div class="row top-buffer-small" ng-if="ctrl.isOrderByAttributesChecked(key)">
+                  <input  type="radio" class="col-md-1"
+                          name="{{'radio' + key}}"
+                          ng-model="fancyModel"
+                          ng-change="ctrl.setOrderByAttributesValue(key, 'dsc')"
+                          value="dsc" 
+                          ng-checked="ctrl.getOrderByAttributesValue(key, 'dsc')" >
+                  <div class="col-md-2" >
+                      DSC
                   </div>
                 </div>
               </div>
             </div>
-        </div>
-    </div>
+          </div>
   </div>
 </div>

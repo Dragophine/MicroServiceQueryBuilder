@@ -45,6 +45,30 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
+
+    this.getResultFromQueryQueryBuilder = function($query, $callback) {
+        $http({
+            method : 'POST',
+            url : $serverRestLocation.getValue() + '/buildQuery', 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+              "query" : $query,
+            }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    };
+
     //sample method to send login data
     this.sendLogin = function($email, $passwort, $callback) {
         $http({

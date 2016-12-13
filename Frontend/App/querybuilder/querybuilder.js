@@ -116,7 +116,22 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	/**
 	Query Operations
 	*/
-	self.executeQueryCB = function($success, $data, $status) {
+	self.executeQueryCallback = function($success, $data, $status) {
+		self.hasError = !$success;
+		if($success){
+			self.table = $data;
+		}
+		else
+		{
+			self.error = $data;
+		}
+	}
+
+	self.executeQuery = function() {
+		$requests.getResultFromQueryQueryBuilder(self.query, self.executeQueryCallback);
+	}
+
+	self.saveQueryCallback = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
 			self.table = $data;
@@ -128,15 +143,11 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	}
 
 	self.saveQuery = function(){
-		$requests.getResultFromQuery(self.query, self.executeQueryCB);
+		$requests.saveQuery(self.query, self.saveQueryCallback);
 	}
 
 	self.loadQuery = function(){
 
-	}
-
-	self.submitQuery = function() {
-		
 	}
 	
 	/**
