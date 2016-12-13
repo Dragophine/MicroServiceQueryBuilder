@@ -7,8 +7,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     templateUrl: 'querybuilder/querybuilder.html'
   });
 }])
-.controller('queryBuilderCtrl', ['$requests', '$scope',
-	function($requests, $scope) {
+.controller('queryBuilderCtrl', ['$requests', '$scope','ngDialog',
+	function($requests, $scope, ngDialog) {
     var self = this;
 
     self.query = {
@@ -27,16 +27,57 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     //$scope.$watch('query', self.transfairToGraph, true);
 
     self.transfairToGraph = function(){
+    	var $nodeID = 1;
+    	var $relationshipID = 0;
+
+    	self.nodeIDStore = {};
+    	self.relationshipIDStore = {};
+
     	//reset
+    	function transfairToGraphRecursion($parrentid, $relationship){
+    		var $node = $relationship['node'];
+
+    		if($node != undefined){
+ 
+    			$nodeID = $nodeID + 1;
+    			$relationshipID = $relationshipID +1;
+    			//save variable value because $nodeId and $relationship id can be changed by a other
+    			//execution
+    			var $nID = $nodeID;
+    			var $rID = $relationshipID;
+
+    			self.nodes.add([{id: $nID, label: $node['type']}]);
+    			self.edges.add([{id: $rID, from: $parrentid, to: $nID, label: $relationship['relationshipType']}]);
+
+    			nodeIDStore[$nID] = $node;
+    			nodeIDStore[$rID] = $relationshipID;
+
+    			if($node["relationship"] != undefined){
+    				for (var i = 0; i < $node["relationship"].length; i++){
+					    var rel = $node["relationship"][i];
+					    transfairToGraphRecursion($nID, rel);
+					}
+    			}
+    		}
+    	}
 
     	if(self.query["query"] !== undefined &&
     		self.query["query"]["node"] !== undefined){
-    		 self.nodes.add([
-    		 	 {id: 1, label: self.query["query"]["type"]}]);
 
+    			var $rootNode = self.query["query"]["node"];
+    		 	//Root node
+    			 self.nodes.add([{id: 1, label: $rootNode["type"]}]);
+    			 nodeIDStore[1] = $rootNode;
+
+    			 //every additional node
+    			 if($rootNode["relationship"] != undefined){
+    				for (var i = 0; i < $rootNode["relationship"].length; i++){
+					    var rel = $rootNode["relationship"][i];
+					    transfairToGraphRecursion(1, rel);
+					}
+    			}
     	}
-    }
-
+    };
     /**
 	 self.nodes.add([
     	 {id: 1, label: 'Node 4'},
@@ -197,6 +238,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	/**
 	Vis settings
 	*/
+	self.nodeIDStore = {};
+	self.relationshipIDStore = {};
+
 	self.nodes = new vis.DataSet();
     self.edges = new vis.DataSet();
 
