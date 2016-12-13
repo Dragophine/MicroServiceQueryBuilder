@@ -151,6 +151,32 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
     
+    // delete query
+    this.deleteQuery = function($query, $params, $name, $description, $category, $callback) {
+        $http({
+            method : 'DELETE',
+            url : $serverRestLocation.getValue() + '/deleteQuery', 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+              "query" : $query,
+              "parameter" :  $params,
+                "name" : $name,
+                "description" : $description,
+                "category" : $category }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    };    
     
     //load query
     this.loadQuery = function($callback) {

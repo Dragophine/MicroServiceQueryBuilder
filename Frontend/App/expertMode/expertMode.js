@@ -19,7 +19,8 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
         lineNumbers: true,
         matchBrackets : true,
         autofocus: true,
-        theme: 'neo'
+        theme: 'neo',
+        viewportMargin: Infinity
       });
     
 //	self.paramcnt = -1;
@@ -34,23 +35,30 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
     		var query = cMirror.getValue();
 //    		var keys = query.split(/[{}]/);
     		var paramcnt = query.split("{").length - 1;
+    		var keys = '';
+    		var startIndex = 0;
+    		var endIndex = 0;
     		
-    		if(self.params.length < paramcnt)
-			{
-        		var i;
-        		for(i = 0; self.params.length < paramcnt; i++)
-        		{
-            		self.params.push.apply(self.params, [{key: "", type : "int", value : ""}]);
-        		}
-			}
-    		else if(self.params.length > paramcnt)
-			{
-        		var i;
-        		for(i = 0; self.params.length > paramcnt; i++)
-        		{
-        			self.params.pop();
-        		}
-			}
+    		// Parameter wieder entfernen und neu generieren
+    		self.params = [];
+    		
+    		/**
+    		 * Der erste Parameter wird so ausgelesen, weil auch an der
+    		 * Position 0 bereits ein Parameter stehen könnte, obwohl
+    		 * das keine korrektes Statement sein wird...
+    		 */
+    		startIndex = query.indexOf("{", startIndex);
+    		endIndex = query.indexOf("}", startIndex);
+    		keys = query.substring(startIndex+1, endIndex);
+    		    		
+    		var i;
+    		for(i = 0; self.params.length < paramcnt; i++)
+    		{
+        		self.params.push.apply(self.params, [{key: keys, type : "int", value : ""}]);
+        		startIndex = query.indexOf("{", startIndex+1);
+        		endIndex = query.indexOf("}", startIndex+1);
+        		keys = query.substring(startIndex+1, endIndex);
+    		}
     	});
     
 	self.paramoptions = ["int", "String"];
@@ -90,32 +98,68 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
   		return $obj === Object($obj);
 	}
 	
-	// save query dialog
-	var saveButton = document.getElementById("saveQuery"),
-	dialogSaveQuery = document.getElementById('dialogSaveQuery'),
-	saveAbbruch = document.getElementById("saveAbbruch");
-	saveButton.addEventListener('click', zeigeFenster);
-	saveAbbruch.addEventListener('click', schließeFensterSave);
-	
-	function zeigeFenster() {
-		dialogSaveQuery.showModal();
-	}
-	
-	function schließeFensterSave() {
-		dialogSaveQuery.close();
-	}
-	
 	// load query dialog
 	self.queries = [];
-	var dialogLoadQuery = document.getElementById('dialogLoadQuery'),
-	loadAbbruch = document.getElementById("loadAbbruch");
-	loadAbbruch.addEventListener('click', schließeFensterLoad);
+
+	// Get the modal
+	var modalSave = document.getElementById('myModalSave');
+	var modalLoad = document.getElementById('myModalLoad');
+	var modalDelete = document.getElementById('myModalDelete');
 	
-	function schließeFensterLoad() {
-		dialogLoadQuery.close();
-	}
+	// Get the button that opens the modal
+	var btnSave = document.getElementById("saveQuery");
+	var btnLoad = document.getElementById("loadQuery");
+	var btnDelete = document.getElementById("deleteQuery");
+
+//	// Get the <span> element that closes the modal
+//	var spanSave = document.getElementsByClassName("closeSave")[0];
+//	var spanLoad = document.getElementsByClassName("closeLoad")[0];
 	
+	var saveAbbruch = document.getElementById("saveAbbruch");
+	var loadAbbruch = document.getElementById("loadAbbruch");
+	var deleteAbbruch = document.getElementById("deleteAbbruch");
+
+	// When the user clicks on the button, open the modal 
+	btnSave.onclick = function() {
+		modalSave.style.display = "block";
 		
+	}	
+	btnLoad.onclick = function() {
+		self.queries = $requests.loadQuery(self.queriesCB);
+		modalLoad.style.display = "block";
+	}
+	btnDelete.onclick = function() {
+		self.queries = $requests.loadQuery(self.queriesCB);
+		modalDelete.style.display = "block";
+	}
+
+//	// When the user clicks on <span> (x), close the modal
+//	spanSave.onclick = function() {
+//		// Zurücksetzen der Werte sonst werden sie beim nächsten Öffnen vom Save-Dialog gleich wieder angezeigt.
+//		self.name = "";
+//		self.description = "";
+//		self.category = "";
+//		// Schließe Save-Dialog
+//		modalSave.style.display = "none";
+//	}
+//	spanLoad.onclick = function() {
+//		modalLoad.style.display = "none";
+//	}
+	saveAbbruch.onclick = function() {
+		// Zurücksetzen der Werte sonst werden sie beim nächsten Öffnen vom Save-Dialog gleich wieder angezeigt.
+		self.name = "";
+		self.description = "";
+		self.category = "";
+		// Schließe Save-Dialog
+		modalSave.style.display = "none";
+	}
+	loadAbbruch.onclick = function() {
+		modalLoad.style.display = "none";
+	}
+	deleteAbbruch.onclick = function() {
+		modalDelete.style.display = "none";
+	}
+
 	self.callback = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
@@ -129,13 +173,55 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	
 	self.queriesCB = function($success, $data, $status){
 		self.hasError = !$success;
-		if($success){
-			self.queries = $data;
+		if($success)
+		{
+//			self.queries = $data;
+			
+			/**
+			 * Da die Query auch Parameter, etc. returniert
+			 * müssen die Queries rausgesucht werden.
+			 */
+			if(self.queries == undefined)
+			{
+				self.queries = [];
+			}
+			var i;
+			// queries mit Parameter
+			for(i = 0; i < $data.length; i++)
+			{
+				if($data[i].n != null && !contains(self.queries, $data[i].n))
+				{
+					self.queries.push($data[i].n);
+				}
+			}
+			
+			// queries ohne Parameter
+			for(i = 0; i < $data.length; i++)
+			{
+				if($data[i].m != null && !contains(self.queries, $data[i].m))
+				{
+					self.queries.push($data[i].m);
+				}
+			}
 		}
 		else
 		{
 			self.error = $data;
 		}
+	}
+	
+	function contains(a, obj)
+	{
+	    for (var i = 0; i < a.length; i++)
+	    {
+	        if (a[i].category === obj.category &&
+	        		a[i].description === obj.description &&
+	        		a[i].name === obj.name)
+	        {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 
 	/**
@@ -148,18 +234,45 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	self.saveQuery = function() {
 		$requests.saveQuery(self.myCodeMirror.getValue(), self.params, 
 				self.name, self.description, self.category, self.callback);
-		schließeFensterSave();
 		// Zurücksetzen der Werte sonst werden sie beim nächsten Öffnen vom Save-Dialog gleich wieder angezeigt.
-		self.name, self.description, self.category = "";
+		self.name = "";
+		self.description = "";
+		self.category = "";
+		// Schließe Save-Dialog
+		modalSave.style.display = "none";
 	}
 	
-	self.loadQuery = function() {
-		self.queries = $requests.loadQuery(self.queriesCB);
-		dialogLoadQuery.showModal();
+	self.deleteSelectedQuery = function($query) {
+
+		$requests.deleteQuery($query.query, $query.parameter, 
+				$query.name, $query.description, $query.category, self.callback);
+		
+		// Schließe Delete-Dialog
+		modalDelete.style.display = "none";
 	}
 	
+//	self.loadQuery = function() {
+//		self.queries = $requests.loadQuery(self.queriesCB);
+//		dialogLoadQuery.showModal();
+//	}
+	
+	/**
+	 * Hier wird festgelegt was passieren soll, wenn der User ein Load-Dialog einen Eintrag
+	 * auswählt.
+	 */
 	self.select = function($query) {		
 		self.myCodeMirror.setValue($query.query);
+		
+		self.params = [];
+		var arrLength = $query.parameter.length;
+		var i;
+		for(i = 0; self.params.length < arrLength; i++)
+		{
+    		self.params.push.apply(self.params, [{key: $query.parameter[i].key, type : $query.parameter[i].type,
+    			value : $query.parameter[i].value}]);
+		}
+		
+		// Schließe Load-Dialog
+		modalLoad.style.display = "none";
 	}
-
 }]);

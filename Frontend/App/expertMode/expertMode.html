@@ -1,53 +1,94 @@
 <!DOCTYPE html>
 <meta charset="utf-8"/>
- 
+<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"> 
 <style>
 .CodeMirror {
     border-top: 1px solid black;
     border-bottom: 1px solid black;
+    height: auto;
 }
+
 </style>
+
 <div class="container" ng-controller="expertModeCtrl as ctrl">
 
   <div class="row">
     <div class="col-md-11">
-      <input type="textarea" class="form-control" id="query"/>
+      <!-- <input type="textarea" rows="1" msd-elastic class="form-control" id="query"/> -->
+      <textarea id="query"> </textarea>
     </div>
     <div class="col-md-1">
-      <button type="submit" class="btn btn-default" ng-click="ctrl.submitQuery()">Submit</button>
+      <button type="submit" ng-click="ctrl.submitQuery()">Submit</button>
     </div>	
-		  <button id="saveQuery">Save Query</button>
-		  <button type="loadQuery" class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button>
-		  
-		  <dialog id="dialogSaveQuery">
-				<h2>Query speichern</h2>
-					<label for="name">Bitte geben Sie einen Namen für die Query an: </label>
-					<input id="name" name="name" type="text" ng-model="ctrl.name"/>
-					<label for="description">Bitte geben Sie einen Beschreibung für die Query an: </label>
-					<input id="description" name="description" type="text" ng-model="ctrl.description"/>
-					<label for="category">Bitte geben Sie eine Kategorie für die Query an: </label>
-					<input id="category" name="category" type="text" ng-model="ctrl.category"/>
-				<button type="saveQuery" class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
-				<button id="saveAbbruch">Cancel</button>
-		</dialog>
-		
-		<dialog id="dialogLoadQuery">
-				<h2>Query laden</h2>
-			    <table class="table">
-       				<tbody >
-        				<tr ng-repeat = "row in ctrl.queries"> 
-             				<td ng-repeat = "cell in row">
-             				<label>Name: </label>
-               				<button ng:click="ctrl.select(cell)" >{{cell.name}}</button>
-               				<label>Beschreibung: {{cell.description}}</label>
-             				<label>Kategorie: {{cell.category}}</label>
-             				<!--   <label>Query: {{cell.query}}</label> -->
-          					</td>
-          				</tr>
-      				</tbody>
-      			</table>
-				<button id="loadAbbruch">Cancel</button>
-		</dialog>  
+ 
+	<!-- Trigger/Open The Modal - Save Query -->
+	<button id="saveQuery">Save Query</button>
+	<!-- The Modal -->
+	<div id="myModalSave" class="modal">
+	
+	  <!-- Modal content - Save Query -->
+		<div class="modal-content">
+	    <h2>Query speichern</h2>
+			<label for="name">Bitte geben Sie einen Namen für die Query an: </label>
+			<input id="name" name="name" type="text" ng-model="ctrl.name"/>
+			<label for="description">Bitte geben Sie einen Beschreibung für die Query an: </label>
+			<input id="description" name="description" type="text" ng-model="ctrl.description"/>
+			<label for="category">Bitte geben Sie eine Kategorie für die Query an: </label>
+			<input id="category" name="category" type="text" ng-model="ctrl.category"/>
+		<button type="saveQuery" ng-click="ctrl.saveQuery()">Save Query</button>
+		<button id="saveAbbruch">Cancel</button>
+	  </div>
+	</div>
+	
+	<!-- Trigger/Open The Modal - Load Query -->
+	<button id="loadQuery">Load Query</button>
+	<!-- The Modal -->
+	<div id="myModalLoad" class="modal">
+	
+	  <!-- Modal content - Load Query -->
+	  <div class="modal-content">
+		<h2>Query laden</h2>
+	    <table class="table">
+     				<tbody >
+      				<tr ng-repeat = "cell in ctrl.queries"> 
+           				<td>
+           				<label>Name: </label>
+             				<button ng:click="ctrl.select(cell)" >{{cell.name}}</button>
+             				<label>Beschreibung: {{cell.description}}</label>
+           				<label>Kategorie: {{cell.category}}</label>
+           				<!--   <label>Query: {{cell.query}}</label> -->
+        					</td>
+        				</tr>
+    				</tbody>
+    			</table>
+		<button id="loadAbbruch">Cancel</button>
+	  </div>
+	</div>
+	
+	<!-- Trigger/Open The Modal - Delete Query -->
+	<button id="deleteQuery">Delete Query</button>
+	<!-- The Modal -->
+	<div id="myModalDelete" class="modal">
+	
+	  <!-- Modal content - Load Query -->
+	  <div class="modal-content">
+		<h2>Query löschen</h2>
+	    <table class="table">
+     				<tbody >
+      				<tr ng-repeat = "cell in ctrl.queries"> 
+           				<td>
+           				<label>Name: </label>
+             				<button ng:click="ctrl.deleteSelectedQuery(cell)" >{{cell.name}}</button>
+             				<label>Beschreibung: {{cell.description}}</label>
+           				<label>Kategorie: {{cell.category}}</label>
+           				<!--   <label>Query: {{cell.query}}</label> -->
+        					</td>
+        				</tr>
+    				</tbody>
+    			</table>
+		<button id="deleteAbbruch">Cancel</button>
+	  </div>
+	</div>
 	
 <!--  <li>
 	Category:
