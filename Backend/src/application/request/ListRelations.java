@@ -25,7 +25,7 @@ public class ListRelations {
 		
 	@CrossOrigin
 	@RequestMapping(value="/listRelations", method=RequestMethod.POST)
-	public ResponseEntity<Result> listNodes(@RequestBody ListEntity entity) throws Exception {
+	public ResponseEntity<Result> listRelations(@RequestBody ListEntity entity) throws Exception {
 		String queryRelations="";
 		
 		
@@ -35,6 +35,26 @@ public class ListRelations {
 			 queryRelations = "MATCH (n:" + entity.getLabel() + ") -[r] -> () return distinct type(r) AS Relation";	
 		} else {
 			queryRelations="match (n:"+entity.getLabel()+")-[r]->() return distinct type(r) As Relation, 'OUTGOING' as Direction union OPTIONAL MATCH (n:"+entity.getLabel()+")<-[k]-() return distinct type(k) as Relation, 'INGOING' as Direction";
+		}
+		
+
+		Result result = neo4jOperations.query(queryRelations, new HashMap<String, String>());
+		
+		return new ResponseEntity<Result>(result, HttpStatus.OK);
+	}
+	
+	@CrossOrigin
+	@RequestMapping(value="/listRelationsWithNodes", method=RequestMethod.POST)
+	public ResponseEntity<Result> listRelationsWithNodes(@RequestBody ListEntity entity) throws Exception {
+		String queryRelations="";
+		
+		
+		if (entity.getDirection().equals("ingoing")){
+			queryRelations = "MATCH (n:" + entity.getLabel() + ")<-[r]- (p) return distinct type(r) AS Relation, labels(p) as Labels";	
+		} else if (entity.getDirection().equals("outgoing")) {
+			 queryRelations = "MATCH (n:" + entity.getLabel() + ") -[r] -> (p) return distinct type(r) AS Relation, labels(p) as Labels";	
+		} else {
+			queryRelations="match (n:"+entity.getLabel()+")-[r]->(p) return distinct type(r) As Relation, labels(p) as Labels, 'OUTGOING' as Direction union OPTIONAL MATCH (n:"+entity.getLabel()+")<-[k]-(s) return distinct type(k) as Relation, labels(s) as Labels, 'INGOING' as Direction";
 		}
 		
 
