@@ -7,8 +7,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     templateUrl: 'querybuilder/querybuilder.html'
   });
 }])
-.controller('queryBuilderCtrl', ['$requests', '$scope',
-	function($requests, $scope) {
+.controller('queryBuilderCtrl', ['$requests', '$scope','ngDialog',
+	function($requests, $scope, ngDialog) {
     var self = this;
 
     self.query = {
@@ -21,7 +21,84 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	}                
     }
 
-    
+    self.nodeIDStore = {};
+    self.relationshipIDStore = {};
+
+    /**
+	Transfair changes to graph
+    */
+    //$scope.$watch('query', self.transfairToGraph, true);
+
+    self.transfairToGraph = function(){
+    	var $nodeID = 1;
+    	var $relationshipID = 0;
+
+    	self.nodeIDStore = {};
+    	self.relationshipIDStore = {};
+
+    	//reset
+    	function transfairToGraphRecursion($parrentid, $relationship){
+    		var $node = $relationship['node'];
+
+    		if($node != undefined){
+ 
+    			$nodeID = $nodeID + 1;
+    			$relationshipID = $relationshipID +1;
+    			//save variable value because $nodeId and $relationship id can be changed by a other
+    			//execution
+    			var $nID = $nodeID;
+    			var $rID = $relationshipID;
+
+    			self.nodes.add([{id: $nID, label: $node['type']}]);
+    			self.edges.add([{id: $rID, from: $parrentid, to: $nID, label: $relationship['relationshipType']}]);
+
+    			self.nodeIDStore[$nID] = $node;
+    			self.relationshipIDStore[$rID] = $relationshipID;
+
+    			if($node["relationship"] != undefined){
+    				for (var i = 0; i < $node["relationship"].length; i++){
+					    var rel = $node["relationship"][i];
+					    transfairToGraphRecursion($nID, rel);
+					}
+    			}
+    		}
+    	}
+
+    	if(self.query["query"] !== undefined &&
+    		self.query["query"]["node"] !== undefined){
+
+    			var $rootNode = self.query["query"]["node"];
+    		 	//Root node
+    			 self.nodes.add([{id: 1, label: $rootNode["type"]}]);
+    			 self.nodeIDStore[1] = $rootNode;
+
+    			 //every additional node
+    			 if($rootNode["relationship"] != undefined){
+    				for (var i = 0; i < $rootNode["relationship"].length; i++){
+					    var rel = $rootNode["relationship"][i];
+					    transfairToGraphRecursion(1, rel);
+					}
+    			}
+    	}
+    };
+    /**
+	 self.nodes.add([
+    	 {id: 1, label: 'Node 4'},
+        
+        {id: 2, label: 'Node 2'},
+        {id: 3, label: 'Node 3'},
+
+        {id: 5, label: 'Node 5'},
+        {id: 6, label: 'Node 1'}]);
+
+
+    self.edges.add([
+    	{id: 1, from: 1, to: 6, label: 'Edge 1'},
+        {id: 2, from: 6, to: 2, label: 'Edge 1'},
+        {id: 3, from: 6, to: 3, label: 'Edge 1'}
+
+    ]);
+    */
 
 	/**
 		Query Properties
@@ -92,6 +169,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		
 
 		self.availableNodes = [];
+
+		self.transfairToGraph();
 	}
 
 	/***
@@ -162,6 +241,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	/**
 	Vis settings
 	*/
+
 	self.nodes = new vis.DataSet();
     self.edges = new vis.DataSet();
 
@@ -197,32 +277,26 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		}
 	};
 
+   /**
+	Open Dilaog
+   */
    self.onNodeClick = function(params) {
-        alert(params["nodes"][0]);
+
+        ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
+        				className: 'ngdialog-theme-default custom-width',
+        				controller: 'queryBuilderNodeDialogCtrl',
+        				controllerAs: 'ctrl',
+        				data: self.nodeIDStore[params["nodes"][0]]});
         
     };
 
     self.onEdgeClick = function(params) {
-        
-        alert(params["edges"][0]);
+         ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
+        				className: 'ngdialog-theme-default custom-width',
+        				controller: 'queryBuilderRelationshipDialogCtrl',
+        				controllerAs: 'ctrl',
+        				data: self.relationshipIDStore[params["edges"][0]]});
     };
 
-
-    self.nodes.add([
-    	 {id: 1, label: 'Node 4'},
-        
-        {id: 2, label: 'Node 2'},
-        {id: 3, label: 'Node 3'},
-
-        {id: 5, label: 'Node 5'},
-        {id: 6, label: 'Node 1'}]);
-
-
-    self.edges.add([
-    	{id: 1, from: 1, to: 6, label: 'Edge 1'},
-        {id: 2, from: 6, to: 2, label: 'Edge 1'},
-        {id: 3, from: 6, to: 3, label: 'Edge 1'}
-
-    ]);
 
 }]);

@@ -11,7 +11,8 @@
     "angular-route": "^1.5.8",
     "bootstrap": "^3.3.7",
     "jquery": "^1.5.8",
-    "vis": "^4.17.0"
+    "vis": "^4.17.0",
+    "ng-dialog": "ngDialog#^0.6.4"
   },
   "authors": [
     "Johann Stöbich",

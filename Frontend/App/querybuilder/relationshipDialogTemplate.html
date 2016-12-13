@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<div >
+  <h1>{{ctrl.name}}</h1>
+
+    <div  ng-if="nodeInfo['relationship'] != ''">
+      <div class="row">
+        <div class="left-buffer">
+          {{nodeInfo['relationship']['relationshipType']}}
+          <button class="btn btn-default left-buffer"  ng-click="ctrl.changeDirection($index)">
+            <span ng-if="nodeInfo['relationship']['direction'] == 'up'"
+                class="glyphicon glyphicon-arrow-up"></span>
+            <span ng-if="nodeInfo['relationship']['direction'] == 'down'"
+                class="glyphicon glyphicon-arrow-down"></span>
+            <span ng-if="nodeInfo['relationship']['direction'] == 'both'"
+                class="glyphicon glyphicon-resize-vertical"></span>
+          </button>
+        </div>
+      </div>
+    </div>
+</div>

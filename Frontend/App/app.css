@@ -35,7 +35,6 @@ Container .css
   margin-top: 35px; 
 }
 
-<<<<<<< HEAD
 .highlightedText {
     background: yellow;
 }
@@ -56,5 +55,10 @@ Bootstrap hacks
    display:block;
 }
 
-=======
->>>>>>> refs/remotes/origin/master
+/**
+Make ng-dialog bigger
+*/
+
+.ngdialog.ngdialog-theme-default.custom-width .ngdialog-content {
+    width: 55%;
+}

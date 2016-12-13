@@ -3,12 +3,16 @@
 // Declare app level module which depends on views, and components
 var app = angular.module('queryBuilder', [
   'ngRoute',
+  'ngDialog',
   'queryBuilder.header',
   'queryBuilder.services',
   'queryBuilder.login',
   'queryBuilder.expertMode',
   'queryBuilder.register',
-  'queryBuilder.querybuilder'
+  'queryBuilder.querybuilder',
+  'queryBuilder.querybuildernodedialog',
+  'queryBuilder.querybuilderrelationshipdialog'
+
 ])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/', {
