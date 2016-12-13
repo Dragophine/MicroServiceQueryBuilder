@@ -7,9 +7,12 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.data.neo4j.template.Neo4jTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -46,6 +49,7 @@ public class QueryBuilderModus {
 	LinkedList<String> filterStatements = new LinkedList<String>();
 	LinkedList<String> orderStatements = new LinkedList<String>();
 	LinkedList<String> returnStatements = new LinkedList<String>();
+	LinkedList<String> cypherquery = new LinkedList<String>();
 	
 	
 	//TODO: rekursiv gestalten; dabei darauf achten, dass orderby, filter und returnattribute (in filterstring, returnstring, orderstring) rekursiv angepasst werden bzw. die strings erweitert werden
@@ -54,35 +58,42 @@ public class QueryBuilderModus {
 	//TODO: darauf acht geben, dass in der paramsMap nix doppelt eingetragen is als Key. 
 	//TODO: darauf acht geben, dass Synonyme nicht mehrfach vergeben werden
 	@RequestMapping(value="/buildQuery",  method=RequestMethod.POST)
-//	public ResponseEntity<Result> buildQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
-	public String buildQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
+	public ResponseEntity<Result> buildQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
+//	public String buildQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
 		filterStatements.clear();
 		orderStatements.clear();
 		returnStatements.clear();
+		cypherquery.clear();
 		synonyms.clear();
 		synonym = 'a';
-		String query = "MATCH";
+		String query = "MATCH ";
 		
 		QueryBuilderStringObject queryBuilderStringObject = new QueryBuilderStringObject();
 		
 		Node node = queryBuilder.getNode();
 		
-		query += buildNode(node);
+		buildNode(node, "");
+		
+		Iterator<String> it = cypherquery.iterator();
+		while (it.hasNext()){
+			query += it.next();
+			if (it.hasNext()) query += ", ";
+		}
 		
 		query += " WHERE ";
 		//TODO funktioniert momentan nur mit AND!! Vllt benötigen wir ein neues attribut im json objekt?!
-		Iterator<String> it = filterStatements.iterator();
+		it = filterStatements.iterator();
 		while (it.hasNext()){
 			query += it.next();
 			if (it.hasNext()) query += " AND ";
 		}
 		
-		query += " RETURN ";
+		query += " RETURN";
 		
 		it = returnStatements.iterator();
 		while (it.hasNext()){
 			query += it.next();
-			if (it.hasNext()) query += ", ";
+			if (it.hasNext()) query += ",";
 		}
 		
 		query += " ORDER BY ";
@@ -93,7 +104,20 @@ public class QueryBuilderModus {
 			if (it.hasNext()) query += ", ";
 		}
 		
-		return query;
+		if (queryBuilder.getLimitCount() != "") {
+			query += " LIMIT " + queryBuilder.getLimitCount();
+		}
+		
+		//return query;
+
+		
+		
+		//testen des results
+		Result result=null;
+		result= neo4jOperations.query(query, paramsMap,true);	
+		return new ResponseEntity<Result>(result, HttpStatus.OK);
+		
+		
 		
 /*		Node firstNode = queryBuilder.getNode();
 
@@ -254,14 +278,13 @@ public class QueryBuilderModus {
 	}
 	
 	
-	private String buildNode(Node node){
+	private void buildNode(Node node, String s){
 		
 		String doublePoint = "";
 		if (node.getType() != "") doublePoint = ":";
 		
-		String nodeString = "(" + synonym + doublePoint + node.getType() + ")";
+		String nodeString = s + "(" + synonym + doublePoint + node.getType() + ")";
 		
-		//TODO was wenn kein Typ angegeben?
 		synonyms.put(node.getType(),String.valueOf(synonym));		
 		synonym++;
 		
@@ -281,16 +304,22 @@ public class QueryBuilderModus {
 		}
 		
 		if (node.getRelationship().isEmpty()){
-			return nodeString;
+			cypherquery.add(nodeString);
+			return;
 		} else {
-			return nodeString + buildRelation(node.getRelationship().iterator().next());
+			Iterator<Relationship> it = node.getRelationship().iterator();
+			while (it.hasNext()){
+				buildRelation(it.next(), nodeString);
+			}
+			return;
+			//return nodeString + buildRelation(node.getRelationship().iterator().next());
 		}	
 	}
 	
 	
-	private String buildRelation(Relationship relation){
+	private void buildRelation(Relationship relation, String s){
 		String relationship = "";
-		//TODO es gibt auch Verbindungen in beide Richtungen
+		
 		if (relation.getDirection().equals("outgoing")){
 			relationship = "-[" + synonym + ":" + relation.getRelationshipType() + "]->";
 		} else {
@@ -315,15 +344,16 @@ public class QueryBuilderModus {
 		}
 		
 		if (relation.getNode() == null){
-			return relationship;
+			cypherquery.add(s + relationship);
+			return;
 		} else {
-			return relationship + buildNode(relation.getNode());
+			buildNode(relation.getNode(), s + relationship);
+			return;// relationship + buildNode(relation.getNode());
 		}	
 	}
 	
 	private void solveFilter(Set<FilterAttribute> filterSet, String type){
 		int i = 1;
-		//TODO selbes Problem => was wenn kein Type??
 		
 		for (FilterAttribute f : filterSet){
 			
@@ -344,13 +374,18 @@ public class QueryBuilderModus {
 	
 	private void solveOrder(Set<OrderByAttribute> obSet, String type){
 		for (OrderByAttribute o : obSet){
-			orderStatements.add(synonyms.get(type) + "." + o.getAttributeName() + " " + o.getDirection());
+			String dir = "";
+			if (o.getDirection() != ""){
+				dir = " " + o.getDirection();
+			}
+			orderStatements.add(synonyms.get(type) + "." + o.getAttributeName() + dir);
 		}
 	}
 	
 	private void solveReturn (Set<ReturnAttribute> retSet, String type){
 		for (ReturnAttribute r : retSet){
-			returnStatements.add(r.getReturnType() + " " + synonyms.get(type) + "." + r.getAttributeName());
+			returnStatements.add(r.getReturnType() + " " + synonyms.get(type) + "." + r.getAttributeName() + " AS " +
+								 type + r.getAttributeName());
 		}
 	}
 	
