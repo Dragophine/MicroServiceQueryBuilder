@@ -1,66 +1,42 @@
 <!DOCTYPE html>
 <div >
   <h1>{{ctrl.name}}</h1>
- <!-- <div  ng-repeat="nodeInfo in ctrl.selectedNodesAndRelation track by $index" class="top-buffer">
-      <div class="panel panel-default" >
-        <div class="row panel-body">
-          <div class="col-md-2" >
-            {{nodeInfo['node']}}
-          </div>
-          <div class="col-md-10" >
-              <div ng-repeat="keyNode in nodeInfo['keys']">
-                 <div ng-repeat="key in keyNode['Keys']">
-                    <div class="row">
-                      <div class="col-md-4">
-                         Filter {{key}}
-                          <input type="textarea" class="form-control" id="query" />
-                      </div>
-                      <div class="col-md-4">
-                         <div class="row top-buffer-small">
-                           <input id="inlineradio1" type="checkbox" class="col-md-1">
-                           <div  class="col-md-11">
-                              RETURN {{key}}
-                           </div>
-                         </div>
-                      </div>
-                      <div class="col-md-2">
-                        <div class="row top-buffer-small">
-                          <input  type="radio"  class="col-md-1">
-                          <div class="col-md-11" >
-                              ORDER ASC
-                          </div>
-                        </div>
-                      </div>
-                      <div class="col-md-2"  >
-                        <div class="row top-buffer-small">
-                          <input  type="radio" class="col-md-1">
-                          <div class="col-md-11" >
-                              ORDER DSC
-                          </div>
-                        </div>
-                      </div>
+  <div class="row">
+    <div class="col-md-10" >
+        <div ng-repeat="keyNode in ctrl.keys">
+           <div ng-repeat="key in keyNode['Keys']">
+              <div class="row">
+                <div class="col-md-4">
+                   Filter {{key}}
+                    <input type="textarea" class="form-control" id="query" />
+                </div>
+                <div class="col-md-4">
+                   <div class="row top-buffer-small">
+                     <input id="inlineradio1" type="checkbox" class="col-md-1">
+                     <div  class="col-md-11">
+                        RETURN {{key}}
+                     </div>
+                   </div>
+                </div>
+                <div class="col-md-2">
+                  <div class="row top-buffer-small">
+                    <input  type="radio"  class="col-md-1">
+                    <div class="col-md-11" >
+                        ORDER ASC
                     </div>
                   </div>
+                </div>
+                <div class="col-md-2"  >
+                  <div class="row top-buffer-small">
+                    <input  type="radio" class="col-md-1">
+                    <div class="col-md-11" >
+                        ORDER DSC
+                    </div>
+                  </div>
+                </div>
               </div>
-          </div>
+            </div>
         </div>
-      </div>
-
-      <div  ng-if="nodeInfo['relationship'] != ''">
-        <div class="row">
-          <div class="left-buffer">
-            {{nodeInfo['relationship']['relationshipType']}}
-            <button class="btn btn-default left-buffer"  ng-click="ctrl.changeDirection($index)">
-              <span ng-if="nodeInfo['relationship']['direction'] == 'up'"
-                  class="glyphicon glyphicon-arrow-up"></span>
-              <span ng-if="nodeInfo['relationship']['direction'] == 'down'"
-                  class="glyphicon glyphicon-arrow-down"></span>
-              <span ng-if="nodeInfo['relationship']['direction'] == 'both'"
-                  class="glyphicon glyphicon-resize-vertical"></span>
-            </button>
-          </div>
-        </div>
-      </div>
     </div>
-  </div>-->
+  </div>
 </div>

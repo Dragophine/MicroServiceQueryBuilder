@@ -21,6 +21,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	}                
     }
 
+    self.nodeIDStore = {};
+    self.relationshipIDStore = {};
+
     /**
 	Transfair changes to graph
     */
@@ -49,8 +52,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     			self.nodes.add([{id: $nID, label: $node['type']}]);
     			self.edges.add([{id: $rID, from: $parrentid, to: $nID, label: $relationship['relationshipType']}]);
 
-    			nodeIDStore[$nID] = $node;
-    			nodeIDStore[$rID] = $relationshipID;
+    			self.nodeIDStore[$nID] = $node;
+    			self.relationshipIDStore[$rID] = $relationshipID;
 
     			if($node["relationship"] != undefined){
     				for (var i = 0; i < $node["relationship"].length; i++){
@@ -67,7 +70,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     			var $rootNode = self.query["query"]["node"];
     		 	//Root node
     			 self.nodes.add([{id: 1, label: $rootNode["type"]}]);
-    			 nodeIDStore[1] = $rootNode;
+    			 self.nodeIDStore[1] = $rootNode;
 
     			 //every additional node
     			 if($rootNode["relationship"] != undefined){
@@ -238,8 +241,6 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	/**
 	Vis settings
 	*/
-	self.nodeIDStore = {};
-	self.relationshipIDStore = {};
 
 	self.nodes = new vis.DataSet();
     self.edges = new vis.DataSet();
@@ -280,8 +281,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	Open Dilaog
    */
    self.onNodeClick = function(params) {
+
         ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
-        				className: 'ngdialog-theme-default',
+        				className: 'ngdialog-theme-default custom-width',
         				controller: 'queryBuilderNodeDialogCtrl',
         				controllerAs: 'ctrl',
         				data: self.nodeIDStore[params["nodes"][0]]});
@@ -290,7 +292,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
     self.onEdgeClick = function(params) {
          ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
-        				className: 'ngdialog-theme-default',
+        				className: 'ngdialog-theme-default custom-width',
         				controller: 'queryBuilderRelationshipDialogCtrl',
         				controllerAs: 'ctrl',
         				data: self.relationshipIDStore[params["edges"][0]]});
