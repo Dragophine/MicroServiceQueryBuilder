@@ -276,14 +276,24 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		}
 	};
 
+   /**
+	Open Dilaog
+   */
    self.onNodeClick = function(params) {
-        alert(params["nodes"][0]);
+        ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
+        				className: 'ngdialog-theme-default',
+        				controller: 'queryBuilderNodeDialogCtrl',
+        				controllerAs: 'ctrl',
+        				data: self.nodeIDStore[params["nodes"][0]]});
         
     };
 
     self.onEdgeClick = function(params) {
-        
-        alert(params["edges"][0]);
+         ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
+        				className: 'ngdialog-theme-default',
+        				controller: 'queryBuilderRelationshipDialogCtrl',
+        				controllerAs: 'ctrl',
+        				data: self.relationshipIDStore[params["edges"][0]]});
     };
 
 

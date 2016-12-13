@@ -9,7 +9,10 @@ var app = angular.module('queryBuilder', [
   'queryBuilder.login',
   'queryBuilder.expertMode',
   'queryBuilder.register',
-  'queryBuilder.querybuilder'
+  'queryBuilder.querybuilder',
+  'queryBuilder.querybuildernodedialog',
+  'queryBuilder.querybuilderrelationshipdialog'
+
 ])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/', {
