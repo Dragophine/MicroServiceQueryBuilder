@@ -41,15 +41,6 @@
                 </div>
                 
                 <div class="row top-buffer-small" ng-if="ctrl.isOrderByAttributesChecked(key)">
-                   <!--ng-change=" ng-change="ctrl.setOrderByAttributesValue(key, 'asc')"
-                          ng-checked="ctrl.getOrderByAttributesValue(key, 'asc')
-                           ng-model="ctrl.orderByModel"
-                          ng-model-options=" {getterSetter: true }" 
-                           ng-model="asc"
-                          oorder-by-attribute="ctrl.keys[parentIndex]['Keys'][$index]"
-                          get-order-by-value="ctrl.getOrderByAttributesValue(key)" 
-                          set-order-by-value="ctrl.setOrderByAttributesValue(key, value)"
-                          order-by-radio-button>-->
                   <input  type="radio" class="col-md-1" 
                           name="{{'radio' + key}}"
                           value="asc"
@@ -62,7 +53,6 @@
                   </div>
                 </div> 
                 <div class="row top-buffer-small" ng-if="ctrl.isOrderByAttributesChecked(key)">
-                  <!--ng-change="ctrl.setOrderByAttributesValue(key, 'dsc')"-->
                   <input  type="radio" class="col-md-1"
                           name="{{'radio' + key}}"
                           value="dsc"
