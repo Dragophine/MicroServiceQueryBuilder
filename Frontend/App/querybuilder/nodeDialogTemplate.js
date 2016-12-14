@@ -35,14 +35,14 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				}
 			}
 			return returnAttribute;
-		}
+		};
 
 		self.isReturnAttributesChecked = function($key){
 			if(self.getReturnAttributes($key) === undefined){
 				return false;
 			}
 			return true;
-		}
+		};
 		/**
 		Toggles the value every time the checkbox is klicked.
 		*/
@@ -61,7 +61,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				});
 			}
 			console.log(self.node);
-		}
+		};
 
 
 		self.getOrderByAttributes = function($key){
@@ -73,14 +73,14 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				}
 			}
 			return orderByAttribute;
-		}
+		};
 
 		self.isOrderByAttributesChecked = function($key){
 			if(self.getOrderByAttributes($key) === undefined){
 				return false;
 			}
 			return true;
-		}
+		};
 		/**
 		Toggles the value every time the checkbox is klicked.
 		*/
@@ -100,17 +100,18 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				});
 			}
 			console.log(self.node);
-		}
+		};
 
-		self.getOrderByAttributesValue = function($key, $value){
+		self.getOrderByAttributesValue = function($key){
 			var orderByAttribute = self.getOrderByAttributes($key);
+			/*
 			var returnValue = 'asc';
 			if(orderByAttribute !== undefined){
 				returnValue = orderByAttribute["direction"];
 			}
-			console.log($key + ':' + $value + ' requests value ' + returnValue);
-			return returnValue;	
-		}
+			console.log($key  + ' requests value ' + returnValue);*/
+			return orderByAttribute;	
+		};
 
 		self.setOrderByAttributesValue = function($key, $value){
 			var orderByAttribute = self.getOrderByAttributes($key);
@@ -119,19 +120,26 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			}
 			console.log($key + ' set to ' + $value);
 			console.log(self.node);
-		}
-
-
-
+		};
+		/*
+		Object.defineProperty(self, 'orderByModel', {
+		  get: function(key) {
+		    return self.getOrderByAttributesValue(key);
+		  },
+		  set: function(key, value) {
+		    self.setOrderByAttributesValue(key, value);
+		  }
+		});*/
+		
 
 		self.getFilterAttributes = function($key){
 
-		}
+		};
 
 
 		self.setFilterAttributes = function($key, value){
 			
-		}
+		};
 
 		
 		/*

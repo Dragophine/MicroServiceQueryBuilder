@@ -52,3 +52,35 @@ app.directive('visNetwork', function() {
 
     }
 });
+
+
+app.directive('orderByRadioButton', function() {
+      return {
+        restrict: 'A',
+        require: '^ngModel',
+        scope: {
+            ngModel: '=',
+            orderByAttribute: '=',
+            getOrderByValue: '&',
+            setOrderByValue: '&'
+        },
+        link: function(scope, el, attr) {
+              var thisscope = scope;
+
+              scope.$watch('ngModel', function(newvalue, oldvalue) {
+                 if(newvalue){
+                    thisscope.setOrderByValue(thisscope.orderByAttribute, thisscope.ngModel["direction"]);
+                 }
+
+              }, true);
+
+              scope.$watch(scope.getOrderByValue(scope.orderByAttribute), function(newvalue, oldvalue) {
+                 if(newvalue){
+                    thisscope.setOrderByValue(thisscope.orderByAttribute, thisscope.ngModel["direction"]);
+                 }
+
+              }, true);
+
+        }
+      };
+    })
