@@ -16,9 +16,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	"description":"",
     	"category":"",
     	"limitcount": "",
-    	"query": {
-    		
-    	}                
+    	           
     }
 
     self.nodeIDStore = {};
@@ -79,10 +77,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     		}
     	}
 
-    	if(self.query["query"] !== undefined &&
-    		self.query["query"]["node"] !== undefined){
+    	if(self.query["node"] !== undefined ){
 
-    			var $rootNode = self.query["query"]["node"];
+    			var $rootNode = self.query["node"];
     		 	//Root node
     			 self.nodes.add([{id: 1, label: $rootNode["type"]}]);
     			 self.nodeIDStore[1] = $rootNode;
@@ -187,7 +184,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		/**
 		Add initial node
 		*/
-		self.query['query']['node'] = {
+		self.query['node'] = {
 			"type": $node,
 			"returnAttributes": [],
 			"filterAttributes": [],
