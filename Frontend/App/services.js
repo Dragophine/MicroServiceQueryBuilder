@@ -51,9 +51,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
             method : 'POST',
             url : $serverRestLocation.getValue() + '/buildQuery', 
             headers: {  'Content-Type':'application/json'},
-            data: { 
-              "query" : $query,
-            }
+            data:      $query
         })
         .success(function(data, status) {
             console.log(data);
@@ -148,6 +146,26 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
     
+    //getRelations with nodes
+    this.getRelationsWithNodes = function($label, $callback) {
+        $http({
+            method : 'POST',
+            url : $serverRestLocation.getValue()+ '/listRelationsWithNodes', 
+            headers: { 
+                    'Content-Type':'application/json'
+            },
+            data: { 
+              "label" : $label
+            }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };
+
     // save query
     this.saveQuery = function($query, $params, $name, $description, $category, $callback) {
         $http({

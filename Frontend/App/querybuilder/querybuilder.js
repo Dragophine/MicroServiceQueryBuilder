@@ -27,11 +27,21 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     /**
 	Transfair changes to graph
     */
-    //$scope.$watch('query', self.transfairToGraph, true);
-
     self.transfairToGraph = function(){
     	var $nodeID = 1;
     	var $relationshipID = 0;
+
+    	for (var id in self.relationshipIDStore) {
+		  if (self.relationshipIDStore.hasOwnProperty(id)) {
+		    self.edges.remove(id);
+		  }
+		}
+
+    	for (var id in self.nodeIDStore) {
+		  if (self.nodeIDStore.hasOwnProperty(id)) {
+		    self.nodes.remove(id);
+		  }
+		}
 
     	self.nodeIDStore = {};
     	self.relationshipIDStore = {};
@@ -50,7 +60,12 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     			var $rID = $relationshipID;
 
     			self.nodes.add([{id: $nID, label: $node['type']}]);
-    			self.edges.add([{id: $rID, from: $parrentid, to: $nID, label: $relationship['relationshipType']}]);
+    			if($relationship['direction'] === "INGOING"){
+  					self.edges.add([{id: $rID, from: $nID, to: $parrentid, label: $relationship['relationshipType']}]);
+    			}
+    			else{
+    				self.edges.add([{id: $rID, from: $parrentid, to: $nID, label: $relationship['relationshipType']}]);
+    			}
 
     			self.nodeIDStore[$nID] = $node;
     			self.relationshipIDStore[$rID] = $relationshipID;
@@ -81,6 +96,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     			}
     	}
     };
+
+   
     /**
 	 self.nodes.add([
     	 {id: 1, label: 'Node 4'},
@@ -293,20 +310,28 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
    */
    self.onNodeClick = function(params) {
 
-        ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
+        var dialog = ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
         				className: 'ngdialog-theme-default custom-width',
         				controller: 'queryBuilderNodeDialogCtrl',
         				controllerAs: 'ctrl',
         				data: self.nodeIDStore[params["nodes"][0]]});
+
+         dialog.closePromise.then(function (data) {
+		     self.transfairToGraph();
+		});
         
     };
 
     self.onEdgeClick = function(params) {
-         ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
+         var dialog = ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
         				className: 'ngdialog-theme-default custom-width',
         				controller: 'queryBuilderRelationshipDialogCtrl',
         				controllerAs: 'ctrl',
         				data: self.relationshipIDStore[params["edges"][0]]});
+        dialog.closePromise.then(function (data) {
+		     self.transfairToGraph();
+		});
+        
     };
 
 

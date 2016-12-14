@@ -72,4 +72,17 @@
             </div>
           </div>
       </div>
+      <div style="display: inline;" >
+          <div ng-repeat="relationship in ctrl.relationships"  style="display: inline;" >
+              <button ng-repeat="label in relationship['Labels']"  class="btn btn-default"
+                      ng-click="ctrl.addRelationship(relationship['Relation'], relationship['Direction'], label)">
+                  {{relationship['Relation']}}
+                <span ng-if="relationship['Direction'] == 'OUTGOING'"
+                    class="glyphicon glyphicon-arrow-down"></span>
+                <span ng-if="relationship['Direction'] == 'INGOING'"
+                    class="glyphicon glyphicon-arrow-up"></span>
+                  {{label}}
+              </button>
+          </div>
+      </div>
 </div>

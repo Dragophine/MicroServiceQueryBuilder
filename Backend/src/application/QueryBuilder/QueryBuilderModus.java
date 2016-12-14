@@ -13,6 +13,7 @@ import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.data.neo4j.template.Neo4jTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -57,6 +58,7 @@ public class QueryBuilderModus {
 	//TODO: Bei Rekursion darauf acht geben, dass die ParamsMap weiterhin ausgefüllt wird
 	//TODO: darauf acht geben, dass in der paramsMap nix doppelt eingetragen is als Key. 
 	//TODO: darauf acht geben, dass Synonyme nicht mehrfach vergeben werden
+	@CrossOrigin 
 	@RequestMapping(value="/buildQuery",  method=RequestMethod.POST)
 	public ResponseEntity<Result> buildQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
 //	public String buildQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {

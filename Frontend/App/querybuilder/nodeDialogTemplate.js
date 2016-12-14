@@ -9,11 +9,14 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
         var self = this;
 	    
         self.node = $scope.ngDialogData;
-        	console.log(self.node);
         self.name = self.node['type'];
         self.keys = [];
+        self.relationships = [];
+        /******************************
+		LOADING 
+		/******************************/
         /***
-		This methods load the relationships for a specific node.
+		This methods load the keys for a specific node.
 		*/
 		self.loadKeysForNodeCB = function($success, $data, $status){
 			self.hasError = !$success;
@@ -24,8 +27,46 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 
 		$requests.getKeys(self.node['type'], self.loadKeysForNodeCB);
 
+		/**
+		This method load the relationships for a specific node.
+		*/
+		self.getRelationsWithNodesCB = function($success, $data, $status){
+			self.hasError = !$success;
+			if($success){
+				self.relationships = $data; 
+			}
+		};
+
+		$requests.getRelationsWithNodes(self.node['type'], self.getRelationsWithNodesCB);
 
 
+		/******************************
+		ADD RELATIONSHIP
+		/******************************/
+		self.addRelationship = function($type, $direction, $node){
+			self.node['relationship'].push({
+					"relationshipType" :$type, 	//hasMethod, hasInstance
+					"direction": $direction, 	//ingoing, outgoing
+					"optional":false, 			//OPTIONAL MATCH
+					"returnAttributes":[],
+					"filterAttributes":[],
+					"orderByAttributes":[],
+					"node": {
+						"type": $node,
+						"returnAttributes": [],
+						"filterAttributes": [],
+						"orderByAttributes": [],
+						"relationship":[]
+					}
+				}
+			);
+			
+
+		}
+
+		/******************************
+		PROPETY SETTING
+		/******************************/
 		self.getReturnAttributes = function($key){
 			var returnAttribute = undefined;
 			for (var i = self.node['returnAttributes'].length - 1; i >= 0; i--) {
@@ -60,7 +101,6 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 					"attributeName":$key
 				});
 			}
-			console.log(self.node);
 		};
 
 
@@ -119,7 +159,6 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 					break;
 				}
 			}
-			console.log(self.node);
 			return returnFilterAttribute;
 		};
 
@@ -143,12 +182,10 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 						"type":"string",		 //int, string...
 						"filterType": "in", 	//sowas wie "in","like","=",">"
 						"value":$value, 
-						"changeable":true/false 
-		//ist der Parameter fix oder in der Verwaltung veränderbar?
+						"changeable":true/false 	//ist der Parameter fix oder in der Verwaltung veränderbar?
 					}
 				);
 			}
-			console.log(self.node);
 		};
 
 		
