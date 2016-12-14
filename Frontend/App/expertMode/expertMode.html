@@ -10,7 +10,14 @@
 
 </style>
 
+
+
+
+
+
+
 <div class="container" ng-controller="expertModeCtrl as ctrl">
+  <div class="container" ng-controller="Controller">
 
   <div class="row">
     <div class="col-md-11">
@@ -18,7 +25,7 @@
       <textarea id="query"> </textarea>
     </div>
     <div class="col-md-1">
-      <button type="submit" ng-click="ctrl.submitQuery()">Submit</button>
+      <button type="submit" ng-click="ctrl.submitQuery() ; setData(ctrl.table)">Submit</button>
     </div>	
  
 	<!-- Trigger/Open The Modal - Save Query -->
@@ -171,9 +178,9 @@
       {{property}} : {{value}}
       </span> -->
 
-      <script type="text/ng-template" id="categoryTree">
+    <!--  <script type="text/ng-template" id="categoryTree">
       <!--<div ng-if="ctrl.isObject(row)"> -->
-        <table class="table">
+       <!-- <table class="table">
         <tbody>
          <tr > 
            <td ng-repeat = "cell in table" ng-if="!ctrl.isObject(cell)">
@@ -185,11 +192,11 @@
         </tbody>
           </table>
        <!-- </div> -->
-       </script>
+     <!--  </script>
 
 <!-- ng-include="'categoryTree'" ng-init="row=cell" ng-if="angular.isObject(cell)" -->
 
-    <table class="table"  ng-if="!ctrl.hasError">
+  <!--  <table class="table"  ng-if="!ctrl.hasError">
        <tbody >
          <tr ng-repeat = "row in ctrl.table"> 
               <td ng-repeat = "cell in row" ng-if="!ctrl.isObject(cell)">
@@ -201,7 +208,13 @@
                    </td> 
           </tr>
       </tbody>
-      </table>
+      </table> -->
+
+
+
+
+ <div outputtable table="ctrl.table"></div> 
+
 
     <div ng-if="ctrl.hasError">
         <div class="row">
@@ -219,5 +232,5 @@
     </div>
 
   </div>
- 
+</div>
 </div>
