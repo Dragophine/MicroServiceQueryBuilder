@@ -86,6 +86,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 		*/
 		self.setOrderByAttributes = function($key){
 			var orderByAttribute = self.getOrderByAttributes($key);
+			//Toggle attribute
 			if(orderByAttribute !== undefined){
 				//lösche return Attribute
 				var index = self.node['orderByAttributes'].indexOf(orderByAttribute);
@@ -99,7 +100,6 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 					"direction": "asc"
 				});
 			}
-			console.log(self.node);
 		};
 
 		self.setOrderByAttributesValue = function($key, $value){
@@ -107,19 +107,48 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			if(orderByAttribute !== undefined){
 				orderByAttribute["direction"] = $value;
 			}
-			console.log($key + ' set to ' + $value);
-			console.log(self.node);
 		};
 		
 		
 
 		self.getFilterAttributes = function($key){
-
+			var returnFilterAttribute = undefined;
+			for (var i = self.node['filterAttributes'].length - 1; i >= 0; i--) {
+				if(self.node['filterAttributes'][i]['attributeName'] === $key){
+					returnFilterAttribute = self.node['filterAttributes'][i];
+					break;
+				}
+			}
+			console.log(self.node);
+			return returnFilterAttribute;
 		};
 
 
-		self.setFilterAttributes = function($key, value){
-			
+		self.setFilterAttributesValue = function($key, $value){
+			var filterAttributes = self.getFilterAttributes($key);
+			//delecte when text empty
+			if(filterAttributes !== undefined && $value === ""){
+				//lösche return Attribute
+				var index = self.node['filterAttributes'].indexOf(filterAttributes);
+				self.node['filterAttributes'].splice(index, 1);	
+			}
+			if(filterAttributes !== undefined){
+				filterAttributes["value"] = $value;
+			}
+			else
+			{
+				//füge attribut hinzu
+				self.node['filterAttributes'].push({
+						"attributeName":$key,
+						"type":"string",		 //int, string...
+						"filterType": "in", 	//sowas wie "in","like","=",">"
+						"value":$value, 
+						"changeable":true/false 
+		//ist der Parameter fix oder in der Verwaltung veränderbar?
+					}
+				);
+			}
+			console.log(self.node);
 		};
 
 		

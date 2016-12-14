@@ -18,7 +18,11 @@
               </div>
               <div class="col-md-3">
                   FILTER
-                  <input type="textarea" class="form-control" id="query" />
+                  <input type="textarea" class="form-control" id="query" 
+                          ng-change="ctrl.setFilterAttributesValue(key, value)" 
+                          ng-watch='ctrl.getFilterAttributes(key)'
+                          ng-watch-object-value="value"
+                          ng-model="value"/>
               </div>
               <div class="col-md-2">
                  <div class="row top-buffer-small">

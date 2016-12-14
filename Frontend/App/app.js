@@ -71,6 +71,7 @@ app.directive('ngWatch', function() {
                   else{
                     ngModel.$setViewValue(newValue);
                   }
+                  ngModel.$render();
                 }      
             }, true);
         }
