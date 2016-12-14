@@ -59,6 +59,7 @@ public class QueryBuilderModus {
 	//TODO: darauf acht geben, dass in der paramsMap nix doppelt eingetragen is als Key. 
 	//TODO: darauf acht geben, dass Synonyme nicht mehrfach vergeben werden
 	@CrossOrigin 
+	
 	@RequestMapping(value="/buildQuery",  method=RequestMethod.POST)
 	public ResponseEntity<Result> buildQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
 //	public String buildQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
