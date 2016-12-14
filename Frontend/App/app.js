@@ -11,7 +11,8 @@ var app = angular.module('queryBuilder', [
   'queryBuilder.register',
   'queryBuilder.querybuilder',
   'queryBuilder.querybuildernodedialog',
-  'queryBuilder.querybuilderrelationshipdialog'
+  'queryBuilder.querybuilderrelationshipdialog',
+  'OutputTable'
 
 ])
 .config(['$routeProvider', function($routeProvider) {
