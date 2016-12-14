@@ -53,6 +53,7 @@ public class QueryBuilderModus {
 	LinkedList<String> cypherquery = new LinkedList<String>();
 	
 	
+	
 	//TODO: rekursiv gestalten; dabei darauf achten, dass orderby, filter und returnattribute (in filterstring, returnstring, orderstring) rekursiv angepasst werden bzw. die strings erweitert werden
 	//TODO: bei Rekursion auch darauf achten, dass die vergabe der synonyme (mit variable synonym) und das einschreiben in die dafür vorgesehene map (synonyms) passiert
 	//TODO: Bei Rekursion darauf acht geben, dass die ParamsMap weiterhin ausgefüllt wird
@@ -69,21 +70,23 @@ public class QueryBuilderModus {
 		cypherquery.clear();
 		synonyms.clear();
 		synonym = 'a';
-		String query = "MATCH ";
+		String query = "";
 		
 		QueryBuilderStringObject queryBuilderStringObject = new QueryBuilderStringObject();
 		
 		Node node = queryBuilder.getNode();
 		
+		//TODO erste relation auf optional prüfen!!
 		buildNode(node, "");
 		
 		Iterator<String> it = cypherquery.iterator();
 		while (it.hasNext()){
-			query += it.next();
-			if (it.hasNext()) query += ", ";
+			query += "MATCH " + it.next();
+			if (it.hasNext()) query += " ";
 		}
 		
-		query += " WHERE ";
+		if (!filterStatements.isEmpty()) query += " WHERE ";
+		
 		//TODO funktioniert momentan nur mit AND!! Vllt benötigen wir ein neues attribut im json objekt?!
 		it = filterStatements.iterator();
 		while (it.hasNext()){
@@ -99,7 +102,7 @@ public class QueryBuilderModus {
 			if (it.hasNext()) query += ",";
 		}
 		
-		query += " ORDER BY ";
+		if (!orderStatements.isEmpty()) query += " ORDER BY ";
 		
 		it = orderStatements.iterator();
 		while (it.hasNext()){
@@ -111,7 +114,7 @@ public class QueryBuilderModus {
 			query += " LIMIT " + queryBuilder.getLimitCount();
 		}
 		
-		//return query;
+//		return query;
 
 		
 		
@@ -350,6 +353,7 @@ public class QueryBuilderModus {
 			cypherquery.add(s + relationship);
 			return;
 		} else {
+			
 			buildNode(relation.getNode(), s + relationship);
 			return;// relationship + buildNode(relation.getNode());
 		}	
