@@ -47,40 +47,32 @@ app.directive('visNetwork', function() {
             network.on('select', function(properties) {
                 onEdgeClick(properties);
             });*/
-
         }
-
     }
 });
 
-
-app.directive('orderByRadioButton', function() {
-      return {
+app.directive('ngWatch', function() {
+    return {
         restrict: 'A',
-        require: '^ngModel',
+        require: 'ngModel',
         scope: {
-            ngModel: '=',
-            orderByAttribute: '=',
-            getOrderByValue: '&',
-            setOrderByValue: '&'
+            ngModel: '=', 
+            ngWatch: '=', /* whatches an object for change*/
+            ngWatchObjectValue: "@" /* set changed value to model*/
         },
-        link: function(scope, el, attr) {
-              var thisscope = scope;
+        link: function($scope, $element, $attrs, ngModel) {
 
-              scope.$watch('ngModel', function(newvalue, oldvalue) {
-                 if(newvalue){
-                    thisscope.setOrderByValue(thisscope.orderByAttribute, thisscope.ngModel["direction"]);
-                 }
-
-              }, true);
-
-              scope.$watch(scope.getOrderByValue(scope.orderByAttribute), function(newvalue, oldvalue) {
-                 if(newvalue){
-                    thisscope.setOrderByValue(thisscope.orderByAttribute, thisscope.ngModel["direction"]);
-                 }
-
-              }, true);
-
+            $scope.$watch('ngWatch', function(newValue, oldValue) {
+                if (newValue){
+                  if($scope.ngWatchObjectValue){
+                    ngModel.$setViewValue(newValue[$scope.ngWatchObjectValue]);
+                  }
+                  else{
+                    ngModel.$setViewValue(newValue);
+                  }
+                }      
+            }, true);
         }
-      };
-    })
+    }
+});
+

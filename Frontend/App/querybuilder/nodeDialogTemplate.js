@@ -102,17 +102,6 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			console.log(self.node);
 		};
 
-		self.getOrderByAttributesValue = function($key){
-			var orderByAttribute = self.getOrderByAttributes($key);
-			/*
-			var returnValue = 'asc';
-			if(orderByAttribute !== undefined){
-				returnValue = orderByAttribute["direction"];
-			}
-			console.log($key  + ' requests value ' + returnValue);*/
-			return orderByAttribute;	
-		};
-
 		self.setOrderByAttributesValue = function($key, $value){
 			var orderByAttribute = self.getOrderByAttributes($key);
 			if(orderByAttribute !== undefined){
@@ -121,15 +110,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			console.log($key + ' set to ' + $value);
 			console.log(self.node);
 		};
-		/*
-		Object.defineProperty(self, 'orderByModel', {
-		  get: function(key) {
-		    return self.getOrderByAttributesValue(key);
-		  },
-		  set: function(key, value) {
-		    self.setOrderByAttributesValue(key, value);
-		  }
-		});*/
+		
 		
 
 		self.getFilterAttributes = function($key){
