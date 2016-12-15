@@ -29,13 +29,15 @@ app.directive('visNetwork', function() {
             ngModel: '=',
             options: '=',
             onNodeClick: '&',
-            onEdgeClick: '&'
+            onEdgeClick: '&',
+            onSelectClick: '&'
         },
         link: function($scope, $element, $attrs, ngModel) {
             var network = new vis.Network($element[0], $scope.ngModel, $scope.options || {});
            
-            var onNodeClick = $scope.onNodeClick || function(prop) {alert('FAIL')};
+            var onNodeClick = $scope.onNodeClick || function(prop) {};
             var onEdgeClick = $scope.onEdgeClick || function(prop) {};
+            var onSelectClick = $scope.onSelectClick || function(prop) {};
 
             network.on('selectNode', function (params)  {
                 onNodeClick({params: params});
@@ -44,10 +46,10 @@ app.directive('visNetwork', function() {
             network.on('selectEdge', function(params) {
                 onEdgeClick({params: params});
             });
-            /*
-            network.on('select', function(properties) {
-                onEdgeClick(properties);
-            });*/
+            
+            network.on('select', function(params) {
+                onSelectClick({params: params});
+            });
         }
     }
 });
@@ -59,6 +61,7 @@ app.directive('ngWatch', function() {
         scope: {
             ngModel: '=', 
             ngWatch: '=', /* whatches an object for change*/
+
             ngWatchObjectValue: "@" /* set changed value to model*/
         },
         link: function($scope, $element, $attrs, ngModel) {

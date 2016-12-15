@@ -302,34 +302,68 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		}
 	};
 
+	
+	self.previousSelectedNode = [];
+	self.previousSelectedEdges  = [];
+
+	self.onSelectClick = function(params){
+		if(self.previousSelectedNode.length < params.nodes.length){
+			 self.openNodeDialog (params);
+		}
+		else if(self.previousSelectedEdges.length < params.edges.length){
+			 self.openEdgeDialog (params);
+		}
+		else if(self.previousSelectedNode.length === params.nodes.length){
+			for (var i = params.nodes.length - 1; i >= 0; i--) {
+				if(self.previousSelectedNode[i] !== params.nodes[i]){
+					self.openNodeDialog (params);
+					break;
+				}
+			}
+		}
+		else if(self.previousSelectedEdges.length === params.edges.length){
+			for (var i = params.edges.length - 1; i >= 0; i--) {
+				if(self.previousSelectedEdges[i] !== params.edges[i]){
+					self.openEdgeDialog (params);
+					break;
+				}
+			}
+		}
+
+		self.previousSelectedNode = params.nodes;
+		self.previousSelectedEdges = params.edges;
+	}
+
+
    /**
 	Open Dilaog
    */
-   self.onNodeClick = function(params) {
 
-        var dialog = ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
+    self.openNodeDialog = function(params){
+    	var dialog = ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
         				className: 'ngdialog-theme-default custom-width',
         				controller: 'queryBuilderNodeDialogCtrl',
         				controllerAs: 'ctrl',
         				data: self.nodeIDStore[params["nodes"][0]]});
 
-         dialog.closePromise.then(function (data) {
-		     self.transfairToGraph();
-		});
-        
+
+	         dialog.closePromise.then(function (data) {
+			     self.transfairToGraph();
+			});
     };
 
-    self.onEdgeClick = function(params) {
-         var dialog = ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
-        				className: 'ngdialog-theme-default custom-width',
-        				controller: 'queryBuilderRelationshipDialogCtrl',
-        				controllerAs: 'ctrl',
-        				data: self.relationshipIDStore[params["edges"][0]]});
-        dialog.closePromise.then(function (data) {
-		     self.transfairToGraph();
-		});
-        
-    };
+    self.openEdgeDialog = function(params){
+	         var dialog = ngDialog.open({ template: 'querybuilder/relationshipDialogTemplate.html',
+	        				className: 'ngdialog-theme-default custom-width',
+	        				controller: 'queryBuilderRelationshipDialogCtrl',
+	        				controllerAs: 'ctrl',
+	        				data: self.relationshipIDStore[params["edges"][0]]});
+
+
+	        dialog.closePromise.then(function (data) {
+			     self.transfairToGraph();
+			});
+    }
 
 
 }]);

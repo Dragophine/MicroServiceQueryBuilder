@@ -98,7 +98,8 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			{
 				//füge attribut hinzu
 				self.node['returnAttributes'].push({
-					"attributeName":$key
+					"attributeName":$key,
+					"returnType": ""
 				});
 			}
 		};
@@ -149,7 +150,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			}
 		};
 		
-		
+		//FILTER ATTRIBUTES
 
 		self.getFilterAttributes = function($key){
 			var returnFilterAttribute = undefined;
@@ -163,29 +164,46 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 		};
 
 
-		self.setFilterAttributesValue = function($key, $value){
-			var filterAttributes = self.getFilterAttributes($key);
-			//delecte when text empty
-			if(filterAttributes !== undefined && $value === ""){
-				//lösche return Attribute
-				var index = self.node['filterAttributes'].indexOf(filterAttributes);
-				self.node['filterAttributes'].splice(index, 1);	
+		self.isFilterAttributesChecked = function($key){
+			if(self.getFilterAttributes($key) === undefined){
+				return false;
 			}
-			if(filterAttributes !== undefined){
-				filterAttributes["value"] = $value;
+			return true;
+		};
+		/**
+		Toggles the value every time the checkbox is klicked.
+		*/
+		self.setFilterAttributes = function($key){
+			var filterAttribute = self.getFilterAttributes($key);
+			if(filterAttribute !== undefined){
+				//lösche return Attribute
+				//lösche return Attribute
+				var index = self.node['filterAttributes'].indexOf(filterAttribute);
+				self.node['filterAttributes'].splice(index, 1);	
 			}
 			else
 			{
-				//füge attribut hinzu
-				self.node['filterAttributes'].push({
+				var newFilterAttribute = {
 						"attributeName":$key,
 						"type":"string",		 //int, string...
 						"filterType": "in", 	//sowas wie "in","like","=",">"
-						"value":$value, 
-						"changeable":true/false 	//ist der Parameter fix oder in der Verwaltung veränderbar?
-					}
+						"value":"", 
+						"changeable":false 	//ist der Parameter fix oder in der Verwaltung veränderbar?
+				};
+				//füge attribut hinzu
+				self.node['filterAttributes'].push(
+					newFilterAttribute
 				);
 			}
+			console.log(self.node);
+		};
+
+		self.setFilterAttributesDynamic = function($key, $type, $value){
+			var filterAttributes = self.getFilterAttributes($key);
+			if(filterAttributes !== undefined){
+				filterAttributes[$type] = $value;
+			}
+			console.log("Set key: " + $key + ", type: " + $type + ", value: " + $value );
 		};
 
 		

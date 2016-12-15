@@ -43,8 +43,7 @@
   <vis-network ng-if="ctrl.availableNodes.length == 0"
         ng-model="ctrl.network_data"
         options="ctrl.network_options" 
-        on-node-click="ctrl.onNodeClick(params)" 
-        on-edge-click="ctrl.onEdgeClick(params)" 
+        on-select-click="ctrl.onSelectClick(params)"
         id="previewNetwork">
   </vis-network>
   
