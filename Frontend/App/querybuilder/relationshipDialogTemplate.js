@@ -8,6 +8,16 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
     function($requests, $scope) {
         var self = this;
 
-        self.name = "Relationship";
+        self.relationship = $scope.ngDialogData;
+        self.name = self.relationship['relationshipType'];
+        self.direction = self.relationship['direction'];
+
+        self.isOptionalChecked = function(){
+        	return self.relationship['optional'];
+        }
+
+        self.setOptionalChecked = function(value){
+        	return self.relationship['optional'] = value;
+        }
 	
 }]);

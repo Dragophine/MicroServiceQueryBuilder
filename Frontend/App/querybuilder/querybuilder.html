@@ -54,38 +54,7 @@
   
   <div class="row top-buffer">
     <table class="table"  ng-if="!ctrl.hasError">
-       <thead>
-        <tr>
-          <th>ID</th>
-          <th>Label</th>
-          <th>Key</th>
-          <th>Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="row in ctrl.table">
-		  <td>
-            <p  ng-repeat="node in row.n.propertyList">
-              <a href="node">{{row.n.id}}</a>
-            </p>
-          </td>
-		  <td>
-            <p  ng-repeat="node in row.n.propertyList">
-              <a href="node">{{row.n.labels[0]}}</a>
-            </p>
-          </td>
-          <td>
-            <p  ng-repeat="node in row.n.propertyList">
-              <a href="node">{{node.key}}</a>
-            </p>
-          </td>
-          <td>
-            <p  ng-repeat="node in row.n.propertyList">
-              <a href="node">{{node.value}}</a>
-            </p>
-          </td>
-        </tr>
-      </tbody>
+       {{self.table}}
     </table>
 
   

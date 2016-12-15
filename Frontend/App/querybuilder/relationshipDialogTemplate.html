@@ -1,20 +1,14 @@
 <!DOCTYPE html>
 <div >
-  <h1>{{ctrl.name}}</h1>
-
-    <div  ng-if="nodeInfo['relationship'] != ''">
-      <div class="row">
-        <div class="left-buffer">
-          {{nodeInfo['relationship']['relationshipType']}}
-          <button class="btn btn-default left-buffer"  ng-click="ctrl.changeDirection($index)">
-            <span ng-if="nodeInfo['relationship']['direction'] == 'up'"
-                class="glyphicon glyphicon-arrow-up"></span>
-            <span ng-if="nodeInfo['relationship']['direction'] == 'down'"
-                class="glyphicon glyphicon-arrow-down"></span>
-            <span ng-if="nodeInfo['relationship']['direction'] == 'both'"
-                class="glyphicon glyphicon-resize-vertical"></span>
-          </button>
-        </div>
-      </div>
+  <h1>{{ctrl.name}} DIRECTION {{ctrl.direction}}</h1>
+   <div class="row">
+      <input id="inlineradio0" type="checkbox" class="col-md-2"
+              ng-model="optional"
+               ng-checked="ctrl.isOptionalChecked()"
+               ng-click="ctrl.setOptionalChecked(optional)">
+      <div  class="col-md-10">
+          OPTIONAL
+       </div>
     </div>
+    
 </div>

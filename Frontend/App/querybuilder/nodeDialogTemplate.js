@@ -60,7 +60,6 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 					}
 				}
 			);
-			
 
 		}
 

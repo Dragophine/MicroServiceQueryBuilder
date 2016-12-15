@@ -66,7 +66,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     			}
 
     			self.nodeIDStore[$nID] = $node;
-    			self.relationshipIDStore[$rID] = $relationshipID;
+    			self.relationshipIDStore[$rID] = $relationship;
 
     			if($node["relationship"] != undefined){
     				for (var i = 0; i < $node["relationship"].length; i++){
@@ -353,11 +353,13 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     };
 
     self.openEdgeDialog = function(params){
+    		 var edgeId =params["edges"][0];
+    		 var relationship =  self.relationshipIDStore[edgeId];
 	         var dialog = ngDialog.open({ template: 'querybuilder/relationshipDialogTemplate.html',
 	        				className: 'ngdialog-theme-default custom-width',
 	        				controller: 'queryBuilderRelationshipDialogCtrl',
 	        				controllerAs: 'ctrl',
-	        				data: self.relationshipIDStore[params["edges"][0]]});
+	        				data:relationship});
 
 
 	        dialog.closePromise.then(function (data) {
