@@ -16,9 +16,22 @@
                 </div>
                 <div ng-if="ctrl.isFilterAttributesChecked(key)" class="top-buffer-small"> 
                   <div>
+                    TYPE
+                  </div>
+                    <select name="singleSelect" id="singleSelect" 
+                      ng-model="type"
+                      ng-change="ctrl.setFilterAttributesDynamic(key, 'type', type)" 
+                      ng-watch='ctrl.getFilterAttributes(key)'
+                      ng-watch-object-value="type">
+                      <option value="string">STRING</option> 
+                      <option value="integer">INT</option>
+                      <option value="double">DOUBLE</option>
+                      <option value="date">DATE</option>
+                   </select>
+                   <div>
                     FILTER TYPE
                   </div>
-                   <select name="singleSelect" id="singleSelect" 
+                    <select name="singleSelect" id="singleSelect" 
                       ng-model="filterType"
                       ng-change="ctrl.setFilterAttributesDynamic(key, 'filterType', filterType)" 
                       ng-watch='ctrl.getFilterAttributes(key)'
@@ -28,7 +41,7 @@
                       <option value=">">SMALLER</option>
                       <option value="<=">GREATER EQUAL</option>
                       <option value=">=">SMALLER EQUAL</option>
-                  </select>
+                   </select>
                   <div>
                     FILTER
                   </div>

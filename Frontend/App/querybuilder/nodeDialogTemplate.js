@@ -185,7 +185,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				var newFilterAttribute = {
 						"attributeName":$key,
 						"type":"string",		 //int, string...
-						"filterType": "in", 	//sowas wie "in","like","=",">"
+						"filterType": "=", 	//sowas wie "in","like","=",">"
 						"value":"", 
 						"changeable":false 	//ist der Parameter fix oder in der Verwaltung veränderbar?
 				};

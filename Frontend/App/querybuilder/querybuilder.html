@@ -40,13 +40,16 @@
           </button>
         </div>
   </div>
-  <vis-network ng-if="ctrl.availableNodes.length == 0"
-        ng-model="ctrl.network_data"
-        options="ctrl.network_options" 
-        on-select-click="ctrl.onSelectClick(params)"
-        id="previewNetwork">
-  </vis-network>
-  
+  <div class="row panel panel-default top-buffer" ng-if="ctrl.availableNodes.length === 0">
+    <div class="panel-body">
+      <vis-network ng-if="ctrl.availableNodes.length == 0"
+            ng-model="ctrl.network_data"
+            options="ctrl.network_options" 
+            on-select-click="ctrl.onSelectClick(params)"
+            id="previewNetwork">
+      </vis-network>
+    </div>
+  </div>
   
 
 
@@ -54,10 +57,10 @@
   
   <div class="row top-buffer">
     <table class="table"  ng-if="!ctrl.hasError">
-       {{self.table}}
+        <h1>Ergebnis</h1>
+       {{ctrl.table}}
     </table>
 
-  
 
     <div ng-if="ctrl.hasError">
         <div class="row">
