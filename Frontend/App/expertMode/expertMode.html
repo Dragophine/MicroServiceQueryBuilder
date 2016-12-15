@@ -17,7 +17,7 @@
 
 
 <div class="container" ng-controller="expertModeCtrl as ctrl">
-  <div class="container" ng-controller="Controller">
+ <!-- <div class="container" ng-controller="Controller"> -->
 
   <div class="row">
     <div class="col-md-11">
@@ -25,7 +25,7 @@
       <textarea id="query"> </textarea>
     </div>
     <div class="col-md-1">
-      <button type="submit" ng-click="ctrl.submitQuery() ; setData(ctrl.table)">Submit</button>
+      <button type="submit" ng-click="ctrl.submitQuery() ">Submit</button>
     </div>	
  
 	<!-- Trigger/Open The Modal - Save Query -->
@@ -212,8 +212,9 @@
 
 
 
-
- <div outputtable table="ctrl.table"></div> 
+ <div class="container" ng-controller="Controller">
+ <div outputtable table="setData(ctrl.table)"></div> 
+ </div>
 
 
     <div ng-if="ctrl.hasError">
@@ -232,5 +233,5 @@
     </div>
 
   </div>
-</div>
+<!--</div> -->
 </div>
