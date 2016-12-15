@@ -45,13 +45,12 @@
       <vis-network ng-if="ctrl.availableNodes.length == 0"
             ng-model="ctrl.network_data"
             options="ctrl.network_options" 
-            on-select-click="ctrl.onSelectClick(params)"
+            on-select-click="ctrl.onSelectClick(params, network)"
             id="previewNetwork">
       </vis-network>
     </div>
   </div>
   
-
 
 <!--   <h1>TEST: {{ctrl.table}}</h1> -->
   

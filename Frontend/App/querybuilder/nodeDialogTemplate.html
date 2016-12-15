@@ -15,7 +15,7 @@
                    </div>
                 </div>
                 <div ng-if="ctrl.isFilterAttributesChecked(key)" class="top-buffer-small"> 
-                  <div>
+                  <div >
                     TYPE
                   </div>
                     <select name="singleSelect" id="singleSelect" 
@@ -28,7 +28,7 @@
                       <option value="double">DOUBLE</option>
                       <option value="date">DATE</option>
                    </select>
-                   <div>
+                   <div class="top-buffer-small">
                     FILTER TYPE
                   </div>
                     <select name="singleSelect" id="singleSelect" 
@@ -42,7 +42,7 @@
                       <option value="<=">GREATER EQUAL</option>
                       <option value=">=">SMALLER EQUAL</option>
                    </select>
-                  <div>
+                  <div class="top-buffer-small">
                     FILTER
                   </div>
                   <input type="textarea" class="form-control" id="query" 
@@ -50,6 +50,15 @@
                           ng-watch='ctrl.getFilterAttributes(key)'
                           ng-watch-object-value="value"
                           ng-model="value"/>
+                    <div class="top-buffer-small">
+                    CHANGEABLE
+                    </div>
+                     <input type="checkbox" class="col-md-2"
+                           ng-value="true"
+                           ng-model="changeable"
+                           ng-change="ctrl.setFilterAttributesDynamic(key, 'changeable', changeable)"
+                           ng-watch='ctrl.getFilterAttributes(key)'
+                           ng-watch-object-value="changeable">
                 </div>
               </div>
               <div class="col-md-3">
@@ -87,13 +96,13 @@
                 <div class="row top-buffer-small" ng-if="ctrl.isOrderByAttributesChecked(key)">
                   <input  type="radio" class="col-md-1"
                           name="{{'radio' + key}}"
-                          value="dsc"
+                          value="desc"
                           ng-model="value"
                           ng-change='ctrl.setOrderByAttributesValue(key, value)'
                           ng-watch='ctrl.getOrderByAttributes(key)'
                           ng-watch-object-value="direction">
                   <div class="col-md-2" >
-                      DSC
+                      DESC
                   </div>
                 </div>
               </div>

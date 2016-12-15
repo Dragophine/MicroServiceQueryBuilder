@@ -326,7 +326,7 @@ public class QueryBuilderModus {
 	private void buildRelation(Relationship relation, String s){
 		String relationship = "";
 		
-		if (relation.getDirection().equals("outgoing")){
+		if (relation.getDirection().equalsIgnoreCase("outgoing")){
 			relationship = "-[" + synonym + ":" + relation.getRelationshipType() + "]->";
 		} else {
 			relationship = "<-[" + synonym + ":" + relation.getRelationshipType()+ "]-";
