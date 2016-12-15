@@ -306,17 +306,20 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	self.previousSelectedNode = [];
 	self.previousSelectedEdges  = [];
 
-	self.onSelectClick = function(params){
-		if(self.previousSelectedNode.length < params.nodes.length){
-			 self.openNodeDialog (params);
+	self.onSelectClick = function(params, network){
+		var openNodeDialog = false;
+		var openEdgeDialog = false;
+		if(params.nodes.length > 0){
+			 openNodeDialog = true;
 		}
-		else if(self.previousSelectedEdges.length < params.edges.length){
-			 self.openEdgeDialog (params);
+		else if(params.edges.length > 0){
+			 openEdgeDialog = true;
 		}
+		/*
 		else if(self.previousSelectedNode.length === params.nodes.length){
 			for (var i = params.nodes.length - 1; i >= 0; i--) {
 				if(self.previousSelectedNode[i] !== params.nodes[i]){
-					self.openNodeDialog (params);
+					openNodeDialog = true;
 					break;
 				}
 			}
@@ -324,12 +327,18 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		else if(self.previousSelectedEdges.length === params.edges.length){
 			for (var i = params.edges.length - 1; i >= 0; i--) {
 				if(self.previousSelectedEdges[i] !== params.edges[i]){
-					self.openEdgeDialog (params);
+					openEdgeDialog = true;
 					break;
 				}
 			}
+		}*/
+		if(openNodeDialog){
+			self.openNodeDialog (params, network);
 		}
 
+		if(!openNodeDialog && openEdgeDialog){
+			self.openEdgeDialog (params, network);
+		}
 		self.previousSelectedNode = params.nodes;
 		self.previousSelectedEdges = params.edges;
 	}
@@ -339,7 +348,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	Open Dilaog
    */
 
-    self.openNodeDialog = function(params){
+    self.openNodeDialog = function(params, network){
+    	var $network = network;
+
     	var dialog = ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
         				className: 'ngdialog-theme-default custom-width',
         				controller: 'queryBuilderNodeDialogCtrl',
@@ -349,12 +360,15 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 	         dialog.closePromise.then(function (data) {
 			     self.transfairToGraph();
+			     $network.redraw();
 			});
     };
 
-    self.openEdgeDialog = function(params){
+    self.openEdgeDialog = function(params, network){
     		 var edgeId =params["edges"][0];
     		 var relationship =  self.relationshipIDStore[edgeId];
+    		 var $network = network;
+
 	         var dialog = ngDialog.open({ template: 'querybuilder/relationshipDialogTemplate.html',
 	        				className: 'ngdialog-theme-default custom-width',
 	        				controller: 'queryBuilderRelationshipDialogCtrl',
@@ -364,6 +378,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 	        dialog.closePromise.then(function (data) {
 			     self.transfairToGraph();
+			     $network.redraw();
 			});
     }
 
