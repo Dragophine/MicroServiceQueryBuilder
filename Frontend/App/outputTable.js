@@ -7,15 +7,15 @@ angular.module('OutputTable', [])
 
           $scope.setData = function (data) {
         $scope.input = data;
-        console.log($scope.input);
+       // console.log($scope.input);
         $scope.data = convertTableWidgetData(data);
     }
-    console.log($scope.input);
+    //console.log($scope.input);
 
             
             var widgetData = $scope.input;
-            var data = "";
-            console.log($scope.json);
+            //var data = "";
+            //console.log($scope.json);
 
         
         function convertTableWidgetData(widgetData, div) {
@@ -25,7 +25,8 @@ angular.module('OutputTable', [])
         }
         function getTableHeader(data){
           // convert header data
-          console.log(data[0]);
+          //console.log(data[0]);
+          //console.log(data[1]);
           var headerData = convertTableHeader(data[0], 1);
           // get max level
           var maxLevel = 0;
@@ -54,9 +55,10 @@ angular.module('OutputTable', [])
         function convertTableHeader(data, level) {
           var headerData = [];
           for (var prop in data) {
-              console.log(prop);
+              //console.log(data[prop]);
             if (typeof data[prop] == 'object' && data[prop] != null) {
-              var subHeaderData = convertTableHeader(data[prop][0], level + 1);                
+              //console.log(data[prop][0]);
+              var subHeaderData = convertTableHeader(data[prop], level + 1);                
               var colspan = 0;
               for(var i=0;i<subHeaderData.length;i++){
                 colspan += subHeaderData[i].colspan;
@@ -99,20 +101,23 @@ angular.module('OutputTable', [])
           return tableRows;
         }
         function convertTableBody(data, level) {
+          //console.log(data);
           var bodyData = [];
           for (var prop in data) {
-              console.log(prop);
+              //console.log(prop);
             if (typeof data[prop] == "object" && data[prop] != null) {
               var subBodyData;
-              for(var i=0;i<data[prop].length;i++){
-                subBodyData = convertTableBody(data[prop][i], level + i);             
+              //console.log(data[prop]);
+              //console.log(data[prop].length);
+              //for(var i=0;i<data[prop].length;i++){
+                subBodyData = convertTableBody(data[prop], level + 1);             
                 var colspan = 0;
                 for(var j=0;j<subBodyData.length;j++){
                   colspan += subBodyData[j].colspan;
                   subBodyData[j].elementType = "object";
                   bodyData.push(subBodyData[j]);
                 }
-              }   
+              //}   
             }
             else{
               bodyData.push({ title: data[prop], level: level, colspan: 1, elementType: "primitive"});
@@ -128,7 +133,7 @@ angular.module('OutputTable', [])
  .directive('outputtable', function() {
      return {
         scope: {
-            table: '=',
+            table: '&',
             setData: '&',
             data: '='
         },
