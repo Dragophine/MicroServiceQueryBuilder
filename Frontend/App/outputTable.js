@@ -133,7 +133,7 @@ angular.module('OutputTable', [])
  .directive('outputtable', function() {
      return {
         scope: {
-            table: '&',
+            table: '=',
             setData: '&',
             data: '='
         },
@@ -144,6 +144,7 @@ angular.module('OutputTable', [])
 
               scope.$watch('table', function(newvalue, oldvalue) {
                  if(newvalue){
+                   //console.log(newvalue);
                     thisscope.setData(newvalue);
                  }
 
