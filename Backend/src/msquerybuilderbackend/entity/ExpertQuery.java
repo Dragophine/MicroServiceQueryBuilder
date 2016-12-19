@@ -1,4 +1,4 @@
-package application.entity;
+package msquerybuilderbackend.entity;
 
 import java.util.ArrayList;
 import java.util.HashSet;

@@ -1,8 +1,8 @@
-package application.repository;
+package msquerybuilderbackend.repository;
 
 import org.springframework.data.neo4j.repository.GraphRepository;
 
-import application.entity.Category;
+import msquerybuilderbackend.entity.Category;
 
 public interface CategoryRepository extends GraphRepository<Category> {
 

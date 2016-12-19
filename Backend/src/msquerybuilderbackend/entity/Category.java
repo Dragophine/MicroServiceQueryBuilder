@@ -1,4 +1,4 @@
-package application.entity;
+package msquerybuilderbackend.entity;
 
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
@@ -27,6 +27,7 @@ public String getName(){
 }
 
 public String getDescription(){
+	if (this.description==null) return "";
 	return this.description;
 }
 }

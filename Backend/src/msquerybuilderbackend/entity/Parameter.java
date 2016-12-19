@@ -1,4 +1,4 @@
-package application.entity;
+package msquerybuilderbackend.entity;
 
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;

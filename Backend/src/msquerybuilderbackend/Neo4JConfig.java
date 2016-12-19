@@ -1,4 +1,4 @@
-package application;
+package msquerybuilderbackend;
 
 import org.neo4j.ogm.session.SessionFactory;
 import org.springframework.context.annotation.Bean;
@@ -27,6 +27,6 @@ public class Neo4JConfig extends Neo4jConfiguration {
 	@Bean
 	public SessionFactory getSessionFactory() {
 		// TODO Auto-generated method stu
-		return new SessionFactory(getConfiguration(), "application.entity");
+		return new SessionFactory(getConfiguration(), "msquerybuilderbackend.entity");
 	}
 }
