@@ -88,6 +88,7 @@ public class AlertService {
 	
 	
 	@CrossOrigin 
+	@Transactional
 	@RequestMapping(value="/alerts",  method=RequestMethod.POST)
 	public ResponseEntity<Result> postAlert(@RequestBody Alert alert) throws Exception {
 		testTypes(alert);
