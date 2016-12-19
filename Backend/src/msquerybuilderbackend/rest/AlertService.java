@@ -49,10 +49,25 @@ public class AlertService {
 		return new ResponseEntity<List<Alert>>(alerts, HttpStatus.OK);
     }
 	
-	
+
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}",  method=RequestMethod.GET)
-	public ResponseEntity<Result> getAlert( @PathVariable String alertId){
+	public ResponseEntity<Alert> getAlert( @PathVariable String alertId){
+		Alert alert=null;
+		if (Long.parseLong(alertId) >=0){
+			 alert= alertRepository.findOne(Long.parseLong(alertId));
+		} else{
+			 alert= alertRepository.findByName(alertId);
+		}
+		
+		return new ResponseEntity<Alert>(alert, HttpStatus.OK);
+    }
+	
+	
+	
+	@CrossOrigin 
+	@RequestMapping(value="/alerts/{alertId}/execute",  method=RequestMethod.GET)
+	public ResponseEntity<Result> executeAlert( @PathVariable String alertId){
 		Alert alert=null;
 		if (Long.parseLong(alertId) >=0){
 			 alert= alertRepository.findOne(Long.parseLong(alertId));
