@@ -30,4 +30,8 @@ public String getDescription(){
 	if (this.description==null) return "";
 	return this.description;
 }
+
+public Long getId(){
+	return this.id;
+}
 }
