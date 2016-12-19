@@ -32,6 +32,10 @@ public String getType(){
 	return this.type;
 }
 
+public Long getId(){
+	return this.id;
+}
+
 public void setKey(String k){
 	this.key=k;
 }
@@ -47,6 +51,8 @@ public void setType(String t){
 public void setChangeable(boolean c){
 	this.changeable=c;
 }
+
+
 
 
 }

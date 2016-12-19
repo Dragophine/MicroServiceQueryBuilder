@@ -48,6 +48,7 @@ public class CategoryService {
 	
 
 	@CrossOrigin 
+	@Transactional
 	@RequestMapping(value="/categories",  method=RequestMethod.POST)
 	public ResponseEntity<Result> postCategory(@RequestBody Category category) throws Exception {
 		categoryRepository.save(category);

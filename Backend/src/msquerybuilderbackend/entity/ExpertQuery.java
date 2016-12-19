@@ -32,6 +32,10 @@ public ExpertQuery(){
 	
 }
 
+public Long getId(){
+	return this.id;
+}
+
 public String getQuery(){
 	return this.query;
 }
