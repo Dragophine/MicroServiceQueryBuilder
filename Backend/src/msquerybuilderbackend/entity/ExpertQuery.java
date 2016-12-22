@@ -1,4 +1,4 @@
-package application.entity;
+package msquerybuilderbackend.entity;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -30,6 +30,10 @@ private String category;
 
 public ExpertQuery(){
 	
+}
+
+public Long getId(){
+	return this.id;
 }
 
 public String getQuery(){

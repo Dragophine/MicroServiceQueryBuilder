@@ -1,32 +1,30 @@
-package application.entity;
+package msquerybuilderbackend.entity;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class Relationship {
+import ch.qos.logback.core.filter.Filter;
 
-	private String relationshipType="";
-	private String direction ="";
-	private String optional="";
-	private Set<ReturnAttribute> returnAttributes = new HashSet<ReturnAttribute>(0);
-	private Set<FilterAttribute> filterAttributes = new HashSet<FilterAttribute>(0);
-	private Set<OrderByAttribute> orderByAttributes = new HashSet<OrderByAttribute>(0);
-	private Node node;
+public class Node {
 	
-	public String getRelationshipType(){
-
-		return this.relationshipType;
+	private String type;
+	private Set<ReturnAttribute> returnAttributes  = new HashSet<ReturnAttribute>(0);
+	private Set<FilterAttribute> filterAttributes  = new HashSet<FilterAttribute>(0);
+	private Set<OrderByAttribute> orderByAttributes  = new HashSet<OrderByAttribute>(0);
+	private Set<Relationship> relationship= new HashSet<Relationship>();
+	
+	
+	public Node(){
+		
 	}
 	
-	public String getDirection(){
-		return this.direction;
-	}
-	
-	public String getOptional(){
-		return this.optional;
+	public String getType(){
+		if (this.type==null) return "";
+		return this.type;
 	}
 	
 	public Set<ReturnAttribute> getReturnAttributes(){
+		
 		return this.returnAttributes;
 	}
 	public Set<FilterAttribute> getFilterAttributes(){
@@ -36,21 +34,11 @@ public class Relationship {
 		return this.orderByAttributes;
 	}
 	
-	public Node getNode(){
-		return this.node;
+	public Set<Relationship> getRelationship(){
+		return this.relationship;
 	}
 	
-	public void setRelationshipType(String r){
-		this.relationshipType=r;
-	}
 	
-	public void setDirection(String d){
-		this.direction=d;
-	}
-	
-	public void setOptional(String o){
-		this.optional=o;
-	}
 	
 	public void setReturnAttributes(Set<ReturnAttribute> r){
 		this.returnAttributes=r;
@@ -64,8 +52,8 @@ public class Relationship {
 		this.orderByAttributes=o;
 	}
 	
-	public void setNode(Node n){
-		this.node=n;
+	public void setRelationship(Set<Relationship> r){
+		this.relationship=r;
 	}
 	
 	public void addReturnAttribute(ReturnAttribute r){
@@ -86,6 +74,11 @@ public class Relationship {
 		orderByAttributes.add(o);
 	}
 	
-
+	public void addRelationship(Relationship r){
+		if (relationship==null)
+			relationship = new HashSet<Relationship>(0);
+		relationship.add(r);
+	}
+	
 	
 }

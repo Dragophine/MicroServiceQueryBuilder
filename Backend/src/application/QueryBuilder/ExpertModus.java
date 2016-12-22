@@ -27,11 +27,11 @@ import org.springframework.web.bind.annotation.RestController;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
-import application.entity.ExpertQuery;
-import application.entity.Parameter;
-import application.exception.InvalidParameterTypeException;
-import application.repository.ExpertQueryRepository;
-import application.repository.ParameterRepository;
+import msquerybuilderbackend.entity.ExpertQuery;
+import msquerybuilderbackend.entity.Parameter;
+import msquerybuilderbackend.exception.InvalidTypeException;
+import msquerybuilderbackend.repository.ExpertQueryRepository;
+import msquerybuilderbackend.repository.ParameterRepository;
 
 import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.sameInstance;
@@ -147,75 +147,84 @@ public class ExpertModus {
 	    private void testTypes(Parameter p) throws Exception{
 	    	switch(p.getType()){
     		case "int":
+    		case "integer":
+    		case "Integer":
     			try{
     			int i = Integer.parseInt((String)p.getValue());
     			p.setValue(i);
     			}catch (Exception e){
-    				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
+    				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
     				
     			}
     		break;
     		
     		case "double":
+    		case "Double":
     			try{
 	    			double i = Double.parseDouble((String)p.getValue());
 	    			p.setValue(i);
 	    			}catch (Exception e){
-	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
+	      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
     			break;
     		
     		case "char":
+    		case "Char":
     			try{
 	    			char i=(char) p.getValue();
 	    			p.setValue(i);
 	    			}catch (Exception e){
-	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
+	      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
     			break;
     			
     		case "boolean":
+    		case "Boolean":
     			try{
 	    			boolean i=(boolean) p.getValue();
 	    			p.setValue(i);
 	    			}catch (Exception e){
-	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
+	      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
     			break;
     			
     		case "float":
+    		case "Float":
     			try{
 	    			float i = Float.parseFloat((String)p.getValue());
 	    			p.setValue(i);
 	    			}catch (Exception e){
-	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
+	      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
     			break;
     		
     		case "long":
+    		case "Long":
     			try{
 	    			long i = Long.parseLong((String)p.getValue());
 	    			p.setValue(i);
 	    			}catch (Exception e){
-	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
+	      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
     			break;
     			
     		case "short":
+    		case "Short":
     			try{
 	    			short i = Short.parseShort((String)p.getValue());
 	    			p.setValue(i);
 	    			}catch (Exception e){
-	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
+	      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
     			break;
     			
     		case "byte":
+    		case "Byte":
     			try{
 	    			byte i = Byte.parseByte((String)p.getValue());
 	    			p.setValue(i);
 	    			}catch (Exception e){
-	      				throw new InvalidParameterTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
+	      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
     			break;
     			

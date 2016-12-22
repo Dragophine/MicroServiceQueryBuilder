@@ -19,16 +19,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import application.entity.FilterAttribute;
-import application.entity.Node;
-import application.entity.OrderByAttribute;
-import application.entity.Parameter;
-import application.entity.QueryBuilder;
-import application.entity.QueryBuilderStringObject;
-import application.entity.Relationship;
-import application.entity.ReturnAttribute;
-import application.repository.ExpertQueryRepository;
-import application.repository.ParameterRepository;
+import msquerybuilderbackend.entity.FilterAttribute;
+import msquerybuilderbackend.entity.Node;
+import msquerybuilderbackend.entity.OrderByAttribute;
+import msquerybuilderbackend.entity.Parameter;
+import msquerybuilderbackend.entity.QueryBuilder;
+import msquerybuilderbackend.entity.QueryBuilderStringObject;
+import msquerybuilderbackend.entity.Relationship;
+import msquerybuilderbackend.entity.ReturnAttribute;
+import msquerybuilderbackend.repository.ExpertQueryRepository;
+import msquerybuilderbackend.repository.ParameterRepository;
 
 @RestController
 public class QueryBuilderModus {

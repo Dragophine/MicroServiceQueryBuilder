@@ -1,4 +1,4 @@
-package application;
+package msquerybuilderbackend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
@@ -10,9 +10,9 @@ import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 @EnableAutoConfiguration
 @ComponentScan
 @EnableNeo4jRepositories
-public class Application {
+public class MicroServiceQueryBuilderBackendApplication {
 
     public static void main(String[] args) {
-        SpringApplication.run(Application.class, args);
+        SpringApplication.run(MicroServiceQueryBuilderBackendApplication.class, args);
     }
 }
