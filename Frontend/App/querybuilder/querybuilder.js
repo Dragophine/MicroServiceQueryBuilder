@@ -198,25 +198,6 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		self.transfairToGraph();
 	}
 
-	/***
-	This methods load the relationships for a specific node.
-	*/
-	self.loadRelationshipForNodeCB = function($success, $data, $status){
-		self.hasError = !$success;
-		if($success){
-			self.availableRelationships = $data;
-		}
-		else
-		{
-			self.error = $data;
-		}
-	}
-
-	self.loadRelationshipForNode = function($node){
-
-		$requests.getRelations($node, self.loadRelationshipForNodeCB);
-	}
-
 
 	/***
 	This methods load the relationships for a specific node.

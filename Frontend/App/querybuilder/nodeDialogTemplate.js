@@ -18,14 +18,14 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
         /***
 		This methods load the keys for a specific node.
 		*/
-		self.loadKeysForNodeCB = function($success, $data, $status){
+		self.getKeysCB = function($success, $data, $status){
 			self.hasError = !$success;
 			if($success){
 				self.keys = $data; 
 			}
 		};
 
-		$requests.getKeys(self.node['type'], self.loadKeysForNodeCB);
+		$requests.getKeys(self.node['type'], self.getKeysCB);
 
 		/**
 		This method load the relationships for a specific node.

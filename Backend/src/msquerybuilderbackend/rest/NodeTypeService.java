@@ -72,7 +72,8 @@ public class NodeTypeService {
 	@RequestMapping(value="/nodetypes/{nodeId}/keys", method=RequestMethod.GET)
 	public ResponseEntity<Result> getKeys(@PathVariable String nodeId) throws Exception {
 		
-		String queryKeys = "MATCH (n:" + nodeId + ") return distinct keys(n) AS Keys";
+		String queryKeys = "MATCH (n:" + nodeId + ") UNWIND keys(n) AS key " +
+						 "WITH key ORDER BY key RETURN  COLLECT(distinct key) as Keys";
 
 		Result result = neo4jOperations.query(queryKeys, new HashMap<String, String>());
 		

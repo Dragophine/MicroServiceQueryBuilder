@@ -45,7 +45,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
-
+    //Execute Query with Querybuilder
     this.getResultFromQueryQueryBuilder = function($query, $callback) {
         $http({
             method : 'POST',
@@ -89,11 +89,11 @@ angular.module('queryBuilder.services', ['ngCookies'])
     };
 
 
-     //sample method to send login data
+    //getNodes 
     this.getNodes = function($callback) {
         $http({
             method : 'GET',
-            url : $serverRestLocation.getValue() + '/listNodes', 
+            url : $serverRestLocation.getValue() + '/nodetypes', 
             headers: { 
                     'Content-Type':'application/json'
             }
@@ -106,16 +106,13 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
-    //sample method to send login data
+    //get Keys
     this.getKeys = function($label, $callback) {
         $http({
-            method : 'POST',
-            url : $serverRestLocation.getValue() + '/listKeys', 
+            method : 'GET',
+            url : $serverRestLocation.getValue() + '/nodetypes/' + $label + '/keys', 
             headers: { 
                     'Content-Type':'application/json'
-            },
-            data: { 
-              "label" : $label
             }
         })
         .success(function(data, status) {
@@ -126,36 +123,15 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
-     //sample method to send login data
-    this.getRelations = function($label, $callback) {
-        $http({
-            method : 'POST',
-            url : $serverRestLocation.getValue()+ '/listRelations', 
-            headers: { 
-                    'Content-Type':'application/json'
-            },
-            data: { 
-              "label" : $label
-            }
-        })
-        .success(function(data, status) {
-            $callback(true, data, status); 
-        })
-        .error(function(data, status) {
-            $callback(false, data, status);
-        });
-    };
+
     
     //getRelations with nodes
     this.getRelationsWithNodes = function($label, $callback) {
         $http({
-            method : 'POST',
-            url : $serverRestLocation.getValue()+ '/listRelationsWithNodes', 
+            method : 'GET',
+            url : $serverRestLocation.getValue()+ '/nodetypes/'+ $label + '/relations/', 
             headers: { 
                     'Content-Type':'application/json'
-            },
-            data: { 
-              "label" : $label
             }
         })
         .success(function(data, status) {
