@@ -280,6 +280,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		      direction: 'UD',        // UD, DU, LR, RL
 		      sortMethod: 'hubsize'   // hubsize, directed
 		    }
+		},
+		interaction:{
+		    zoomView: false
 		}
 	};
 

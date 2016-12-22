@@ -6,105 +6,132 @@
             <h2>{{key}}</h2>
             <div class="row panel" >
               <div class="col-md-5">
-                <div class="row">
-                  <input id="inlineradio0" type="checkbox" class="col-md-2"
+                <div class="panel panel-default top-buffer-small" >
+                  <div class="panel-heading">
+                        <div class="pull-left" style="width:15px;">
+                          <input id="inlineradio0" type="checkbox" 
                            ng-checked="ctrl.isFilterAttributesChecked(key)"
                            ng-click="ctrl.setFilterAttributes(key)">
-                  <div  class="col-md-10">
-                      FILTER
-                   </div>
-                </div>
-                <div ng-if="ctrl.isFilterAttributesChecked(key)" class="top-buffer-small"> 
-                  <div >
-                    TYPE
+                        </div>
+                        <div class="pull-left left-buffer ">
+                           Filter
+                        </div>
+                        <div class="clearfix"></div>
                   </div>
-                    <select name="singleSelect" id="singleSelect" 
-                      ng-model="type"
-                      ng-change="ctrl.setFilterAttributesDynamic(key, 'type', type)" 
-                      ng-watch='ctrl.getFilterAttributes(key)'
-                      ng-watch-object-value="type">
-                      <option value="string">STRING</option> 
-                      <option value="integer">INT</option>
-                      <option value="double">DOUBLE</option>
-                      <option value="date">DATE</option>
-                   </select>
-                   <div class="top-buffer-small">
-                    FILTER TYPE
-                  </div>
-                    <select name="singleSelect" id="singleSelect" 
+                  <div ng-if="ctrl.isFilterAttributesChecked(key)" class="panel-body"> 
+                      <div>
+                       Type
+                      </div>
+                      <select name="singleSelect" id="singleSelect" class="form-control"
+                        ng-model="type"
+                        ng-change="ctrl.setFilterAttributesDynamic(key, 'type', type)" 
+                        ng-watch='ctrl.getFilterAttributes(key)'
+                        ng-watch-object-value="type">
+                        <option value="string">STRING</option> 
+                        <option value="integer">INT</option>
+                        <option value="double">DOUBLE</option>
+                        <option value="date">DATE</option>
+                      </select>
+                      <div class="top-buffer-small">
+                        Filter Type
+                      </div>
+                      <select name="singleSelect" id="singleSelect" class="form-control"
                       ng-model="filterType"
                       ng-change="ctrl.setFilterAttributesDynamic(key, 'filterType', filterType)" 
                       ng-watch='ctrl.getFilterAttributes(key)'
                       ng-watch-object-value="filterType">
-                      <option value="=">EQUALS</option> 
-                      <option value="<">GREATER</option>
-                      <option value=">">SMALLER</option>
-                      <option value="<=">GREATER EQUAL</option>
-                      <option value=">=">SMALLER EQUAL</option>
-                   </select>
-                  <div class="top-buffer-small">
-                    FILTER
-                  </div>
-                  <input type="textarea" class="form-control" id="query" 
+                        <option value="=">EQUALS</option> 
+                        <option value="<">GREATER</option>
+                        <option value=">">SMALLER</option>
+                       <option value="<=">GREATER EQUAL</option>
+                        <option value=">=">SMALLER EQUAL</option>
+                      </select>
+                      <div class="top-buffer-small">
+                         Filter
+                      </div>
+                      <input type="textarea" class="form-control" id="query" 
                           ng-change="ctrl.setFilterAttributesDynamic(key, 'value', value)" 
                           ng-watch='ctrl.getFilterAttributes(key)'
                           ng-watch-object-value="value"
                           ng-model="value"/>
-                    <div class="top-buffer-small">
-                    CHANGEABLE
+                      </input>
+                      <div class="input-group top-buffer-small">
+                          <div class="panel-title pull-left" style="width:15px;">
+                            <input type="checkbox" 
+                             ng-value="true"
+                             ng-model="changeable"
+                             ng-change="ctrl.setFilterAttributesDynamic(key, 'changeable', changeable)"
+                             ng-watch='ctrl.getFilterAttributes(key)'
+                             ng-watch-object-value="changeable">
+                            </input>
+                          </div>
+                          <div class="panel-title pull-left left-buffer ">
+                            Cangeable
+                          </div>
+                          <div class="clearfix"></div> 
+                      </div>
                     </div>
-                     <input type="checkbox" class="col-md-2"
-                           ng-value="true"
-                           ng-model="changeable"
-                           ng-change="ctrl.setFilterAttributesDynamic(key, 'changeable', changeable)"
-                           ng-watch='ctrl.getFilterAttributes(key)'
-                           ng-watch-object-value="changeable">
                 </div>
               </div>
               <div class="col-md-3">
-                 <div class="row">
-                   <input id="inlineradio1" type="checkbox" class="col-md-2"
-                           ng-checked="ctrl.isReturnAttributesChecked(key)"
-                           ng-click="ctrl.setReturnAttributes(key)">
-                   <div  class="col-md-10">
-                      RETURN
-                   </div>
+                 <div class="panel panel-default top-buffer-small" >
+                    <div class="panel-heading">
+                        <div class="panel-title pull-left" style="width:15px;">
+                          <input id="inlineradio1" type="checkbox"
+                                 ng-checked="ctrl.isReturnAttributesChecked(key)"
+                                 ng-click="ctrl.setReturnAttributes(key)">
+                          </input>
+                        </div>
+                        <div class="panel-title pull-left left-buffer">
+                            Return
+                        </div>
+                        <div class="clearfix"></div>
+                    </div>
                  </div>
               </div>
               <div class="col-md-3">
-                <div class="row">
-                  <input  type="checkbox"  class="col-md-1"
-                          ng-checked="ctrl.isOrderByAttributesChecked(key)"
-                          ng-click="ctrl.setOrderByAttributes(key)">
-                  <div class="col-md-2" >
-                      ORDER
-                  </div>
-                </div>
-                
-                <div class="row top-buffer-small" ng-if="ctrl.isOrderByAttributesChecked(key)">
-                  <input  type="radio" class="col-md-1" 
-                          name="{{'radio' + key}}"
-                          value="asc"
-                          ng-model="value"
-                          ng-change='ctrl.setOrderByAttributesValue(key, value)'
-                          ng-watch='ctrl.getOrderByAttributes(key)'
-                          ng-watch-object-value="direction">
-                  <div class="col-md-2" >
-                      ASC
-                  </div>
-                </div> 
-                <div class="row top-buffer-small" ng-if="ctrl.isOrderByAttributesChecked(key)">
-                  <input  type="radio" class="col-md-1"
-                          name="{{'radio' + key}}"
-                          value="desc"
-                          ng-model="value"
-                          ng-change='ctrl.setOrderByAttributesValue(key, value)'
-                          ng-watch='ctrl.getOrderByAttributes(key)'
-                          ng-watch-object-value="direction">
-                  <div class="col-md-2" >
-                      DESC
-                  </div>
-                </div>
+                <div class="panel panel-default top-buffer-small" >
+                    <div class="panel-heading">
+                      <div class="panel-title pull-left" style="width:15px;">
+                        <input  type="checkbox" 
+                        ng-checked="ctrl.isOrderByAttributesChecked(key)"
+                        ng-click="ctrl.setOrderByAttributes(key)">
+                        </input>
+                      </div>
+                      <div class="panel-title pull-left left-buffer" >
+                        Order
+                      </div>
+                      <div class="clearfix"></div>
+                    </div>
+                    <div class="panel-body" ng-if="ctrl.isOrderByAttributesChecked(key)">
+                      <div>
+                        <input  type="radio" class="col-md-1" 
+                                name="{{'radio' + key}}"
+                                value="asc"
+                                ng-model="value"
+                                ng-change='ctrl.setOrderByAttributesValue(key, value)'
+                                ng-watch='ctrl.getOrderByAttributes(key)'
+                                ng-watch-object-value="direction">
+                        </input>
+                        <div class="col-md-2" >
+                            ASC
+                        </div>
+                      </div> 
+                      <div class="row top-buffer-small">
+                        <input  type="radio" class="col-md-1"
+                                name="{{'radio' + key}}"
+                                value="desc"
+                                ng-model="value"
+                                ng-change='ctrl.setOrderByAttributesValue(key, value)'
+                                ng-watch='ctrl.getOrderByAttributes(key)'
+                                ng-watch-object-value="direction">
+                        </input>
+                        <div class="col-md-2" >
+                            DESC
+                        </div>
+                      </div>
+                    </div>
+                </div>            
               </div>
             </div>
           </div>
