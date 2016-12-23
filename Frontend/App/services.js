@@ -22,14 +22,11 @@ angular.module('queryBuilder.services', ['ngCookies'])
     this.getResultFromQuery = function($query, $params, $callback) {
         $http({
             method : 'POST',
-            url : $serverRestLocation.getValue() + '/expertModus', 
+            url : $serverRestLocation.getValue() + '/expertqueries/execute', 
             headers: {  'Content-Type':'application/json'},
             data: { 
               "query" : $query,
-              "parameter" :  $params,
-                "name" : "Query1",
-                "description" : "Query 11",
-                "category" : "abc" }
+              "parameter" :  $params }
         })
         .success(function(data, status) {
             console.log(data);
@@ -146,7 +143,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
     this.saveQuery = function($query, $params, $name, $description, $category, $callback) {
         $http({
             method : 'POST',
-            url : $serverRestLocation.getValue() + '/saveQuery', 
+            url : $serverRestLocation.getValue() + '/expertqueries', 
             headers: {  'Content-Type':'application/json'},
             data: { 
               "query" : $query,
@@ -173,7 +170,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
     this.deleteQuery = function($query, $params, $name, $description, $category, $callback) {
         $http({
             method : 'DELETE',
-            url : $serverRestLocation.getValue() + '/deleteQuery', 
+            url : $serverRestLocation.getValue() + '/expertqueries/' + $name, 
             headers: {  'Content-Type':'application/json'},
             data: { 
               "query" : $query,
@@ -200,7 +197,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
     this.loadQuery = function($callback) {
         $http({
             method : 'GET',
-            url : $serverRestLocation.getValue() + '/loadQuery', 
+            url : $serverRestLocation.getValue() + '/expertqueries', 
             headers: { 
                     'Content-Type':'application/json'
             }
@@ -212,6 +209,129 @@ angular.module('queryBuilder.services', ['ngCookies'])
             $callback(false, data, status);
         });
     };
-
-
+    
+    //get all already existing alerts
+    this.getAllAlertNames = function($callback) {
+        $http({
+            method : 'GET',
+            url : $serverRestLocation.getValue() + '/alerts', 
+            headers: { 
+                    'Content-Type':'application/json'
+            }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };
+    
+    // add alert
+    this.addAlert = function($name, $nodeName, $attributeName, $type, $filterType,
+    		$email, $value, $callback) {
+        $http({
+            method : 'POST',
+            url : $serverRestLocation.getValue() + '/alerts', 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+              "name" : $name,
+              "nodeName" :  $nodeName,
+              "attributeName" : $attributeName,
+              "type" : $type,
+              "filterType" : $filterType,
+              "value" : $value,
+              "email" : $email }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    };
+    
+    // save alert
+    this.saveAlert = function($existingName, $name, $nodeName, $attributeName, $type, $filterType,
+    		$email, $value, $callback) {
+        $http({
+            method : 'PUT',
+            url : $serverRestLocation.getValue() + '/alerts/' + $existingName, 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+              "name" : $name,
+              "nodeName" :  $nodeName,
+              "attributeName" : $attributeName,
+              "type" : $type,
+              "filterType" : $filterType,
+              "value" : $value,
+              "email" : $email }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    };
+    
+    // delete alert
+    this.deleteAlert = function($name, $callback) {
+        $http({
+            method : 'DELETE',
+            url : $serverRestLocation.getValue() + '/alerts/' + $name, 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+                "name" : $name
+                }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    };
+        
+    // execute alert
+    this.executeAlert = function($name, $callback) {
+        $http({
+            method : 'GET',
+            url : $serverRestLocation.getValue() + '/alerts/' + $name + '/execute', 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+                "name" : $name
+                }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    };    
 }]);

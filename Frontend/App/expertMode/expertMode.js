@@ -26,6 +26,7 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 //	self.paramcnt = -1;
 	
 	self.params = [];
+	self.invalidSaveText = [];
 	
 	/**
 	 * Immer wenn sich bei der Query etwas ändert, sollen sich die Parameter automatisch anpassen.
@@ -121,15 +122,16 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 
 	// When the user clicks on the button, open the modal 
 	btnSave.onclick = function() {
+		self.invalidSaveText = [];
 		modalSave.style.display = "block";
 		
 	}	
 	btnLoad.onclick = function() {
-		self.queries = $requests.loadQuery(self.queriesCB);
+		$requests.loadQuery(self.queriesCB);
 		modalLoad.style.display = "block";
 	}
 	btnDelete.onclick = function() {
-		self.queries = $requests.loadQuery(self.queriesCB);
+		$requests.loadQuery(self.queriesCB);
 		modalDelete.style.display = "block";
 	}
 
@@ -181,10 +183,8 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 			 * Da die Query auch Parameter, etc. returniert
 			 * müssen die Queries rausgesucht werden.
 			 */
-			if(self.queries == undefined)
-			{
-				self.queries = [];
-			}
+			self.queries = [];
+			
 			var i;
 			// queries mit Parameter
 			for(i = 0; i < $data.length; i++)
@@ -231,15 +231,29 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		$requests.getResultFromQuery(self.myCodeMirror.getValue(), self.params, self.callback);
 	}
 	
-	self.saveQuery = function() {
-		$requests.saveQuery(self.myCodeMirror.getValue(), self.params, 
-				self.name, self.description, self.category, self.callback);
-		// Zurücksetzen der Werte sonst werden sie beim nächsten Öffnen vom Save-Dialog gleich wieder angezeigt.
-		self.name = "";
-		self.description = "";
-		self.category = "";
-		// Schließe Save-Dialog
-		modalSave.style.display = "none";
+	self.saveQuery = function()
+	{
+		self.invalidSaveText = [];
+		var queryName = self.name;
+		$requests.loadQuery(self.queriesCB);
+		
+		if(!existsQueryName(queryName))
+		{
+			self.invalidSaveText = [];
+			$requests.saveQuery(self.myCodeMirror.getValue(), self.params, 
+					queryName, self.description, self.category, self.callback);
+			// Zurücksetzen der Werte sonst werden sie beim nächsten Öffnen vom Save-Dialog gleich wieder angezeigt.
+			self.name = "";
+			self.description = "";
+			self.category = "";
+			// Schließe Save-Dialog
+			modalSave.style.display = "none";
+		}
+		else
+		{
+			self.invalidSaveText.push("Der Queryname existiert bereits, " +
+					"verwenden Sie bitte einen anderen Querynamen.");
+		}
 	}
 	
 	self.deleteSelectedQuery = function($query) {
@@ -274,5 +288,17 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		
 		// Schließe Load-Dialog
 		modalLoad.style.display = "none";
+	}
+	
+	function existsQueryName($queryName)
+	{
+	    for (var i = 0; i < self.queries.length; i++)
+	    {
+	        if (self.queries[i].name === $queryName)
+	        {
+	            return true;
+	        }
+	    }
+	    return false;
 	}
 }]);
