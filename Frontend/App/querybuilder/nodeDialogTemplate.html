@@ -104,6 +104,32 @@
                       <div class="clearfix"></div>
                     </div>
                     <div class="panel-body" ng-if="ctrl.isOrderByAttributesChecked(key)">
+                       
+                       <div class="row">
+                          <input  class="col-xs-3" type="radio" 
+                            name="{{'radio' + key}}"
+                            value="asc"
+                            ng-model="value"
+                            ng-click='ctrl.setOrderByAttributesValue(key, value)'
+                            ng-watch='ctrl.getOrderByAttributes(key)'
+                            ng-watch-object-value="direction">
+                          </input>
+                          <div class="col-xs-9">ASC</div>
+                        </div>
+                        <div class="row">
+                          
+                           <input class="col-xs-3"  class="btn btn-primary" type="radio" 
+                            name="{{'radio' + key}}"
+                            value="desc"
+                            ng-model="value"
+                            ng-click='ctrl.setOrderByAttributesValue(key, value)'
+                            ng-watch='ctrl.getOrderByAttributes(key)'
+                            ng-watch-object-value="direction">
+                            <div class="col-xs-9">DESC</div>
+                          </input>
+                         </div>
+                  
+                      <!--
                       <div>
                         <input  type="radio" class="col-md-1" 
                                 name="{{'radio' + key}}"
@@ -128,7 +154,7 @@
                         </input>
                         <div class="col-md-2" >
                             DESC
-                        </div>
+                        </div>-->
                       </div>
                     </div>
                 </div>            
