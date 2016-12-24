@@ -69,8 +69,23 @@ public class AlertService {
 	@RequestMapping(value="/alerts/{alertId}/execute",  method=RequestMethod.GET)
 	public ResponseEntity<Result> executeAlert( @PathVariable String alertId){
 		Alert alert=null;
-		if (Long.parseLong(alertId) >=0){
-			 alert= alertRepository.findOne(Long.parseLong(alertId));
+		Long id = new Long(-1);
+		
+		try
+		{
+			id = Long.parseLong(alertId);
+		}
+		catch(NumberFormatException P_ex)
+		{
+			/**
+			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
+			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
+			 * eindeutige Name sein. 
+			 */
+		}
+		
+		if (id >=0){
+			 alert= alertRepository.findOne(id);
 		} else{
 			 alert= alertRepository.findByName(alertId);
 		}
@@ -109,9 +124,24 @@ public class AlertService {
 	@Transactional
 	public ResponseEntity<Alert> updateAlert( @PathVariable String alertId, @RequestBody Alert al) throws Exception{
 		testTypes(al);
-		Alert alert=null;
-		if (Long.parseLong(alertId) >=0){
-			 alert= alertRepository.findOne(Long.parseLong(alertId));
+		Alert alert=null;		
+		Long id = new Long(-1);
+		
+		try
+		{
+			id = Long.parseLong(alertId);
+		}
+		catch(NumberFormatException P_ex)
+		{
+			/**
+			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
+			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
+			 * eindeutige Name sein. 
+			 */
+		}
+		
+		if (id >=0){
+			 alert= alertRepository.findOne(id);
 		} else{
 			 alert= alertRepository.findByName(alertId);
 		}
@@ -134,8 +164,24 @@ public class AlertService {
 	@Transactional
 	public ResponseEntity<Result> deleteAlert( @PathVariable String alertId){
 		Alert alert=null;
-		if (Long.parseLong(alertId) >=0){
-			 alert= alertRepository.findOne(Long.parseLong(alertId));
+		Long id = new Long(-1);
+		
+		try
+		{
+			id = Long.parseLong(alertId);
+		}
+		catch(NumberFormatException P_ex)
+		{
+			/**
+			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
+			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
+			 * eindeutige Name sein. 
+			 */
+		}
+		
+		
+		if (id >=0){
+			 alert= alertRepository.findOne(id);
 		} else{
 			 alert= alertRepository.findByName(alertId);
 		}
@@ -151,7 +197,14 @@ public class AlertService {
  		case "integer":
  		case "Integer":
  			try{
- 			int i = Integer.parseInt((String)a.getValue());
+ 				
+			/**
+			 * Castet man einen Integer mittels (String) auf einen Stringwert kommt es zu einen Fehler:
+			 * java.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.String
+			 * at msquerybuilderbackend.rest.AlertService.executeAlert(AlertService.java:95) ~[classes/:na]
+			 * --> Stattdessen wird toString() verwendet.
+			 */
+ 			int i = Integer.parseInt(a.getValue().toString());
  			a.setValue(i);
  			}catch (Exception e){
  				throw new InvalidTypeException("alert with name "+a.getName()+" is not from Type "+a.getType());

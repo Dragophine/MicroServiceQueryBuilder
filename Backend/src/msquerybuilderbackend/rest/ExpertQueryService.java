@@ -89,8 +89,23 @@ public class ExpertQueryService {
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.DELETE)	 
 		    public ResponseEntity<Result> deleteQuery(@PathVariable String queryId) throws Exception	{
 				ExpertQuery expertQuery=null;
-				if (Long.parseLong(queryId) >=0){
-					 expertQuery= expertQueryRepository.findOne(Long.parseLong(queryId));
+				Long id = new Long(-1);
+				
+				try
+				{
+					id = Long.parseLong(queryId);
+				}
+				catch(NumberFormatException P_ex)
+				{
+					/**
+					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
+					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
+					 * eindeutige Name sein. 
+					 */
+				}
+				
+				if (id >=0){
+					 expertQuery= expertQueryRepository.findOne(id);
 				} else{
 					 expertQuery= expertQueryRepository.findByName(queryId);
 				}
@@ -110,7 +125,22 @@ public class ExpertQueryService {
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.PUT)	 
 		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody ExpertQuery updatedQuery) throws Exception	{
 				ExpertQuery expertQuery=null;
-				if (Long.parseLong(queryId) >=0){
+				Long id = new Long(-1);
+				
+				try
+				{
+					id = Long.parseLong(queryId);
+				}
+				catch(NumberFormatException P_ex)
+				{
+					/**
+					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
+					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
+					 * eindeutige Name sein. 
+					 */
+				}
+				
+				if (id >=0){
 					 expertQuery= expertQueryRepository.findOne(Long.parseLong(queryId));
 				} else{
 					 expertQuery= expertQueryRepository.findByName(queryId);
@@ -139,11 +169,24 @@ public class ExpertQueryService {
 			
 			@CrossOrigin 
 			@Transactional
-		    @RequestMapping(value="/expertqueries",  method=RequestMethod.GET)	 
-		    public ResponseEntity<List<ExpertQuery>> getQueries() throws Exception	{
-				List<ExpertQuery> expertQueries=expertQueryRepository.getAllExpertQueries();
-		
-			return new ResponseEntity<List<ExpertQuery>>(expertQueries,HttpStatus.OK);
+		    @RequestMapping(value="/expertqueries",  method=RequestMethod.GET)
+		    public ResponseEntity<Result> getQueries() throws Exception	{
+//		    public ResponseEntity<List<ExpertQuery>> getQueries() throws Exception	{
+//				List<ExpertQuery> expertQueries=expertQueryRepository.getAllExpertQueries();
+//		
+//			return new ResponseEntity<List<ExpertQuery>>(expertQueries,HttpStatus.OK);
+				
+				/**
+				 * Workaround: Wenn auch die Parameter aufgelöst und returniert werden in der Query,
+				 * dann sind die dazugehörigen Parameter aller Queries die returniert werden auch sichtbar.
+				 */
+				String queryNodesQuery = "MATCH (n:ExpertQuery) OPTIONAL MATCH (m:ExpertQuery)-[e:HAS_PARAMETER]-(x) RETURN n,m,e,x";			
+				Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
+	
+	//			String queryNodesQuery = "MATCH (n:ExpertQuery) RETURN n";			
+	//			Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
+	
+			return new ResponseEntity<Result>(resultQuery, HttpStatus.OK);
 		    }
 			
 			@CrossOrigin 
@@ -151,13 +194,27 @@ public class ExpertQueryService {
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.GET)	 
 		    public ResponseEntity<ExpertQuery> getQuery(@PathVariable String queryId) throws Exception	{
 				ExpertQuery expertQuery=null;
-				if (Long.parseLong(queryId) >=0){
+				Long id = new Long(-1);
+				
+				try
+				{
+					id = Long.parseLong(queryId);
+				}
+				catch(NumberFormatException P_ex)
+				{
+					/**
+					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
+					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
+					 * eindeutige Name sein. 
+					 */
+				}
+				
+				if (id >=0){
 					 expertQuery= expertQueryRepository.findOne(Long.parseLong(queryId));
 				} else{
 					 expertQuery= expertQueryRepository.findByName(queryId);
 				}
-		    	
-		
+
 			return new ResponseEntity<ExpertQuery>(expertQuery,HttpStatus.OK);
 		    }
 			

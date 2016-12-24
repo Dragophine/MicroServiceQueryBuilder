@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<div  ng-controller="alertingCtrl as ctrl">
+
+<table class="table">
+	<tbody >
+		<tr> 
+			<td>
+			<h2>Alert erstellen/speichern</h2>
+			
+  <form class="loginform">
+    <div class="group">
+      <input type="text" ng-model="ctrl.name">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Name</label>
+    </div>
+    
+	<div class="group" >
+      <select  ng-model="ctrl.nodeName" ng-change="ctrl.setNode()"
+      style="width: 100%; display:block; margin-bottom: 5px">
+          <option ng-repeat="node in ctrl.availableNodes"> {{node.Label[0]}} </option>
+      </select>
+      <label>Knotenname</label>
+    </div>
+    
+   	<div class="group" >
+      <select ng-model="ctrl.attributeName"
+      style="width: 100%; display:block; margin-bottom: 5px">
+          <option ng-repeat="node in ctrl.availableAttributeNames[0].Keys"> {{node}} </option>
+      </select>
+      <label>Attributename</label>
+    </div>       
+    
+    <div class="group">
+       <select ng-model="ctrl.type">
+         <option value="string">STRING</option> 
+         <option value="integer">INT</option>
+         <option value="double">DOUBLE</option>
+         <option value="date">DATE</option>
+      </select>
+      <label>Datentyp</label>
+    </div>	
+	<div class="group" >
+      <select  ng-model="ctrl.filterType"
+      style="width: 100%; display:block; margin-bottom: 5px">
+		<option value="=">EQUALS</option> 
+		<option value="<">GREATER</option>
+		<option value=">">SMALLER</option>
+		<option value="<=">GREATER EQUAL</option>
+		<option value=">=">SMALLER EQUAL</option>
+      </select>
+      <label>Filtertyp</label>
+    </div>
+    <div class="group">
+      <input type="text" ng-model="ctrl.value">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Wert</label>
+    </div>
+    <div class="group">
+      <input type="email" ng-model="ctrl.email">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Email-Adresse</label>
+    </div>
+    <button type="button" class="button buttonBlue" ng-click="ctrl.addAlert($event)"> Neuen Alert erzeugen </button>    
+    <div class="row" ng-if="ctrl.selectedAlertName">    
+    <button type="button" class="button buttonBlue" ng-click="ctrl.saveAlert($event)"> Bestehenden Alert speichern </button>
+   	<button type="button" class="button buttonBlue" ng-click="ctrl.resetValues($event)"> Ausgefuellte Werte zuruecksetzen </button>
+	</div>
+	
+	<!-- The Modal -->
+	<div id="myModalMissingData" class="modal">	
+	  <!-- Modal content - Save Query -->
+		<div class="modal-content">
+	    <h2>Bitte passen Sie die folgenden Werte an:</h2>
+   	      <div ng-repeat="errorText in ctrl.text" style="display: inline;">
+          	<label for="name"> {{errorText}} </label>
+		  </div>
+		<button id="missingDataOk"> Okay </button>
+	  </div>
+	</div>
+  </form>
+
+			</td>
+			<td>
+			
+			<h2>Existing Alerts</h2>
+			
+			 <table class="table">
+				<tbody >
+				<tr ng-repeat = "cell in ctrl.existingAlerts"> 
+					<td>
+					<label>Name: {{cell.name}} </label>
+						<button ng:click="ctrl.selectLoad(cell)"> Load Alert </button>
+						<button ng:click="ctrl.selectDelete(cell)"> Delete Alert </button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+</div>

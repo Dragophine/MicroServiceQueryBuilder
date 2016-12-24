@@ -36,6 +36,11 @@
 	  <!-- Modal content - Save Query -->
 		<div class="modal-content">
 	    <h2>Query speichern</h2>
+	    	<div class="row" ng-if="ctrl.invalidSaveText">
+	    		<div ng-repeat="text in ctrl.invalidSaveText" style="display: inline;">
+	    			<p><font color="red">{{text}}</font></p>
+	    		</div>
+    		</div>
 			<label for="name">Bitte geben Sie einen Namen für die Query an: </label>
 			<input id="name" name="name" type="text" ng-model="ctrl.name"/>
 			<label for="description">Bitte geben Sie einen Beschreibung für die Query an: </label>
