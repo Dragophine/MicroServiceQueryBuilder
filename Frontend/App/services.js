@@ -121,6 +121,23 @@ angular.module('queryBuilder.services', ['ngCookies'])
     };
 
 
+
+    //get Keys
+    this.getRelationshipKeys = function($label, $callback) {
+        $http({
+            method : 'GET',
+            url : $serverRestLocation.getValue() + '/relationshiptypes/' + $label + '/keys', 
+            headers: { 
+                    'Content-Type':'application/json'
+            }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };
     
     //getRelations with nodes
     this.getRelationsWithNodes = function($label, $callback) {
