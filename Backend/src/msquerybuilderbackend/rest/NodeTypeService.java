@@ -33,7 +33,7 @@ public class NodeTypeService {
 	public ResponseEntity<Result> getNodeTypes() throws Exception {
 
 		
-		String queryNodes = "MATCH (n) WHERE labels(n) <> \"ExpertQuery\" AND labels(n) <> \"Parameter\" AND labels(n)<>\"Alert\" return DISTINCT labels(n) AS Label";
+		String queryNodes = "MATCH (n) WHERE labels(n) <> \"ExpertQuery\" AND labels(n) <> \"Parameter\" AND labels(n)<>\"Alert\" AND labels(n)<>\"Category\" return DISTINCT labels(n) AS Label";
 	
 		Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
 	
@@ -61,7 +61,7 @@ public class NodeTypeService {
 	@CrossOrigin
 	@RequestMapping(value="/nodetypes/{nodeId}/{relationship}", method=RequestMethod.GET)
 	public ResponseEntity<Result> getNodeTypes(@PathVariable String nodeId, @PathVariable String relationship) throws Exception {
-		String	queryNodes = "MATCH (n:" + nodeId + ") -["+relationship+"] -> (p) return distinct labels(p) AS Label";
+		String	queryNodes = "MATCH (n:" + nodeId + ") -[f:"+relationship+"] -> (p) return distinct labels(p) AS Label";
 		Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
 		
 		return new ResponseEntity<Result>(result, HttpStatus.OK);
