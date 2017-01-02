@@ -87,9 +87,9 @@ public class NodeTypeService {
 		String queryRelations="";
 		
 		
-		if (direction.equals("ingoing")){
+		if (direction.equals("ingoing")||direction.equals("INGOING")){
 			queryRelations = "MATCH (n:" + nodeId + ")<-[r]- (p) return distinct type(r) AS Relation, labels(p) as Labels";	
-		} else if (direction.equals("outgoing")) {
+		} else if (direction.equals("outgoing") || direction.equals("OUTGOING")) {
 			 queryRelations = "MATCH (n:" + nodeId + ") -[r] -> (p) return distinct type(r) AS Relation, labels(p) as Labels";	
 		} else {
 			queryRelations="match (n:"+nodeId+")-[r]->(p) return distinct type(r) As Relation, labels(p) as Labels, 'OUTGOING' as Direction union MATCH (n:"+nodeId+")<-[k]-(s) return distinct type(k) as Relation, labels(s) as Labels, 'INGOING' as Direction";
