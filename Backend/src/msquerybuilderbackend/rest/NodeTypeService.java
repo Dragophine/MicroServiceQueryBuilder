@@ -33,7 +33,7 @@ public class NodeTypeService {
 	public ResponseEntity<Result> getNodeTypes() throws Exception {
 
 		
-		String queryNodes = "MATCH (n) WHERE labels(n) <> \"ExpertQuery\" AND labels(n) <> \"Parameter\" AND labels(n)<>\"Alert\" AND labels(n)<>\"Category\" return DISTINCT labels(n) AS Label";
+		String queryNodes = "MATCH (n) WHERE labels(n) <> \"ExpertQuery\" AND labels(n) <> \"Parameter\" AND labels(n)<>\"Alert\" AND labels(n)<>\"Category\" AND labels(n) <> \"QueryBuilder\" return DISTINCT labels(n) AS Label";
 	
 		Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
 	
