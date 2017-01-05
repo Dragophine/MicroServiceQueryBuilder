@@ -1,7 +1,6 @@
 package msquerybuilderbackend.rest;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.neo4j.ogm.model.Result;
@@ -18,22 +17,23 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-import msquerybuilderbackend.entity.Alert;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Parameter;
+import msquerybuilderbackend.entity.QueryBuilder;
 import msquerybuilderbackend.exception.InvalidTypeException;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
+import msquerybuilderbackend.repository.QueryBuilderRepository;
 
 @RestController
-public class ExpertQueryService {
+public class QueryBuilderService {
 
 	
 	 @Autowired
 		Neo4jOperations neo4jOperations;
 		Neo4jTemplate temp;
 		@Autowired
-		ExpertQueryRepository expertQueryRepository;
+		QueryBuilderRepository queryBuilderRepository;
 		@Autowired
 		ParameterRepository parameterRepository;
 		
@@ -45,39 +45,28 @@ public class ExpertQueryService {
 			//the adress of client must not be the same.
 			//Pleas add @CrossOrigin to every request.
 			
-		    @RequestMapping(value="/expertqueries/execute",  method=RequestMethod.POST)
-		    public ResponseEntity<Result> preExecuteQuery(@RequestBody ExpertQuery expertQuery) throws Exception {
+		    @RequestMapping(value="/queryBuilder/execute",  method=RequestMethod.POST)
+		    public ResponseEntity<Result> preExecuteQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
 		    	Map<String,Object> paramsMap = new HashMap<String,Object>();
 		    	Result result=null;
-		    	if (expertQuery.getParameter() !=null)
-		    	{
-		    		for (Parameter p:expertQuery.getParameter())
-		    		{
-		    			testTypes(p); 		
-			    		paramsMap.put(p.getKey(), p.getValue());
-			    		System.out.println(p.getKey() + " "+p.getValue());
-			    	}
-		    		result= neo4jOperations.query(expertQuery.getQuery(), paramsMap,true);	    		
-		    	}
-		    	else
-		    	{
-		    		result = neo4jOperations.query(expertQuery.getQuery(),new HashMap<String, String>(), true);
-		    	}
+		    	
+//		    		result = neo4jOperations.query(queryBuilder.getQuery(),new HashMap<String, String>(), true);
+		    	
 		
 			return new ResponseEntity<Result>(result, HttpStatus.OK);
 		    }	
 			
 			@Transactional
 			@CrossOrigin 
-		    @RequestMapping(value="/expertqueries",  method=RequestMethod.POST)	 
-		    public ResponseEntity<Result> saveQuery(@RequestBody ExpertQuery expertQuery) throws Exception
+		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.POST)	 
+		    public ResponseEntity<Result> saveQuery(@RequestBody QueryBuilder queryBuilder) throws Exception
 			{
-		    	for (Parameter p : expertQuery.getParameter())
-		    	{
-					testTypes(p);				
-		    		parameterRepository.save(p);
-		    	}
-		    	expertQueryRepository.save(expertQuery);
+//		    	for (Parameter p : queryBuilder.getParameter())
+//		    	{
+//					testTypes(p);				
+//		    		parameterRepository.save(p);
+//		    	}
+//		    	expertQueryRepository.save(queryBuilder);
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
@@ -86,9 +75,9 @@ public class ExpertQueryService {
 			
 			@CrossOrigin 
 			@Transactional
-		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.DELETE)	 
+		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.DELETE)	 
 		    public ResponseEntity<Result> deleteQuery(@PathVariable String queryId) throws Exception	{
-				ExpertQuery expertQuery=null;
+				QueryBuilder queryBuilder=null;
 				Long id = new Long(-1);
 				
 				try
@@ -103,18 +92,18 @@ public class ExpertQueryService {
 					 * eindeutige Name sein. 
 					 */
 				}
-				
-				if (id >=0){
-					 expertQuery= expertQueryRepository.findOne(id);
-				} else{
-					 expertQuery= expertQueryRepository.findByName(queryId);
-				}
-		    	for (Parameter p : expertQuery.getParameter())
-		    	{
-			    	parameterRepository.delete(p.getId());
-		    	}
-		    	
-		    	expertQueryRepository.delete(expertQuery.getId());
+//				
+//				if (id >=0){
+//					 queryBuilder= queryBuilderRepository.findOne(id);
+//				} else{
+//					 queryBuilder= queryBuilderRepository.findByName(queryId);
+//				}
+//		    	for (Parameter p : queryBuilder.getParameter())
+//		    	{
+//			    	parameterRepository.delete(p.getId());
+//		    	}
+//		    	
+//		    	queryBuilderRepository.delete(queryBuilder.getId());
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
@@ -123,8 +112,8 @@ public class ExpertQueryService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.PUT)	 
-		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody ExpertQuery updatedQuery) throws Exception	{
-				ExpertQuery expertQuery=null;
+		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody QueryBuilder updatedQuery) throws Exception	{
+				QueryBuilder queryBuilder=null;
 				Long id = new Long(-1);
 				
 				try
@@ -141,72 +130,48 @@ public class ExpertQueryService {
 				}
 				
 				if (id >=0){
-					 expertQuery= expertQueryRepository.findOne(Long.parseLong(queryId));
+					 queryBuilder= queryBuilderRepository.findOne(Long.parseLong(queryId));
 				} else{
-					 expertQuery= expertQueryRepository.findByName(queryId);
+					 queryBuilder= queryBuilderRepository.findByName(queryId);
 				}
-		    	for (Parameter p : expertQuery.getParameter())
-		    	{			    	
-			    	parameterRepository.delete(p.getId());
-		    	}
-		    	
-		    	for (Parameter p : updatedQuery.getParameter())
-		    	{			    	
-			    	parameterRepository.save(p);
-		    	}
-		    	
-		    	
-		    	expertQuery.setDescription(updatedQuery.getDescription());
-		    	expertQuery.setName(updatedQuery.getName());
-		    	expertQuery.setQuery(updatedQuery.getQuery());
-		    	expertQuery.setCategory(updatedQuery.getCategory());
-		    	expertQuery.setParameter(updatedQuery.getParameter());
-		    	
-		    	expertQueryRepository.save(expertQuery);
+//		    	for (Parameter p : queryBuilder.getParameter())
+//		    	{			    	
+//			    	parameterRepository.delete(p.getId());
+//		    	}
+//		    	
+//		    	for (Parameter p : updatedQuery.getParameter())
+//		    	{			    	
+//			    	parameterRepository.save(p);
+//		    	}
+//		    	
+//		    	
+//		    	queryBuilder.setDescription(updatedQuery.getDescription());
+//		    	queryBuilder.setName(updatedQuery.getName());
+//		    	queryBuilder.setQuery(updatedQuery.getQuery());
+//		    	queryBuilder.setCategory(updatedQuery.getCategory());
+//		    	queryBuilder.setParameter(updatedQuery.getParameter());
+//		    	
+//		    	queryBuilderRepository.save(queryBuilder);
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
 			
-			@CrossOrigin 
-			@Transactional
-		    @RequestMapping(value="/expertqueriesold",  method=RequestMethod.GET)
-		    public ResponseEntity<Result> getQueriesOld() throws Exception	{
-//		    public ResponseEntity<List<ExpertQuery>> getQueries() throws Exception	{
-//				List<ExpertQuery> expertQueries=expertQueryRepository.getAllExpertQueries();
-//		
-//			return new ResponseEntity<List<ExpertQuery>>(expertQueries,HttpStatus.OK);
-				
-				/**
-				 * Workaround: Wenn auch die Parameter aufgelöst und returniert werden in der Query,
-				 * dann sind die dazugehörigen Parameter aller Queries die returniert werden auch sichtbar.
-				 */
-				String queryNodesQuery = "MATCH (n:ExpertQuery) OPTIONAL MATCH (m:ExpertQuery)-[e:HAS_PARAMETER]-(x) RETURN n,m,e,x";			
-				Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
-	
-	//			String queryNodesQuery = "MATCH (n:ExpertQuery) RETURN n";			
-	//			Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
-	
-			return new ResponseEntity<Result>(resultQuery, HttpStatus.OK);
-		    }
+			
 			
 			@CrossOrigin 
 			@Transactional
-		    @RequestMapping(value="/expertqueries",  method=RequestMethod.GET)
-		    public ResponseEntity<Iterable<ExpertQuery>> getQueries() throws Exception	{
-				Iterable<ExpertQuery> expertqueries= expertQueryRepository.findAll();
-				return new ResponseEntity<Iterable<ExpertQuery>>(expertqueries, HttpStatus.OK);
-//				String queryNodesQuery = "MATCH (expertquery:ExpertQuery) return expertquery";			
-//				Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
+		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.GET)
+		    public ResponseEntity<Iterable<QueryBuilder>> getQueries() throws Exception	{
+				Iterable<QueryBuilder> queryBuilder= queryBuilderRepository.findAll();
+				return new ResponseEntity<Iterable<QueryBuilder>>(queryBuilder, HttpStatus.OK);
 
-//	
-//			return new ResponseEntity<Result>(resultQuery, HttpStatus.OK);
 		    }
 			
 			@CrossOrigin 
 			@Transactional
-		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.GET)	 
-		    public ResponseEntity<ExpertQuery> getQuery(@PathVariable String queryId) throws Exception	{
-				ExpertQuery expertQuery=null;
+		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.GET)	 
+		    public ResponseEntity<QueryBuilder> getQuery(@PathVariable String queryId) throws Exception	{
+				QueryBuilder queryBuilder=null;
 				Long id = new Long(-1);
 				
 				try
@@ -223,12 +188,12 @@ public class ExpertQueryService {
 				}
 				
 				if (id >=0){
-					 expertQuery= expertQueryRepository.findOne(Long.parseLong(queryId));
+					 queryBuilder= queryBuilderRepository.findOne(Long.parseLong(queryId));
 				} else{
-					 expertQuery= expertQueryRepository.findByName(queryId);
+					 queryBuilder= queryBuilderRepository.findByName(queryId);
 				}
 
-			return new ResponseEntity<ExpertQuery>(expertQuery,HttpStatus.OK);
+			return new ResponseEntity<QueryBuilder>(queryBuilder,HttpStatus.OK);
 		    }
 			
 			
