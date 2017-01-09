@@ -22,7 +22,17 @@ public class RelationshipTypeService {
 	Neo4jTemplate temp;
 	
 	
+	@CrossOrigin
+	@RequestMapping(value="/relationshiptypes", method=RequestMethod.GET)
+	public ResponseEntity<Result> getRelationshipTypes() throws Exception {
+
+		
+		String queryRelations = "MATCH ()-[r]->() where type(r)<>\"HAS_PARAMETER\" and type(r)<>\"HAS_CATEGORY\" AND type(r)<>\"HAS_EXPERTQUERY\" return distinct type(r) AS Relationship";
 	
+		Result result = neo4jOperations.query(queryRelations, new HashMap<String, String>());
+	
+		return new ResponseEntity<Result>(result, HttpStatus.OK);
+	}
 	
 	@CrossOrigin
 	@RequestMapping(value="/relationshiptypes/{relationId}/keys", method=RequestMethod.GET)

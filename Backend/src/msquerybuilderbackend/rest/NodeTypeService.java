@@ -33,7 +33,7 @@ public class NodeTypeService {
 	public ResponseEntity<Result> getNodeTypes() throws Exception {
 
 		
-		String queryNodes = "MATCH (n) WHERE labels(n) <> \"ExpertQuery\" AND labels(n) <> \"Parameter\" AND labels(n)<>\"Alert\" return DISTINCT labels(n) AS Label";
+		String queryNodes = "MATCH (n) WHERE labels(n) <> \"ExpertQuery\" AND labels(n) <> \"Parameter\" AND labels(n)<>\"Alert\" AND labels(n)<>\"Category\" AND labels(n) <> \"QueryBuilder\" return DISTINCT labels(n) AS Label";
 	
 		Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
 	
@@ -61,7 +61,7 @@ public class NodeTypeService {
 	@CrossOrigin
 	@RequestMapping(value="/nodetypes/{nodeId}/{relationship}", method=RequestMethod.GET)
 	public ResponseEntity<Result> getNodeTypes(@PathVariable String nodeId, @PathVariable String relationship) throws Exception {
-		String	queryNodes = "MATCH (n:" + nodeId + ") -["+relationship+"] -> (p) return distinct labels(p) AS Label";
+		String	queryNodes = "MATCH (n:" + nodeId + ") -[f:"+relationship+"] -> (p) return distinct labels(p) AS Label";
 		Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
 		
 		return new ResponseEntity<Result>(result, HttpStatus.OK);
@@ -87,9 +87,9 @@ public class NodeTypeService {
 		String queryRelations="";
 		
 		
-		if (direction.equals("ingoing")){
+		if (direction.equals("ingoing")||direction.equals("INGOING")){
 			queryRelations = "MATCH (n:" + nodeId + ")<-[r]- (p) return distinct type(r) AS Relation, labels(p) as Labels";	
-		} else if (direction.equals("outgoing")) {
+		} else if (direction.equals("outgoing") || direction.equals("OUTGOING")) {
 			 queryRelations = "MATCH (n:" + nodeId + ") -[r] -> (p) return distinct type(r) AS Relation, labels(p) as Labels";	
 		} else {
 			queryRelations="match (n:"+nodeId+")-[r]->(p) return distinct type(r) As Relation, labels(p) as Labels, 'OUTGOING' as Direction union MATCH (n:"+nodeId+")<-[k]-(s) return distinct type(k) as Relation, labels(s) as Labels, 'INGOING' as Direction";
