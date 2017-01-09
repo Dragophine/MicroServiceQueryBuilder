@@ -6,6 +6,7 @@
       <button class="btn btn-default" ng-click="ctrl.executeQuery()">Execute Query</button>
       <button class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
       <button class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button>
+      <button class="btn btn-default" ng-click="ctrl.deleteQuery()">Delete Query</button>
     </div>
   </div>
 
@@ -40,14 +41,23 @@
           </button>
         </div>
   </div>
-  <div class="row panel panel-default top-buffer" ng-if="ctrl.availableNodes.length === 0">
-    <div class="panel-body">
-      <vis-network ng-if="ctrl.availableNodes.length == 0"
-            ng-model="ctrl.network_data"
-            options="ctrl.network_options" 
-            on-select-click="ctrl.onSelectClick(params, network)"
-            id="previewNetwork">
-      </vis-network>
+  <div class="row" ng-if="ctrl.availableNodes.length === 0">
+    <div class="panel panel-default top-buffer">
+      <div class="panel-body">
+        <vis-network ng-if="ctrl.availableNodes.length == 0"
+              ng-model="ctrl.network_data"
+              options="ctrl.network_options" 
+              on-select-click="ctrl.onSelectClick(params, network)"
+              on-double-click="ctrl.onDoubleClick(params, network)"
+              id="previewNetwork">
+        </vis-network>
+      </div>
+    </div>
+    <div class="panel panel-default top-buffer" 
+      ng-if="ctrl.selectedNode != undefined">
+      <div class="panel-body">
+        <h1>{{ctrl.selectedNode['type']}}</h1>
+      </div>
     </div>
   </div>
   

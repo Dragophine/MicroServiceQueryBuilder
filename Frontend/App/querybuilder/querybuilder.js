@@ -16,16 +16,30 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	"description":"",
     	"category":"",
     	"limitcount": "",
-    	           
+    	"node":""          
     }
 
     self.nodeIDStore = {};
     self.relationshipIDStore = {};
+    /**
+	holdes the selected node in the vis network
+    */
+    self.selectedNode = undefined;
+	/**
+	Holdes the available nodes at the beginning of the selection prozess.
+	*/
+	self.availableNodes = "";
 
+	/**
+		Result Properties
+	*/
+	self.table = "";
+	self.hasError = false;
+	self.error = "";
     /**
 	Transfair changes to graph
     */
-    self.transfairToGraph = function(){
+    self.transfairToGraph = function($network){
     	var $nodeID = 1;
     	var $relationshipID = 0;
 
@@ -92,6 +106,10 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 					}
     			}
     	}
+    	if($network !== undefined){
+    		$network.redraw();
+    	}
+    	
     };
 
    
@@ -114,18 +132,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     ]);
     */
 
-	/**
-		Query Properties
-	*/
-	self.availableNodes = "";
-	self.availableRelationships = "";
-
-	/**
-		Result Properties
-	*/
-	self.table = "";
-	self.hasError = false;
-	self.error = "";
+	
 
 	/**
 	Query Operations
@@ -164,6 +171,18 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 	}
 	
+	self.deleteQuery = function(){
+		self.query = {
+	    	"name":"",
+	    	"description":"",
+	    	"category":"",
+	    	"limitcount": "",
+	    	 "node":""
+	    }
+	    $requests.getNodes(self.getNodesCB);
+		 self.transfairToGraph();
+	}
+
 	/**
 	Methods on node
 	*/
@@ -286,11 +305,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		}
 	};
 
-	
-	self.previousSelectedNode = [];
-	self.previousSelectedEdges  = [];
 
-	self.onSelectClick = function(params, network){
+	self.onDoubleClick = function(params, network){
 		var openNodeDialog = false;
 		var openEdgeDialog = false;
 		if(params.nodes.length > 0){
@@ -299,23 +315,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		else if(params.edges.length > 0){
 			 openEdgeDialog = true;
 		}
-		/*
-		else if(self.previousSelectedNode.length === params.nodes.length){
-			for (var i = params.nodes.length - 1; i >= 0; i--) {
-				if(self.previousSelectedNode[i] !== params.nodes[i]){
-					openNodeDialog = true;
-					break;
-				}
-			}
-		}
-		else if(self.previousSelectedEdges.length === params.edges.length){
-			for (var i = params.edges.length - 1; i >= 0; i--) {
-				if(self.previousSelectedEdges[i] !== params.edges[i]){
-					openEdgeDialog = true;
-					break;
-				}
-			}
-		}*/
+		
 		if(openNodeDialog){
 			self.openNodeDialog (params, network);
 		}
@@ -323,8 +323,16 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		if(!openNodeDialog && openEdgeDialog){
 			self.openEdgeDialog (params, network);
 		}
-		self.previousSelectedNode = params.nodes;
-		self.previousSelectedEdges = params.edges;
+	}
+
+	self.onSelectClick = function(params, network){
+		if(params.nodes.length > 0){
+			self.selectedNode = self.nodeIDStore[params.nodes[0]];
+		}
+		else {
+			self.selectedNode = undefined;
+		}
+		$scope.$apply();
 	}
 
 
@@ -343,8 +351,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 
 	         dialog.closePromise.then(function (data) {
-			     self.transfairToGraph();
-			     $network.redraw();
+			     self.transfairToGraph($network);
+			    
 			});
     };
 
@@ -361,10 +369,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 
 	        dialog.closePromise.then(function (data) {
-			     self.transfairToGraph();
-			     $network.redraw();
+			     self.transfairToGraph($network);
 			});
     }
-
 
 }]);

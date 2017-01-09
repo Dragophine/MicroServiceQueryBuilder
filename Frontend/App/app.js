@@ -31,7 +31,8 @@ app.directive('visNetwork', function() {
             options: '=',
             onNodeClick: '&',
             onEdgeClick: '&',
-            onSelectClick: '&'
+            onSelectClick: '&',
+            onDoubleClick: '&'
         },
         link: function($scope, $element, $attrs, ngModel) {
             var $network = new vis.Network($element[0], $scope.ngModel, $scope.options || {});
@@ -39,7 +40,8 @@ app.directive('visNetwork', function() {
             var onNodeClick = $scope.onNodeClick || function(prop) {};
             var onEdgeClick = $scope.onEdgeClick || function(prop) {};
             var onSelectClick = $scope.onSelectClick || function(prop) {};
-
+            var onDoubleClick = $scope.onDoubleClick || function(prop) {};
+ 
             $network.on('selectNode', function (params)  {
                 onNodeClick({params: params, network: $network});
             });
@@ -50,6 +52,10 @@ app.directive('visNetwork', function() {
             
             $network.on('select', function(params) {
                 onSelectClick({params: params, network: $network});
+            });
+
+            $network.on('doubleClick', function(params) {
+                onDoubleClick({params: params, network: $network});
             });
         }
     }
