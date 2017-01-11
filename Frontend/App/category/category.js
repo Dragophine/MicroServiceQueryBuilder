@@ -14,6 +14,7 @@ angular.module('queryBuilder.category', ['ngRoute', 'queryBuilder.services'])
 	self.name = "";
 	self.description = "";	
   self.id = "";	
+  self.existingCategories = [];
 
 	
 	var missingDataModal = document.getElementById('myModalMissingData');
@@ -65,8 +66,7 @@ angular.module('queryBuilder.category', ['ngRoute', 'queryBuilder.services'])
         }
         else
 		{
-			$requests.addCategory(self.name, self.description, self.getCategories);
-			$requests.getAllCategories(self.getCategories);
+            $requests.addCategory(self.name, self.description, self.callback);
         }
     };
     
