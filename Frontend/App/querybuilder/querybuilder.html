@@ -22,8 +22,10 @@
   </div>
   <div class="row">
       <h1>Category</h1>
-      <input type="textarea" class="form-control" id="query"
-            ng-model="ctrl.query['category']"  placeholder="Category" />
+      <select  ng-model="ctrl.categoryName" ng-change="ctrl.categoryName"
+      style="width: 100%; display:block; margin-bottom: 5px">
+          <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
+      </select>
   </div>
   
   <div class="row">

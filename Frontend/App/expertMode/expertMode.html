@@ -46,7 +46,12 @@
 			<label for="description">Bitte geben Sie einen Beschreibung für die Query an: </label>
 			<input id="description" name="description" type="text" ng-model="ctrl.description"/>
 			<label for="category">Bitte geben Sie eine Kategorie für die Query an: </label>
-			<input id="category" name="category" type="text" ng-model="ctrl.category"/>
+      <div class="group" >
+        <select  ng-model="ctrl.categoryName" ng-change="ctrl.categoryName"
+          style="width: 100%; display:block; margin-bottom: 5px">
+          <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
+        </select>
+      </div>
 		<button type="saveQuery" ng-click="ctrl.saveQuery()">Save Query</button>
 		<button id="saveAbbruch">Cancel</button>
 	  </div>

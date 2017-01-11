@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<div  ng-controller="categoryCtrl as ctrl">
+
+<table class="table">
+	<tbody >
+		<tr> 
+			<td>
+			<h2>Kategorie erstellen/speichern</h2>
+			
+  <form class="loginform">
+    <div class="group">
+      <input type="text" ng-model="ctrl.name">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Name</label>
+    </div>
+    
+<div class="group">
+      <input type="text" ng-model="ctrl.description">
+      <span class="highlight"></span><span class="bar"></span>
+      <label>Beschreibung</label>
+    </div>
+ 
+    
+
+    <button type="button" class="button buttonBlue" ng-click="ctrl.addCategory($event)"> Neuen Kategorie erstellen </button>    
+    <div class="row" ng-if="ctrl.selectedAlertName">    
+    <button type="button" class="button buttonBlue" ng-click="ctrl.updateCategory($event)"> Bestehende Kategorie ändern </button>
+   	<button type="button" class="button buttonBlue" ng-click="ctrl.resetValues($event)"> Ausgefuellte Werte zuruecksetzen </button>
+	</div>
+	
+	<!-- The Modal -->
+	<div id="myModalMissingData" class="modal">	
+	  <!-- Modal content - Save Query -->
+		<div class="modal-content">
+	    <h2>Bitte passen Sie die folgenden Werte an:</h2>
+   	      <div ng-repeat="errorText in ctrl.text" style="display: inline;">
+          	<label for="name"> {{errorText}} </label>
+		  </div>
+		<button id="missingDataOk"> Okay </button>
+	  </div>
+	</div>
+  </form>
+
+			</td>
+			<td>
+			
+			<h2>Existing Categories</h2>
+			
+			 <table class="table">
+				<tbody >
+				<tr ng-repeat = "cell in ctrl.existingCategories"> 
+					<td>
+					<label>Name: {{cell.name}} </label>
+						<button ng:click="ctrl.selectLoad(cell)"> Load Category </button>
+						<button ng:click="ctrl.selectDelete(cell)"> Delete Category </button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+</div>

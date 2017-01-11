@@ -373,4 +373,24 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 			});
     }
 
+
+	self.availableCategories = [];
+	self.categoryName = "";
+
+			/**
+	Method for categories
+	*/
+	self.getCategories = function($success, $data, $status){
+		self.hasError = !$success;
+		if($success){
+			self.availableCategories = $data;
+		}
+		else
+		{
+			self.error = $data;
+		}
+	}
+	$requests.getAllCategories(self.getCategories);
+
+
 }]);

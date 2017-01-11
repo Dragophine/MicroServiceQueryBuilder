@@ -350,5 +350,95 @@ angular.module('queryBuilder.services', ['ngCookies'])
            $callback(false, data, status);
             }
         });
-    };    
+    };   
+
+          //get all already existing categories
+    this.getAllCategories = function($callback) {
+        $http({
+            method : 'GET',
+            url : $serverRestLocation.getValue() + '/categories', 
+            headers: { 
+                    'Content-Type':'application/json'
+            }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };   
+
+        // add category
+    this.addCategory = function($name, $description, $callback) {
+        $http({
+            method : 'POST',
+            url : $serverRestLocation.getValue() + '/categories', 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+              "name" : $name,
+              "description" :  $description }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    }; 
+
+        
+    // update category
+    this.updateCategory = function($id, $name, $description, $callback) {
+        $http({
+            method : 'PUT',
+            url : $serverRestLocation.getValue() + '/categories/' + $id, 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+              "name" : $name,
+              "description" :  $description }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    };
+
+        // delete categories
+    this.deleteCategory = function($id, $callback) {
+        $http({
+            method : 'DELETE',
+            url : $serverRestLocation.getValue() + '/categories/' + $id, 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+                "name" : $id
+                }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    }; 
 }]);
