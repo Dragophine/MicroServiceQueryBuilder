@@ -211,13 +211,33 @@ angular.module('queryBuilder.services', ['ngCookies'])
     };    
     
     //load query
-    this.loadQuery = function($callback) {
+    this.loadAllQueries = function($callback) {
         $http({
             method : 'GET',
             url : $serverRestLocation.getValue() + '/expertqueries', 
             headers: { 
                     'Content-Type':'application/json'
             }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };
+    
+    //get query by name
+    this.getQueryByName = function($name, $callback) {
+        $http({
+            method : 'GET',
+            url : $serverRestLocation.getValue() + '/expertqueries/' + $name,
+            headers: { 
+                    'Content-Type':'application/json'
+            },
+            data: { 
+                "name" : $name
+              }
         })
         .success(function(data, status) {
             $callback(true, data, status); 
@@ -245,7 +265,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
     };
     
     // add alert
-    this.addAlert = function($name, $nodeName, $attributeName, $type, $filterType,
+    this.addAlert = function($name, $selectedQuery, $type, $filterType,
     		$email, $value, $callback) {
         $http({
             method : 'POST',
@@ -253,8 +273,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
             headers: {  'Content-Type':'application/json'},
             data: { 
               "name" : $name,
-              "nodeName" :  $nodeName,
-              "attributeName" : $attributeName,
+              "query" :  $selectedQuery,
               "type" : $type,
               "filterType" : $filterType,
               "value" : $value,
@@ -275,7 +294,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
     };
     
     // save alert
-    this.saveAlert = function($existingName, $name, $nodeName, $attributeName, $type, $filterType,
+    this.saveAlert = function($existingName, $name, $selectedQuery, $type, $filterType,
     		$email, $value, $callback) {
         $http({
             method : 'PUT',
@@ -283,8 +302,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
             headers: {  'Content-Type':'application/json'},
             data: { 
               "name" : $name,
-              "nodeName" :  $nodeName,
-              "attributeName" : $attributeName,
+              "query" :  $selectedQuery,
               "type" : $type,
               "filterType" : $filterType,
               "value" : $value,

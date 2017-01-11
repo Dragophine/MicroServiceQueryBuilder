@@ -10,25 +10,26 @@ public class Alert {
 	@GraphId private Long id;
 	
 	private String name;
-	private String nodeName;
-	private String attributeName;
+//	private String nodeName;
+//	private String attributeName;
 	private String type;
 	private String filterType;
 	private Object value;
 	private String email;
+	private String query;
 	
 
 public void setName(String n){
 	this.name=n;
 }
 
-public void setNodeName(String n){
-	this.nodeName=n;
-}
-
-public void setAttributeName(String a){
-	this.attributeName=a;
-}
+//public void setNodeName(String n){
+//	this.nodeName=n;
+//}
+//
+//public void setAttributeName(String a){
+//	this.attributeName=a;
+//}
 
 public void setType(String t){
 	this.type=t;
@@ -50,13 +51,13 @@ public String getName(){
 	return this.name;
 }
 
-public String getNodeName(){
-	return this.nodeName;
-}
-
-public String getAttributeName(){
-	return this.attributeName;
-}
+//public String getNodeName(){
+//	return this.nodeName;
+//}
+//
+//public String getAttributeName(){
+//	return this.attributeName;
+//}
 
 public String getType(){
 	return this.type;
@@ -76,5 +77,13 @@ public String getEmail(){
 
 public Long getId(){
 	return this.id;
+}
+
+public String getQuery() {
+	return query;
+}
+
+public void setQuery(String q) {
+	query = q;
 }
 }

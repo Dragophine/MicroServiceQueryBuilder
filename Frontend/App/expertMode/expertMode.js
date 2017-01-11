@@ -127,11 +127,11 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		
 	}	
 	btnLoad.onclick = function() {
-		$requests.loadQuery(self.queriesCB);
+		$requests.loadAllQueries(self.queriesCB);
 		modalLoad.style.display = "block";
 	}
 	btnDelete.onclick = function() {
-		$requests.loadQuery(self.queriesCB);
+		$requests.loadAllQueries(self.queriesCB);
 		modalDelete.style.display = "block";
 	}
 
@@ -177,32 +177,32 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		self.hasError = !$success;
 		if($success)
 		{
-//			self.queries = $data;
+			self.queries = $data;
 			
-			/**
-			 * Da die Query auch Parameter, etc. returniert
-			 * müssen die Queries rausgesucht werden.
-			 */
-			self.queries = [];
-			
-			var i;
-			// queries mit Parameter
-			for(i = 0; i < $data.length; i++)
-			{
-				if($data[i].n != null && !contains(self.queries, $data[i].n))
-				{
-					self.queries.push($data[i].n);
-				}
-			}
-			
-			// queries ohne Parameter
-			for(i = 0; i < $data.length; i++)
-			{
-				if($data[i].m != null && !contains(self.queries, $data[i].m))
-				{
-					self.queries.push($data[i].m);
-				}
-			}
+//			/**
+//			 * Da die Query auch Parameter, etc. returniert
+//			 * müssen die Queries rausgesucht werden.
+//			 */
+//			self.queries = [];
+//			
+//			var i;
+//			// queries mit Parameter
+//			for(i = 0; i < $data.length; i++)
+//			{
+//				if($data[i].n != null && !contains(self.queries, $data[i].n))
+//				{
+//					self.queries.push($data[i].n);
+//				}
+//			}
+//			
+//			// queries ohne Parameter
+//			for(i = 0; i < $data.length; i++)
+//			{
+//				if($data[i].m != null && !contains(self.queries, $data[i].m))
+//				{
+//					self.queries.push($data[i].m);
+//				}
+//			}
 		}
 		else
 		{
@@ -235,7 +235,7 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	{
 		self.invalidSaveText = [];
 		var queryName = self.name;
-		$requests.loadQuery(self.queriesCB);
+		$requests.loadAllQueries(self.queriesCB);
 		
 		if(!existsQueryName(queryName))
 		{
