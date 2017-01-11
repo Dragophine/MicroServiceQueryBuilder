@@ -111,7 +111,7 @@ public class QueryBuilderService {
 			
 			@CrossOrigin 
 			@Transactional
-		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.PUT)	 
+		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.PUT)	 
 		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody QueryBuilder updatedQuery) throws Exception	{
 				QueryBuilder queryBuilder=null;
 				Long id = new Long(-1);
