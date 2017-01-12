@@ -7,3 +7,5 @@
 .Trashes
 ehthumbs.db
 Thumbs.db
+Frontend/App/bower_components
+Frontend/App/node_modules

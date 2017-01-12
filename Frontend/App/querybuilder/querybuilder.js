@@ -250,6 +250,13 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 				"content":"Please enter a category before you save/update the query."
 			};
 		}
+		else if(self.query.node === ""|| self.query.node === undefined
+			|| self.query.node === null){
+			$data = {
+				"head":"No node",
+				"content":"Please enter a node before you save/update the query."
+			};
+		}
     	return $data;
 	}
 
