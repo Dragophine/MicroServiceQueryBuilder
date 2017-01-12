@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import msquerybuilderbackend.entity.Alert;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Parameter;
+import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
 import msquerybuilderbackend.exception.InvalidTypeException;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
@@ -72,16 +73,24 @@ public class ExpertQueryService {
 			@Transactional
 			@CrossOrigin 
 		    @RequestMapping(value="/expertqueries",  method=RequestMethod.POST)	 
-		    public ResponseEntity<Result> saveQuery(@RequestBody ExpertQuery expertQuery) throws Exception
-			{
-		    	for (Parameter p : expertQuery.getParameter())
-		    	{
-					testTypes(p);				
-		    		parameterRepository.save(p);
-		    	}
+		    public ResponseEntity<Long> saveQuery(@RequestBody ExpertQuery expertQuery) throws Exception{
+		    
+		    ExpertQuery alreadyUsedName= expertQueryRepository.findByName(expertQuery.getName());
+			if (alreadyUsedName != null){
+				
+				return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);	
+			}else{
+			
+//		    	for (Parameter p : expertQuery.getParameter())
+//		    	{
+//					testTypes(p);				
+//		    		parameterRepository.save(p);
+//		    	}
 		    	expertQueryRepository.save(expertQuery);
+		    	ExpertQuery newExpertQuery = expertQueryRepository.findByName(expertQuery.getName());
 		
-			return new ResponseEntity<Result>(HttpStatus.OK);
+		    	return new ResponseEntity<Long>(newExpertQuery.getId(),HttpStatus.OK);
+			}
 		    }
 			
 			

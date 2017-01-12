@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 
 import msquerybuilderbackend.entity.Category;
+import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
 import msquerybuilderbackend.repository.CategoryRepository;
 
 @RestController
@@ -50,10 +51,16 @@ public class CategoryService {
 	@CrossOrigin 
 	@Transactional
 	@RequestMapping(value="/categories",  method=RequestMethod.POST)
-	public ResponseEntity<Result> postCategory(@RequestBody Category category) throws Exception {
-		categoryRepository.save(category);
-		
-		return new ResponseEntity<Result>( HttpStatus.OK);
+	public ResponseEntity<Long> postCategory(@RequestBody Category category) throws Exception {
+		Category alreadyUsedName= categoryRepository.findByName(category.getName());
+		if (alreadyUsedName != null){
+			
+			return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);	
+		}else{
+			categoryRepository.save(category);
+			Category newCategory = categoryRepository.findByName(category.getName());
+			return new ResponseEntity<Long>( newCategory.getId(),HttpStatus.OK);
+		}
 	}
 	
 	@CrossOrigin 

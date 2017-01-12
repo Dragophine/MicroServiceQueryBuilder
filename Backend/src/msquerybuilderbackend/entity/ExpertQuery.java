@@ -24,8 +24,8 @@ private Set<Parameter> parameter = new HashSet<Parameter>(0);
 
 private String description;
 
-//later to change to type Category
-private String category;
+@Relationship(type = "HAS_CATEGORY", direction = Relationship.OUTGOING)
+private Category category;
 
 
 public ExpertQuery(){
@@ -52,7 +52,7 @@ public String getDescription(){
 	return this.description;
 }
 
-public String getCategory(){
+public Category getCategory(){
 	return this.category;
 }
 
@@ -72,7 +72,7 @@ public void setDescription(String d){
 	this.description=d;
 }
 
-public void setCategory(String c){
+public void setCategory(Category c){
 	this.category=c;
 }
 

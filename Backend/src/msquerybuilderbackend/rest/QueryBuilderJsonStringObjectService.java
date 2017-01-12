@@ -1,5 +1,6 @@
 package msquerybuilderbackend.rest;
   
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,28 +22,40 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
+import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Node;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.entity.QueryBuilder;
+import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
+import msquerybuilderbackend.entity.QueryBuilderStringObject;
 import msquerybuilderbackend.exception.InvalidTypeException;
+import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
-import msquerybuilderbackend.repository.QueryBuilderRepository;
+import msquerybuilderbackend.repository.QueryBuilderJsonStringRepository;
 
 @RestController
-public class QueryBuilderService {
+public class QueryBuilderJsonStringObjectService {
 
 	
 	 @Autowired
 		Neo4jOperations neo4jOperations;
 		Neo4jTemplate temp;
 		@Autowired
-		QueryBuilderRepository queryBuilderRepository;
+		QueryBuilderJsonStringRepository queryBuilderJsonStringObjectRepository;
 		@Autowired
 		ParameterRepository parameterRepository;
 		@Autowired
 		ExpertQueryRepository expertQueryRepository;
+		
+		@Autowired
+		CategoryRepository categoryRepository;
 		
 	
 			@CrossOrigin 
@@ -68,24 +81,37 @@ public class QueryBuilderService {
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.POST)	 
 		    public ResponseEntity<Long> saveQuery(@RequestBody QueryBuilder queryBuilder) throws Exception{
 			
-			QueryBuilder alreadyUsedName= queryBuilderRepository.findByName(queryBuilder.getName());
+			QueryBuilderJsonStringObject alreadyUsedName= queryBuilderJsonStringObjectRepository.findByName(queryBuilder.getName());
 			if (alreadyUsedName != null){
 				
 				return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);	
 			}else{
+				Category category = categoryRepository.findByName(queryBuilder.getCategory());
 				
 /**
  * Interpretation des Querybuilders wie bei execute ausständig
- */
-		//		queryBuilder.addExpertQuery(expertquery);
+ */				
+//				expertQuery.setName(queryBuilder.getName());
+//				expertQuery.setDescription(queryBuilder.getDescription());
+//				expertQuery.setCategory(category);
+		//		queryBuilderJsonStringObject.addExpertQuery(expertquery);
+				
 				/**
 				 * ExpertQuery auch den Namen und Beschreibung geben
 				 */
-				queryBuilder.setExpertQuery(null);
-		    	queryBuilderRepository.save(queryBuilder);
-		    	QueryBuilder returnNew=queryBuilderRepository.findByName(queryBuilder.getName());
+				QueryBuilderJsonStringObject qbjso = new QueryBuilderJsonStringObject();
+				qbjso.setName(queryBuilder.getName());
+				qbjso.setDescription(queryBuilder.getDescription());
+				qbjso.setCategory(category);
+				ObjectWriter mapper = new ObjectMapper().writer().withDefaultPrettyPrinter();
+				String queryBuilderJsonString = mapper.writeValueAsString(queryBuilder);
+				qbjso.setQueryBuilderJson(queryBuilderJsonString);
+				
+				qbjso.setExpertQuery(null);
+		    	queryBuilderJsonStringObjectRepository.save(qbjso);
+		    	QueryBuilderJsonStringObject returnNew=queryBuilderJsonStringObjectRepository.findByName(queryBuilder.getName());
 		
-			return new ResponseEntity<Long>(0L,HttpStatus.OK);
+		    	return new ResponseEntity<Long>(returnNew.getId(),HttpStatus.OK);
 			}
 		    }
 			
@@ -95,7 +121,7 @@ public class QueryBuilderService {
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.DELETE)	 
 		    public ResponseEntity<Result> deleteQuery(@PathVariable String queryId) throws Exception	{
-				QueryBuilder queryBuilder=null;
+				QueryBuilderJsonStringObject qbjso=null;
 				Long id = new Long(-1);
 				
 				try
@@ -112,28 +138,29 @@ public class QueryBuilderService {
 				}
 				
 				if (id >=0){
-					 queryBuilder= queryBuilderRepository.findOne(id);
+					 qbjso= queryBuilderJsonStringObjectRepository.findOne(id);
 				} else{
-					 queryBuilder= queryBuilderRepository.findByName(queryId);
+					 qbjso= queryBuilderJsonStringObjectRepository.findByName(queryId);
 				}
-				
-				
-				Set<ExpertQuery> expertqueries = queryBuilder.getExpertQuery();
-				Iterator iter = expertqueries.iterator();
-		
-				while (iter.hasNext()){
-					ExpertQuery eq= (ExpertQuery) iter.next();
-					for (Parameter p : eq.getParameter())
+//				
+//				
+//				Set<ExpertQuery> expertqueries = qbjso.getExpertQuery();
+//				Iterator iter = expertqueries.iterator();
+//		
+//				while (iter.hasNext()){
+//					ExpertQuery eq= (ExpertQuery) iter.next();
+				if (qbjso.getExpertQuery()!=null){
+					for (Parameter p : qbjso.getExpertQuery().getParameter())
 			    	{
 				    	parameterRepository.delete(p.getId());
 			    	}
-					expertQueryRepository.delete(eq.getId());
+					expertQueryRepository.delete(qbjso.getExpertQuery().getId());
 				}
 				
 
 		    	
 		    	
-		    	queryBuilderRepository.delete(0L);
+		    	queryBuilderJsonStringObjectRepository.delete(0L);
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
@@ -143,7 +170,7 @@ public class QueryBuilderService {
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.PUT)	 
 		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody QueryBuilder updatedQuery) throws Exception	{
-				QueryBuilder queryBuilder=null;
+				QueryBuilderJsonStringObject qbjso=null;
 				Long id = new Long(-1);
 				
 				try
@@ -160,20 +187,21 @@ public class QueryBuilderService {
 				}
 				
 				if (id >=0){
-					 queryBuilder= queryBuilderRepository.findOne(Long.parseLong(queryId));
+					 qbjso= queryBuilderJsonStringObjectRepository.findOne(Long.parseLong(queryId));
 				} else{
-					 queryBuilder= queryBuilderRepository.findByName(queryId);
+					 qbjso= queryBuilderJsonStringObjectRepository.findByName(queryId);
 				}
 				
 				/**
 				 * Interpretation der Query in ExpertQuery ausständig wie bei execute
 				 */
 				 
-				if (queryBuilder.getExpertQuery()!=null){
-			    	for (ExpertQuery q : queryBuilder.getExpertQuery())
-			    	{			    	
-				    	expertQueryRepository.delete(q.getId());
-			    	}
+				if (qbjso.getExpertQuery()!=null){
+//			    	for (ExpertQuery q : qbjso.getExpertQuery())
+//			    	{			    	
+//				    	expertQueryRepository.delete(q.getId());
+//			    	}
+					expertQueryRepository.delete(qbjso.getExpertQuery());
 				}
 		    	
 		    	
@@ -185,21 +213,31 @@ public class QueryBuilderService {
 //			    	expertQueryRepository.save(q);
 //		    	}
 		    	
-		    	Set<ExpertQuery> updatedQuerySet = new HashSet<ExpertQuery>();
+//		    	Set<ExpertQuery> updatedQuerySet = new HashSet<ExpertQuery>();
 //		    	updatedQuerySet.add(expertQuery);
-		    	queryBuilder.setDescription(updatedQuery.getDescription());
-		    	queryBuilder.setName(updatedQuery.getName());
-		    	queryBuilder.setExpertQuery(updatedQuerySet);
-		    	queryBuilder.setCategory(updatedQuery.getCategory());
-		    	queryBuilder.setLimitcount(updatedQuery.getLimitCount());
-		    	queryBuilder.setNode(updatedQuery.getNode());
-		    
+				
+				Category category = categoryRepository.findByName(updatedQuery.getCategory());
+		    	qbjso.setDescription(updatedQuery.getDescription());
+		    	qbjso.setName(updatedQuery.getName());
+		    	qbjso.setCategory(category);
+		    	ObjectWriter mapper = new ObjectMapper().writer().withDefaultPrettyPrinter();
+				String queryBuilderJsonString = mapper.writeValueAsString(updatedQuery);
+				qbjso.setQueryBuilderJson(queryBuilderJsonString);
+		    	
+		    	/**
+		    	 * zusammengebaute ExpertQuery
+		    	 */
+//		    	newExpertQuery.setName(updatedQuery.getName());
+//		    	newExpertQuery.setDescription(updatedQuery.getDescription());
+//		    	newExpertQuery.setCategory(category);
+//		    	qbjso.setExpertQuery(newExpertQuery);
+
 		    	
 		    	
 		    	
 		    	
 		    	
-		    	queryBuilderRepository.save(queryBuilder);
+		    	queryBuilderJsonStringObjectRepository.save(qbjso);
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
@@ -209,9 +247,32 @@ public class QueryBuilderService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.GET)
-		    public ResponseEntity<Iterable<QueryBuilder>> getQueries() throws Exception	{
-				Iterable<QueryBuilder> queryBuilder= queryBuilderRepository.findAll();
-				return new ResponseEntity<Iterable<QueryBuilder>>(queryBuilder, HttpStatus.OK);
+		    public ResponseEntity<Set<QueryBuilder>> getQueries() throws Exception	{
+				Iterable<QueryBuilderJsonStringObject> qbjso= queryBuilderJsonStringObjectRepository.findAll();
+				Set<QueryBuilder> querybuilders = new HashSet<QueryBuilder>();
+				ObjectMapper mapper = new ObjectMapper();
+				for ( QueryBuilderJsonStringObject qb: qbjso ){
+					try {
+
+
+						// Convert JSON string to Object
+						String jsonInString = qb.getQueryBuilderJson();
+						QueryBuilder queryBuilder = mapper.readValue(jsonInString, QueryBuilder.class);
+						queryBuilder.setId(qb.getId());
+						querybuilders.add(queryBuilder);
+
+					} catch (JsonGenerationException e) {
+						e.printStackTrace();
+					} catch (JsonMappingException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+				}
+				
+				
+				return new ResponseEntity<Set<QueryBuilder>>(querybuilders, HttpStatus.OK);
 
 		    }
 			
@@ -219,7 +280,7 @@ public class QueryBuilderService {
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.GET)	 
 		    public ResponseEntity<QueryBuilder> getQuery(@PathVariable String queryId) throws Exception	{
-				QueryBuilder queryBuilder=null;
+				QueryBuilderJsonStringObject qbjso=null;
 				Long id = new Long(-1);
 				
 				try
@@ -236,11 +297,31 @@ public class QueryBuilderService {
 				}
 				
 				if (id >=0){
-					 queryBuilder= queryBuilderRepository.findOne(Long.parseLong(queryId));
+					 qbjso= queryBuilderJsonStringObjectRepository.findOne(Long.parseLong(queryId));
 				} else{
-					 queryBuilder= queryBuilderRepository.findByName(queryId);
+					 qbjso= queryBuilderJsonStringObjectRepository.findByName(queryId);
 				}
+					
+				
+				ObjectMapper mapper = new ObjectMapper();
+				QueryBuilder queryBuilder=null;
+					try {
+						// Convert JSON string to Object
+						String jsonInString = qbjso.getQueryBuilderJson();
+						 queryBuilder = mapper.readValue(jsonInString, QueryBuilder.class);
+						 queryBuilder.setId(qbjso.getId());
 
+					} catch (JsonGenerationException e) {
+						e.printStackTrace();
+					} catch (JsonMappingException e) {
+						e.printStackTrace();
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+
+				
+				
+				
 			return new ResponseEntity<QueryBuilder>(queryBuilder,HttpStatus.OK);
 		    }
 			

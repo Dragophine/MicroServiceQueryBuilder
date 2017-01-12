@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import msquerybuilderbackend.entity.Alert;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Parameter;
+import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
 import msquerybuilderbackend.exception.InvalidTypeException;
 import msquerybuilderbackend.repository.AlertRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
@@ -189,11 +190,18 @@ public class AlertService {
 	@CrossOrigin 
 	@Transactional
 	@RequestMapping(value="/alerts",  method=RequestMethod.POST)
-	public ResponseEntity<Result> postAlert(@RequestBody Alert alert) throws Exception {
-		testTypes(alert);
-		alertRepository.save(alert);
-		
-		return new ResponseEntity<Result>( HttpStatus.OK);
+	public ResponseEntity<Long> postAlert(@RequestBody Alert alert) throws Exception {
+		Alert alreadyUsedName= alertRepository.findByName(alert.getName());
+		if (alreadyUsedName != null){
+			
+			return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);	
+		}else{
+			testTypes(alert);
+			alertRepository.save(alert);
+			
+			Alert newAlert = alertRepository.findByName(alert.getName());
+			return new ResponseEntity<Long>(newAlert.getId(), HttpStatus.OK);
+		}
 	}
 	
 	@CrossOrigin 
