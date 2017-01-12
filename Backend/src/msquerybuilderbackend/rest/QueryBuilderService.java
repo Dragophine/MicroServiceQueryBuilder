@@ -1,6 +1,7 @@
 package msquerybuilderbackend.rest;
   
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
@@ -147,24 +148,34 @@ public class QueryBuilderService {
 				} else{
 					 queryBuilder= queryBuilderRepository.findByName(queryId);
 				}
-//		    	for (Parameter p : queryBuilder.getParameter())
+				
+				/**
+				 * Interpretation der Query in ExpertQuery ausständig wie bei execute
+				 */
+				 
+		    	for (ExpertQuery q : queryBuilder.getExpertQuery())
+		    	{			    	
+			    	expertQueryRepository.delete(q.getId());
+		    	}
+		    	
+		    	
+		    	/**
+		    	 * eventuell nicht notwendig, falls es durch die Beschreibung des RElationships in der Entity funktioniert
+		    	 */
+//		    	for (ExpertQuery q : updatedQuery.getExpertQuery())
 //		    	{			    	
-//			    	parameterRepository.delete(p.getId());
+//			    	expertQueryRepository.save(q);
 //		    	}
-//		    	
-//		    	for (Parameter p : updatedQuery.getParameter())
-//		    	{			    	
-//			    	parameterRepository.save(p);
-//		    	}
-//		    	
-//		    	
-//		    	queryBuilder.setDescription(updatedQuery.getDescription());
-//		    	queryBuilder.setName(updatedQuery.getName());
-//		    	queryBuilder.setQuery(updatedQuery.getQuery());
-//		    	queryBuilder.setCategory(updatedQuery.getCategory());
-//		    	queryBuilder.setParameter(updatedQuery.getParameter());
-//		    	
-//		    	queryBuilderRepository.save(queryBuilder);
+		    	
+		    	Set<ExpertQuery> updatedQuerySet = new HashSet<ExpertQuery>();
+//		    	updatedQuerySet.add(expertQuery);
+		    	queryBuilder.setDescription(updatedQuery.getDescription());
+		    	queryBuilder.setName(updatedQuery.getName());
+		    	queryBuilder.setExpertQuery(updatedQuerySet);
+		    	queryBuilder.setCategory(updatedQuery.getCategory());
+		    	
+		    	
+		    	queryBuilderRepository.save(queryBuilder);
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
