@@ -12,6 +12,8 @@ var app = angular.module('queryBuilder', [
   'queryBuilder.querybuilder',
   'queryBuilder.querybuildernodedialog',
   'queryBuilder.querybuilderrelationshipdialog',
+  'queryBuilder.querybuilderLoadDialog',
+  'queryBuilder.querybuilderInfoDialog',
   'OutputTable',
   'queryBuilder.alerting',
   'queryBuilder.category',

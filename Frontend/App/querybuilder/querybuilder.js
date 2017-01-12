@@ -12,10 +12,11 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     var self = this;
 
     self.query = {
+    	"id":"",
     	"name":"",
     	"description":"",
     	"category":"",
-    	"limitcount": "",
+    	"limitCount": "",
     	"node":""          
     }
 
@@ -95,7 +96,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
     			var $rootNode = self.query["node"];
     		 	//Root node
-    			 self.nodes.add([{id: 1, label: $rootNode["type"]}]);
+    			 self.nodes.add([{id: 1, label: $rootNode["type"], x: 0, y: 0}]);
     			 self.nodeIDStore[1] = $rootNode;
 
     			 //every additional node
@@ -132,6 +133,14 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     ]);
     */
 
+    self.showInfoDialog = function($data){
+    	var dialog = ngDialog.open({ template: 'querybuilder/infoDialog.html',
+        				className: 'ngdialog-theme-default custom-width',
+        				controller: 'querybuilderInfoDialogCtrl',
+        				controllerAs: 'ctrl',
+        				data:$data
+        		 });
+    }
 	
 
 	/**
@@ -153,34 +162,165 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	}
 
 	self.saveQueryCallback = function($success, $data, $status) {
-		self.hasError = !$success;
+		var $dataForDialog = undefined;
 		if($success){
-			self.table = $data;
+			$dataForDialog = {
+				"head":"Successfully saved",
+				"content":"The query was saved successfully saved."
+			};
+			self.query.id = $data;
 		}
 		else
 		{
-			self.error = $data;
+			$dataForDialog = {
+				"head":"Error when saving",
+				"content":"Error when saving the query. Info: " + $data
+			};
 		}
+
+		 self.showInfoDialog($dataForDialog);
+
+		
 	}
 
 	self.saveQuery = function(){
-		$requests.saveQuery(self.query, self.saveQueryCallback);
+		var $data =self.checkInputData();
+    	if($data === undefined){
+
+    		$requests.saveQueryInBuilder(self.query, self.saveQueryCallback);
+    	}
+    	else
+    	{
+    		self.showInfoDialog($data);
+    	}
+		
+	}
+
+	self.updateQueryCallback = function($success, $data, $status) {
+		var $data = undefined;
+		if($success){
+			$data = {
+				"head":"Successfully updated",
+				"content":"The query was saved successfully updated."
+			};
+		}
+		else
+		{
+			$data = {
+				"head":"Error when updating",
+				"content":"Error when updating the query. Info: " + $data
+			};
+		}
+
+		 self.showInfoDialog($data);	
+	}
+
+	self.updateQuery = function(){
+		var $data =self.checkInputData();
+		if($data === undefined){
+    		$requests.updateQueryInBuilder(self.query, self.query.id, self.updateQueryCallback);
+    	}
+    	else
+    	{
+    		self.showInfoDialog($data);
+    	}
+		
+	}
+
+	self.checkInputData = function(){
+		var $data = undefined;
+		if(self.query.name === "" || self.query.name === undefined
+			|| self.query.name === null){
+			$data = {
+				"head":"No name",
+				"content":"Please enter a name before you save/update the query."
+			};
+		}
+		else if(self.query.description === ""|| self.query.description === undefined
+			|| self.query.description === null){
+			$data = {
+				"head":"No description",
+				"content":"Please enter a description before you save/update the query."
+			};
+		}
+		else if(self.query.category === ""|| self.query.category === undefined
+			|| self.query.category === null){
+			$data = {
+				"head":"No category",
+				"content":"Please enter a category before you save/update the query."
+			};
+		}
+    	return $data;
 	}
 
 	self.loadQuery = function(){
+		var dialog = ngDialog.open({ template: 'querybuilder/loadDialog.html',
+	        				className: 'ngdialog-theme-default custom-width',
+	        				controller: 'querybuilderLoadDialogCtrl',
+	        				controllerAs: 'ctrl'});
 
+
+        dialog.closePromise.then(function ($data) {
+        	if($data !== undefined &&
+        		$data.value !== undefined &&
+        		$data.value.name !== undefined &&
+        		$data.value.description !== undefined &&
+        		$data.value.category !== undefined)
+        	{
+        		self.query = $data.value;
+
+        		if(
+        		   $data.value.node !== undefined &&
+        		   $data.value.node !== "" &&
+        		   $data.value.node.type !== undefined &&
+        		   $data.value.node.type !== "" )
+        		{
+        		   	self.availableNodes =  [];
+        		}
+        		else{
+        			$requests.getNodes(self.getNodesCB);
+        		}
+		     	self.transfairToGraph();
+        	}
+		});
 	}
 	
+	self.deleteQueryCallback = function($success, $data, $status) {
+		var $data = undefined;
+		if($success){
+			$data = {
+				"head":"Successfully deleted",
+				"content":"The query was saved successfully deleted."
+			};
+			self.newQuery();
+		}
+		else
+		{
+			$data = {
+				"head":"Error when deleting",
+				"content":"Error when deleting the query. Info: " + $data
+			};
+		}
+
+		 self.showInfoDialog($data);
+	}
+
 	self.deleteQuery = function(){
+		$requests.deleteQueryInBuilder(self.query.id, self.deleteQueryCallback);
+		
+	}
+
+	self.newQuery = function(){
 		self.query = {
+			"id":"",
 	    	"name":"",
 	    	"description":"",
 	    	"category":"",
-	    	"limitcount": "",
+	    	"limitCount": "",
 	    	 "node":""
 	    }
 	    $requests.getNodes(self.getNodesCB);
-		 self.transfairToGraph();
+		self.transfairToGraph();
 	}
 
 	/**
@@ -247,20 +387,43 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 //	    }));
 //	};
 
-	/*
-	View oprerations
-	*/
-	self.changeDirection = function(i){
-		if(self.selectedNodesAndRelation[i]["relationship"]['direction'] == 'up'){
-			self.selectedNodesAndRelation[i]["relationship"]['direction'] = 'down';
-		}
-		else if(self.selectedNodesAndRelation[i]["relationship"]['direction'] == 'down'){
-			self.selectedNodesAndRelation[i]["relationship"]['direction'] = 'both';
-		}
-		else if(self.selectedNodesAndRelation[i]["relationship"]['direction'] == 'both'){
-			self.selectedNodesAndRelation[i]["relationship"]['direction'] = 'up';
-		}	
 
+	self.deleteSelectedNode = function(){
+		//if node is head
+		if(self.query.node ===  self.selectedNode){
+			self.selectedNode = undefined;
+			self.query.node = undefined;
+			$requests.getNodes(self.getNodesCB);
+		}
+		//if node is not head
+		else{
+			if(self.deleteRecursion(self.query.node, self.selectedNode) === 1){
+				self.selectedNode = undefined;
+			};
+		}
+		
+		self.transfairToGraph();
+	}
+
+	self.deleteRecursion = function($nodeToCheck, $nodeToDelete){
+		if($nodeToCheck === $nodeToDelete){
+			return 0; //delte node;
+		}
+		else {
+			for (var i = $nodeToCheck.relationship.length - 1; i >= 0; i--) {
+				var res = self.deleteRecursion($nodeToCheck.relationship[i].node, $nodeToDelete);
+				if(res === 0) //delete node
+				{
+					$nodeToCheck.relationship.splice(i, 1);
+					return 1;
+				}
+				else if(res === 1) { //node already deleted
+					return 1;
+				}
+				//if(res === 2) node not found.
+			}
+			return 2;//not found
+		}
 	}
 
 	/**
@@ -287,6 +450,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		    }
 		},
 		layout: {
+			randomSeed: 50,
 
 			hierarchical: {
 		      enabled:true,
@@ -297,7 +461,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		      edgeMinimization: true,
 		      parentCentralization: true,
 		      direction: 'UD',        // UD, DU, LR, RL
-		      sortMethod: 'hubsize'   // hubsize, directed
+		      sortMethod: 'directed'   // hubsize, directed
 		    }
 		},
 		interaction:{
@@ -375,7 +539,6 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 
 	self.availableCategories = [];
-	self.categoryName = "";
 
 			/**
 	Method for categories

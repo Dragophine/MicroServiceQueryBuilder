@@ -18,6 +18,10 @@ Container .css
     }
 }
 
+.top-buffer-verysmall { 
+  margin-top: 5px; 
+}
+
 .top-buffer-small { 
   margin-top: 17px; 
 }
@@ -29,6 +33,10 @@ Container .css
 
 .left-buffer {
   margin-left: 20px;
+}
+
+.left-buffer-padding {
+  padding-right: 20px;
 }
 
 .top-buffer-large { 

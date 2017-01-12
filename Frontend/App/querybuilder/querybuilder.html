@@ -4,9 +4,14 @@
   <div class="row top-buffer-small">
     <div>
       <button class="btn btn-default" ng-click="ctrl.executeQuery()">Execute Query</button>
-      <button class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
+      <button ng-if='ctrl.query["id"] === ""'
+              class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
+       <button ng-if='ctrl.query["id"] !== ""'
+              class="btn btn-default" ng-click="ctrl.updateQuery()">Update Query</button>
+      <button ng-if='ctrl.query["id"] !== ""'
+              class="btn btn-default" ng-click="ctrl.deleteQuery()">Delete Query</button>
       <button class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button>
-      <button class="btn btn-default" ng-click="ctrl.deleteQuery()">Delete Query</button>
+      <button class="btn btn-default" ng-click="ctrl.newQuery()">New Query</button>
     </div>
   </div>
 
@@ -22,7 +27,7 @@
   </div>
   <div class="row">
       <h1>Category</h1>
-      <select  ng-model="ctrl.categoryName" ng-change="ctrl.categoryName"
+      <select  ng-model="ctrl.query['category']" ng-change="ctrl.query['category']"
       style="width: 100%; display:block; margin-bottom: 5px">
           <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
       </select>
@@ -31,7 +36,7 @@
   <div class="row">
       <h1>Limit</h1>
       <input type="textarea" class="form-control" id="query"
-            ng-model="ctrl.query['limitcount']"  placeholder="LimitCount" />
+            ng-model="ctrl.query['limitCount']"  placeholder="Limit Count" />
   </div>
   
 
@@ -44,7 +49,9 @@
         </div>
   </div>
   <div class="row" ng-if="ctrl.availableNodes.length === 0">
-    <div class="panel panel-default top-buffer col-md-9">
+    <div class="panel panel-default top-buffer"
+         ng-class="{'col-md-8': ctrl.selectedNode != undefined, 
+                    'col-md-12': ctrl.selectedNode == undefined}">
       <div class="panel-body">
         <vis-network ng-if="ctrl.availableNodes.length == 0"
               ng-model="ctrl.network_data"
@@ -55,10 +62,15 @@
         </vis-network>
       </div>
     </div>
+    <div class="col-md-1">
+    </div>
     <div class="panel panel-default top-buffer col-md-3" 
       ng-if="ctrl.selectedNode != undefined">
       <div class="panel-body">
         <h1>{{ctrl.selectedNode['type']}}</h1>
+        <button ng-click="ctrl.deleteSelectedNode()">
+          Delete
+        </button>
       </div>
     </div>
   </div>

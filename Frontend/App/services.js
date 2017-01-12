@@ -46,7 +46,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
     this.getResultFromQueryQueryBuilder = function($query, $callback) {
         $http({
             method : 'POST',
-            url : $serverRestLocation.getValue() + '/buildQuery', 
+            url : $serverRestLocation.getValue() + '/queryBuilder/execute', 
             headers: {  'Content-Type':'application/json'},
             data:      $query
         })
@@ -182,6 +182,45 @@ angular.module('queryBuilder.services', ['ngCookies'])
             }
         });
     };
+
+    this.saveQueryInBuilder = function($query, $callback) {
+        $http({
+            method : 'POST',
+            url : $serverRestLocation.getValue() + '/queryBuilder', 
+            headers: {  'Content-Type':'application/json'},
+            data: $query
+        })
+        .success(function(data, status) {
+            if($callback !== undefined){
+                $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            if($callback !== undefined){
+                 $callback(false, data, status);
+            }
+        });
+    };
+
+    this.updateQueryInBuilder = function($query, $id, $callback) {
+        $http({
+            method : 'PUT',
+            url : $serverRestLocation.getValue() + '/queryBuilder/' + $id, 
+            headers: {  'Content-Type':'application/json'},
+            data: $query
+        })
+        .success(function(data, status) {
+            if($callback !== undefined){
+                $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            if($callback !== undefined){
+                 $callback(false, data, status);
+            }
+        });
+    };
+    
     
     // delete query
     this.deleteQuery = function($query, $params, $name, $description, $category, $callback) {
@@ -209,12 +248,46 @@ angular.module('queryBuilder.services', ['ngCookies'])
             }
         });
     };    
+
+     this.deleteQueryInBuilder = function( $id, $callback) {
+       $http({
+            method : 'DELETE',
+            url : $serverRestLocation.getValue() + '/queryBuilder/' + $id, 
+            headers: {  'Content-Type':'application/json'}
+        })
+        .success(function(data, status) {
+            if($callback !== undefined){
+                $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            if($callback !== undefined){
+                 $callback(false, data, status);
+            }
+        });
+    };    
     
     //load query
     this.loadAllQueries = function($callback) {
         $http({
             method : 'GET',
             url : $serverRestLocation.getValue() + '/expertqueries', 
+            headers: { 
+                    'Content-Type':'application/json'
+            }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };
+
+    this.loadAllQueriesInBuilder = function($callback) {
+        $http({
+            method : 'GET',
+            url : $serverRestLocation.getValue() + '/queryBuilder', 
             headers: { 
                     'Content-Type':'application/json'
             }
