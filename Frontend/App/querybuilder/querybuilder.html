@@ -42,7 +42,7 @@
         </div>
   </div>
   <div class="row" ng-if="ctrl.availableNodes.length === 0">
-    <div class="panel panel-default top-buffer">
+    <div class="panel panel-default top-buffer col-md-9">
       <div class="panel-body">
         <vis-network ng-if="ctrl.availableNodes.length == 0"
               ng-model="ctrl.network_data"
@@ -53,7 +53,7 @@
         </vis-network>
       </div>
     </div>
-    <div class="panel panel-default top-buffer" 
+    <div class="panel panel-default top-buffer col-md-3" 
       ng-if="ctrl.selectedNode != undefined">
       <div class="panel-body">
         <h1>{{ctrl.selectedNode['type']}}</h1>
