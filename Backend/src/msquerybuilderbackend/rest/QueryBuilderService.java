@@ -66,12 +66,12 @@ public class QueryBuilderService {
 			@Transactional
 			@CrossOrigin 
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.POST)	 
-		    public ResponseEntity<Result> saveQuery(@RequestBody QueryBuilder queryBuilder) throws Exception{
+		    public ResponseEntity<Long> saveQuery(@RequestBody QueryBuilder queryBuilder) throws Exception{
 			
 			QueryBuilder alreadyUsedName= queryBuilderRepository.findByName(queryBuilder.getName());
 			if (alreadyUsedName != null){
 				
-				return new ResponseEntity<Result>(HttpStatus.CONFLICT);	
+				return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);	
 			}else{
 				
 /**
@@ -80,8 +80,9 @@ public class QueryBuilderService {
 		//		queryBuilder.addExpertQuery(expertquery);
 				queryBuilder.setExpertQuery(null);
 		    	queryBuilderRepository.save(queryBuilder);
+		    	QueryBuilder returnNew=queryBuilderRepository.findByName(queryBuilder.getName());
 		
-			return new ResponseEntity<Result>(HttpStatus.OK);
+			return new ResponseEntity<Long>(returnNew.getId(),HttpStatus.OK);
 			}
 		    }
 			
@@ -112,6 +113,8 @@ public class QueryBuilderService {
 				} else{
 					 queryBuilder= queryBuilderRepository.findByName(queryId);
 				}
+				
+				
 				Set<ExpertQuery> expertqueries = queryBuilder.getExpertQuery();
 				Iterator iter = expertqueries.iterator();
 		
@@ -187,6 +190,7 @@ public class QueryBuilderService {
 		    	queryBuilder.setCategory(updatedQuery.getCategory());
 		    	queryBuilder.setLimitcount(updatedQuery.getLimitCount());
 		    	queryBuilder.setNode(updatedQuery.getNode());
+		    
 		    	
 		    	
 		    	

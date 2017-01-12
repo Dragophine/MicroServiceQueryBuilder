@@ -50,6 +50,9 @@ public String getName(){
 }
 
 public Set<ExpertQuery>getExpertQuery(){
+	if (this.expertquery==null){
+		return new HashSet<ExpertQuery>();
+	}
 	return this.expertquery;
 }
 
