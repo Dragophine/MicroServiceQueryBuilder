@@ -1,7 +1,9 @@
 package msquerybuilderbackend.entity;
 
-public class FilterAttribute {
+import org.neo4j.ogm.annotation.GraphId;
 
+public class FilterAttribute {
+	@GraphId private Long id;
 	private String attributeName="";
 	private String filterType="";
 //	private String key;

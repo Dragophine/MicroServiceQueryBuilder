@@ -1,7 +1,9 @@
 package msquerybuilderbackend.entity;
 
+import org.neo4j.ogm.annotation.GraphId;
+
 public class OrderByAttribute {
-	
+	@GraphId private Long id;
 	private String attributeName="";
 	private String direction="";
 	

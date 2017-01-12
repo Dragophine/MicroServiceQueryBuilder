@@ -42,6 +42,7 @@ import java.lang.reflect.Type;
 
 
 @RestController
+@Deprecated
 public class ExpertModus {
 	  @Autowired
 		Neo4jOperations neo4jOperations;

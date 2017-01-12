@@ -3,10 +3,12 @@ package msquerybuilderbackend.entity;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.neo4j.ogm.annotation.GraphId;
+
 import ch.qos.logback.core.filter.Filter;
 
 public class Node {
-	
+	@GraphId private Long id;
 	private String type;
 	private Set<ReturnAttribute> returnAttributes  = new HashSet<ReturnAttribute>(0);
 	private Set<FilterAttribute> filterAttributes  = new HashSet<FilterAttribute>(0);

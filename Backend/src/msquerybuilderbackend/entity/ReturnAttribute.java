@@ -1,7 +1,9 @@
 package msquerybuilderbackend.entity;
 
-public class ReturnAttribute {
+import org.neo4j.ogm.annotation.GraphId;
 
+public class ReturnAttribute {
+	@GraphId private Long id;
 	private String attributeName ="";
 	private String returnType ="";
 	
