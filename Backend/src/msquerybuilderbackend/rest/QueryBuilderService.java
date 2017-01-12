@@ -64,8 +64,14 @@ public class QueryBuilderService {
 			@Transactional
 			@CrossOrigin 
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.POST)	 
-		    public ResponseEntity<Result> saveQuery(@RequestBody QueryBuilder queryBuilder) throws Exception
-			{
+		    public ResponseEntity<Result> saveQuery(@RequestBody QueryBuilder queryBuilder) throws Exception{
+			
+			QueryBuilder alreadyUsedName= queryBuilderRepository.findByName(queryBuilder.getName());
+			if (alreadyUsedName != null){
+				
+				return new ResponseEntity<Result>(HttpStatus.CONFLICT);	
+			}else{
+				
 /**
  * Interpretation des Querybuilders wie bei execute ausständig
  */
@@ -74,6 +80,7 @@ public class QueryBuilderService {
 		    	queryBuilderRepository.save(queryBuilder);
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
+			}
 		    }
 			
 			
