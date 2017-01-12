@@ -31,6 +31,10 @@ Container .css
   margin-left: 20px;
 }
 
+.left-buffer-padding {
+  padding-right: 20px;
+}
+
 .top-buffer-large { 
   margin-top: 35px; 
 }

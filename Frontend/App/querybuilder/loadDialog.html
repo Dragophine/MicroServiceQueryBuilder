@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<div>
+  <h1>Query </h1>
+  <div class="row top-buffer panel panel-default" ng-repeat="query in ctrl.loadedQueries">
+    <div class="col-sm-3">
+      {{query.name}}
+    </div>
+    <div class="col-sm-3">
+      {{query.description}}
+    </div>
+    <div class="col-sm-3">
+      {{query.category}}
+    </div>
+    <div class="col-sm-3 top-buffer-small">
+      <button ng-click="ctrl.selectQuery(query)">
+        Load
+      </button>
+    </div>
+  </div>
+   
+</div>

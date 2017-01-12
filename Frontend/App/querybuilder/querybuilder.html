@@ -22,7 +22,7 @@
   </div>
   <div class="row">
       <h1>Category</h1>
-      <select  ng-model="ctrl.categoryName" ng-change="ctrl.categoryName"
+      <select  ng-model="ctrl.query['category']" ng-change="ctrl.query['category']"
       style="width: 100%; display:block; margin-bottom: 5px">
           <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
       </select>
@@ -44,7 +44,9 @@
         </div>
   </div>
   <div class="row" ng-if="ctrl.availableNodes.length === 0">
-    <div class="panel panel-default top-buffer col-md-9">
+    <div class="panel panel-default top-buffer"
+         ng-class="{'col-md-8': ctrl.selectedNode != undefined, 
+                    'col-md-12': ctrl.selectedNode == undefined}">
       <div class="panel-body">
         <vis-network ng-if="ctrl.availableNodes.length == 0"
               ng-model="ctrl.network_data"
@@ -55,10 +57,15 @@
         </vis-network>
       </div>
     </div>
+    <div class="col-md-1">
+    </div>
     <div class="panel panel-default top-buffer col-md-3" 
       ng-if="ctrl.selectedNode != undefined">
       <div class="panel-body">
         <h1>{{ctrl.selectedNode['type']}}</h1>
+        <button ng-click="ctrl.deleteSelectedNode()">
+          Delete
+        </button>
       </div>
     </div>
   </div>
