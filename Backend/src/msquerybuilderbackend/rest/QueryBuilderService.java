@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import org.neo4j.ogm.annotation.Relationship;
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import msquerybuilderbackend.entity.ExpertQuery;
+import msquerybuilderbackend.entity.Node;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.entity.QueryBuilder;
 import msquerybuilderbackend.exception.InvalidTypeException;
@@ -161,10 +163,12 @@ public class QueryBuilderService {
 				 * Interpretation der Query in ExpertQuery ausständig wie bei execute
 				 */
 				 
-		    	for (ExpertQuery q : queryBuilder.getExpertQuery())
-		    	{			    	
-			    	expertQueryRepository.delete(q.getId());
-		    	}
+				if (queryBuilder.getExpertQuery()!=null){
+			    	for (ExpertQuery q : queryBuilder.getExpertQuery())
+			    	{			    	
+				    	expertQueryRepository.delete(q.getId());
+			    	}
+				}
 		    	
 		    	
 		    	/**
@@ -181,6 +185,11 @@ public class QueryBuilderService {
 		    	queryBuilder.setName(updatedQuery.getName());
 		    	queryBuilder.setExpertQuery(updatedQuerySet);
 		    	queryBuilder.setCategory(updatedQuery.getCategory());
+		    	queryBuilder.setLimitcount(updatedQuery.getLimitCount());
+		    	queryBuilder.setNode(updatedQuery.getNode());
+		    	
+		    	
+		    	
 		    	
 		    	
 		    	queryBuilderRepository.save(queryBuilder);
