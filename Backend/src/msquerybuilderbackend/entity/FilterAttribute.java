@@ -11,6 +11,9 @@ public class FilterAttribute {
 	private String type="";
 	private String value="";
 	private Boolean changeable;
+	private Boolean isBracketOpen;
+	private Boolean isBracketClosed;
+	private String logic="";
 	
 	public FilterAttribute(){
 		
@@ -40,6 +43,31 @@ public class FilterAttribute {
 		return this.changeable;
 	}
 	
+	
+	public Boolean getIsBracketOpen() {
+		return isBracketOpen;
+	}
+
+	public void setIsBracketOpen(Boolean isBracketOpen) {
+		this.isBracketOpen = isBracketOpen;
+	}
+
+	public Boolean getIsBracketClosed() {
+		return isBracketClosed;
+	}
+
+	public void setIsBracketClosed(Boolean isBracketClosed) {
+		this.isBracketClosed = isBracketClosed;
+	}
+
+	public String getLogic() {
+		return logic;
+	}
+
+	public void setLogic(String logic) {
+		this.logic = logic;
+	}
+
 	public void setAttributeName(String at){
 		this.attributeName=at;
 	}
