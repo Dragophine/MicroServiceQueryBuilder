@@ -12,7 +12,7 @@ public class QueryBuilder {
 
 
 
-	@GraphId private Long id;
+@GraphId private Long id;
 private String name;
 private String description;
 

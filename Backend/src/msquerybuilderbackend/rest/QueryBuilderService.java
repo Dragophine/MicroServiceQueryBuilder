@@ -1,7 +1,9 @@
 package msquerybuilderbackend.rest;
   
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Set;
 
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +38,8 @@ public class QueryBuilderService {
 		QueryBuilderRepository queryBuilderRepository;
 		@Autowired
 		ParameterRepository parameterRepository;
+		@Autowired
+		ExpertQueryRepository expertQueryRepository;
 		
 	
 			@CrossOrigin 
@@ -61,12 +65,11 @@ public class QueryBuilderService {
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.POST)	 
 		    public ResponseEntity<Result> saveQuery(@RequestBody QueryBuilder queryBuilder) throws Exception
 			{
-//		    	for (Parameter p : queryBuilder.getParameter())
-//		    	{
-//					testTypes(p);				
-//		    		parameterRepository.save(p);
-//		    	}
-//		    	expertQueryRepository.save(queryBuilder);
+/**
+ * Interpretation des Querybuilders wie bei execute ausständig
+ */
+		//		queryBuilder.addExpertQuery(expertquery);
+		    	queryBuilderRepository.save(queryBuilder);
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
@@ -92,18 +95,28 @@ public class QueryBuilderService {
 					 * eindeutige Name sein. 
 					 */
 				}
-//				
-//				if (id >=0){
-//					 queryBuilder= queryBuilderRepository.findOne(id);
-//				} else{
-//					 queryBuilder= queryBuilderRepository.findByName(queryId);
-//				}
-//		    	for (Parameter p : queryBuilder.getParameter())
-//		    	{
-//			    	parameterRepository.delete(p.getId());
-//		    	}
-//		    	
-//		    	queryBuilderRepository.delete(queryBuilder.getId());
+				
+				if (id >=0){
+					 queryBuilder= queryBuilderRepository.findOne(id);
+				} else{
+					 queryBuilder= queryBuilderRepository.findByName(queryId);
+				}
+				Set<ExpertQuery> expertqueries = queryBuilder.getExpertQuery();
+				Iterator iter = expertqueries.iterator();
+		
+				while (iter.hasNext()){
+					ExpertQuery eq= (ExpertQuery) iter.next();
+					for (Parameter p : eq.getParameter())
+			    	{
+				    	parameterRepository.delete(p.getId());
+			    	}
+					expertQueryRepository.delete(eq.getId());
+				}
+				
+
+		    	
+		    	
+		    	queryBuilderRepository.delete(queryBuilder.getId());
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
