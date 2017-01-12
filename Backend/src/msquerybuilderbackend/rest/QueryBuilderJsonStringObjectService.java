@@ -160,7 +160,7 @@ public class QueryBuilderJsonStringObjectService {
 
 		    	
 		    	
-		    	queryBuilderJsonStringObjectRepository.delete(0L);
+		    	queryBuilderJsonStringObjectRepository.delete(qbjso.getId());
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
