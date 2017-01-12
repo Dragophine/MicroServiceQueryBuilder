@@ -162,29 +162,31 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	}
 
 	self.saveQueryCallback = function($success, $data, $status) {
-		var $data = undefined;
+		var $dataForDialog = undefined;
 		if($success){
-			$data = {
+			$dataForDialog = {
 				"head":"Successfully saved",
 				"content":"The query was saved successfully saved."
 			};
+			self.query.id = $data;
 		}
 		else
 		{
-			$data = {
+			$dataForDialog = {
 				"head":"Error when saving",
 				"content":"Error when saving the query. Info: " + $data
 			};
 		}
 
-		 self.showInfoDialog($data);
+		 self.showInfoDialog($dataForDialog);
+
 		
 	}
 
 	self.saveQuery = function(){
 		var $data =self.checkInputData();
     	if($data === undefined){
-    		
+
     		$requests.saveQueryInBuilder(self.query, self.saveQueryCallback);
     	}
     	else
