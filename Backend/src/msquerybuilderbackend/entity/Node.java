@@ -6,18 +6,31 @@ import java.util.Set;
 import org.neo4j.ogm.annotation.GraphId;
 
 import ch.qos.logback.core.filter.Filter;
+import org.neo4j.ogm.annotation.NodeEntity;
+import org.neo4j.ogm.annotation.Relationship;
 
+@NodeEntity
 public class Node {
 	@GraphId private Long id;
 	private String type;
+	@Relationship(type = "RETURN_ATTRIBUTES", direction = Relationship.OUTGOING)
 	private Set<ReturnAttribute> returnAttributes  = new HashSet<ReturnAttribute>(0);
+	
+	@Relationship(type = "FILTER_ATTRIBUTES", direction = Relationship.OUTGOING)
 	private Set<FilterAttribute> filterAttributes  = new HashSet<FilterAttribute>(0);
+	
+	@Relationship(type = "ORDER_BY_ATTRIBUTES", direction = Relationship.OUTGOING)
 	private Set<OrderByAttribute> orderByAttributes  = new HashSet<OrderByAttribute>(0);
+	
+	@Relationship(type = "RELATIONSHIP", direction = Relationship.OUTGOING)
 	private Set<Relationship> relationship= new HashSet<Relationship>();
 	
 	
 	public Node(){
 		
+	}
+	public Long getId(){
+		return this.id;
 	}
 	
 	public String getType(){

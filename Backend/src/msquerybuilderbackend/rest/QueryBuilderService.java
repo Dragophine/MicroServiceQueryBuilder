@@ -78,6 +78,9 @@ public class QueryBuilderService {
  * Interpretation des Querybuilders wie bei execute ausständig
  */
 		//		queryBuilder.addExpertQuery(expertquery);
+				/**
+				 * ExpertQuery auch den Namen und Beschreibung geben
+				 */
 				queryBuilder.setExpertQuery(null);
 		    	queryBuilderRepository.save(queryBuilder);
 		    	QueryBuilder returnNew=queryBuilderRepository.findByName(queryBuilder.getName());

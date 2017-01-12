@@ -4,7 +4,9 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.neo4j.ogm.annotation.GraphId;
+import org.neo4j.ogm.annotation.NodeEntity;
 
+@NodeEntity
 public class Relationship {
 	@GraphId private Long id;
 	private String relationshipType="";
@@ -18,6 +20,10 @@ public class Relationship {
 	public String getRelationshipType(){
 
 		return this.relationshipType;
+	}
+	
+	public Long getId(){
+		return this.id;
 	}
 	
 	public String getDirection(){
