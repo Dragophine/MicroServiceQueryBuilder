@@ -70,6 +70,7 @@ public class QueryBuilderService {
  * Interpretation des Querybuilders wie bei execute ausständig
  */
 		//		queryBuilder.addExpertQuery(expertquery);
+				queryBuilder.setExpertQuery(null);
 		    	queryBuilderRepository.save(queryBuilder);
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
