@@ -9,6 +9,7 @@ public class ReturnAttribute {
 	private String attributeName ="";
 	private String returnType ="";
 	
+	
 	public ReturnAttribute(){
 		
 	}
