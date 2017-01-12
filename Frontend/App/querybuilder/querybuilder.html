@@ -4,9 +4,14 @@
   <div class="row top-buffer-small">
     <div>
       <button class="btn btn-default" ng-click="ctrl.executeQuery()">Execute Query</button>
-      <button class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
+      <button ng-if='ctrl.query["id"] === ""'
+              class="btn btn-default" ng-click="ctrl.saveQuery()">Save Query</button>
+       <button ng-if='ctrl.query["id"] !== ""'
+              class="btn btn-default" ng-click="ctrl.updateQuery()">Update Query</button>
+      <button ng-if='ctrl.query["id"] !== ""'
+              class="btn btn-default" ng-click="ctrl.deleteQuery()">Delete Query</button>
       <button class="btn btn-default" ng-click="ctrl.loadQuery()">Load Query</button>
-      <button class="btn btn-default" ng-click="ctrl.deleteQuery()">Delete Query</button>
+      <button class="btn btn-default" ng-click="ctrl.newQuery()">New Query</button>
     </div>
   </div>
 
@@ -31,7 +36,7 @@
   <div class="row">
       <h1>Limit</h1>
       <input type="textarea" class="form-control" id="query"
-            ng-model="ctrl.query['limitcount']"  placeholder="LimitCount" />
+            ng-model="ctrl.query['limitCount']"  placeholder="Limit Count" />
   </div>
   
 

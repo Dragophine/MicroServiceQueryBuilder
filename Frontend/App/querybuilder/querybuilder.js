@@ -12,10 +12,11 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     var self = this;
 
     self.query = {
+    	"id":"",
     	"name":"",
     	"description":"",
     	"category":"",
-    	"limitcount": "",
+    	"limitCount": "",
     	"node":""          
     }
 
@@ -181,27 +182,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	}
 
 	self.saveQuery = function(){
-		var $data = undefined;
-		if(self.query.name === "" || self.query.name === undefined){
-			$data = {
-				"head":"No name",
-				"content":"Please enter a name before you save the query."
-			};
-		}
-		else if(self.query.description === ""|| self.query.name === undefined){
-			$data = {
-				"head":"No description",
-				"content":"Please enter a description before you save the query."
-			};
-		}
-		else if(self.query.category === ""|| self.query.name === undefined){
-			$data = {
-				"head":"No category",
-				"content":"Please enter a category before you save the query."
-			};
-		}
-    	
+		var $data =self.checkInputData();
     	if($data === undefined){
+    		
     		$requests.saveQueryInBuilder(self.query, self.saveQueryCallback);
     	}
     	else
@@ -209,6 +192,63 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     		self.showInfoDialog($data);
     	}
 		
+	}
+
+	self.updateQueryCallback = function($success, $data, $status) {
+		var $data = undefined;
+		if($success){
+			$data = {
+				"head":"Successfully updated",
+				"content":"The query was saved successfully updated."
+			};
+		}
+		else
+		{
+			$data = {
+				"head":"Error when updating",
+				"content":"Error when updating the query. Info: " + $data
+			};
+		}
+
+		 self.showInfoDialog($data);	
+	}
+
+	self.updateQuery = function(){
+		var $data =self.checkInputData();
+		if($data === undefined){
+    		$requests.updateQueryInBuilder(self.query, self.query.id, self.updateQueryCallback);
+    	}
+    	else
+    	{
+    		self.showInfoDialog($data);
+    	}
+		
+	}
+
+	self.checkInputData = function(){
+		var $data = undefined;
+		if(self.query.name === "" || self.query.name === undefined
+			|| self.query.name === null){
+			$data = {
+				"head":"No name",
+				"content":"Please enter a name before you save/update the query."
+			};
+		}
+		else if(self.query.description === ""|| self.query.description === undefined
+			|| self.query.description === null){
+			$data = {
+				"head":"No description",
+				"content":"Please enter a description before you save/update the query."
+			};
+		}
+		else if(self.query.category === ""|| self.query.category === undefined
+			|| self.query.category === null){
+			$data = {
+				"head":"No category",
+				"content":"Please enter a category before you save/update the query."
+			};
+		}
+    	return $data;
 	}
 
 	self.loadQuery = function(){
@@ -243,16 +283,42 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		});
 	}
 	
+	self.deleteQueryCallback = function($success, $data, $status) {
+		var $data = undefined;
+		if($success){
+			$data = {
+				"head":"Successfully deleted",
+				"content":"The query was saved successfully deleted."
+			};
+			self.newQuery();
+		}
+		else
+		{
+			$data = {
+				"head":"Error when deleting",
+				"content":"Error when deleting the query. Info: " + $data
+			};
+		}
+
+		 self.showInfoDialog($data);
+	}
+
 	self.deleteQuery = function(){
+		$requests.deleteQueryInBuilder(self.query.id, self.deleteQueryCallback);
+		
+	}
+
+	self.newQuery = function(){
 		self.query = {
+			"id":"",
 	    	"name":"",
 	    	"description":"",
 	    	"category":"",
-	    	"limitcount": "",
+	    	"limitCount": "",
 	    	 "node":""
 	    }
 	    $requests.getNodes(self.getNodesCB);
-		 self.transfairToGraph();
+		self.transfairToGraph();
 	}
 
 	/**

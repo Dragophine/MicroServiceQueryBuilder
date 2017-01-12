@@ -188,9 +188,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
             method : 'POST',
             url : $serverRestLocation.getValue() + '/queryBuilder', 
             headers: {  'Content-Type':'application/json'},
-            data: { 
-                $query
-            }
+            data: $query
         })
         .success(function(data, status) {
             if($callback !== undefined){
@@ -203,6 +201,26 @@ angular.module('queryBuilder.services', ['ngCookies'])
             }
         });
     };
+
+    this.updateQueryInBuilder = function($query, $id, $callback) {
+        $http({
+            method : 'PUT',
+            url : $serverRestLocation.getValue() + '/queryBuilder/' + $id, 
+            headers: {  'Content-Type':'application/json'},
+            data: $query
+        })
+        .success(function(data, status) {
+            if($callback !== undefined){
+                $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            if($callback !== undefined){
+                 $callback(false, data, status);
+            }
+        });
+    };
+    
     
     // delete query
     this.deleteQuery = function($query, $params, $name, $description, $category, $callback) {
@@ -227,6 +245,24 @@ angular.module('queryBuilder.services', ['ngCookies'])
             console.log(data);
             if($callback !== undefined){
            $callback(false, data, status);
+            }
+        });
+    };    
+
+     this.deleteQueryInBuilder = function( $id, $callback) {
+       $http({
+            method : 'DELETE',
+            url : $serverRestLocation.getValue() + '/queryBuilder/' + $id, 
+            headers: {  'Content-Type':'application/json'}
+        })
+        .success(function(data, status) {
+            if($callback !== undefined){
+                $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            if($callback !== undefined){
+                 $callback(false, data, status);
             }
         });
     };    
