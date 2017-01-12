@@ -1,11 +1,10 @@
 package msquerybuilderbackend.entity;
 
-import org.neo4j.ogm.annotation.GraphId;
-import org.neo4j.ogm.annotation.NodeEntity;
 
-@NodeEntity
+
+
 public class FilterAttribute {
-	@GraphId private Long id;
+	
 	private String attributeName="";
 	private String filterType="";
 //	private String key;
@@ -16,9 +15,7 @@ public class FilterAttribute {
 	public FilterAttribute(){
 		
 	}
-	public Long getId(){
-		return this.id;
-	}
+
 	public String getAttributeName(){
 		return this.attributeName;
 	}

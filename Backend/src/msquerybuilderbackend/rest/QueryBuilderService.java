@@ -85,7 +85,7 @@ public class QueryBuilderService {
 		    	queryBuilderRepository.save(queryBuilder);
 		    	QueryBuilder returnNew=queryBuilderRepository.findByName(queryBuilder.getName());
 		
-			return new ResponseEntity<Long>(returnNew.getId(),HttpStatus.OK);
+			return new ResponseEntity<Long>(0L,HttpStatus.OK);
 			}
 		    }
 			
@@ -133,7 +133,7 @@ public class QueryBuilderService {
 
 		    	
 		    	
-		    	queryBuilderRepository.delete(queryBuilder.getId());
+		    	queryBuilderRepository.delete(0L);
 		
 			return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
