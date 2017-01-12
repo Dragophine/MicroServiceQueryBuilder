@@ -1,20 +1,24 @@
 package msquerybuilderbackend.entity;
 
-import org.neo4j.ogm.annotation.GraphId;
+
+
 
 public class FilterAttribute {
-	@GraphId private Long id;
+	
 	private String attributeName="";
 	private String filterType="";
 //	private String key;
 	private String type="";
 	private String value="";
 	private Boolean changeable;
+	private Boolean isBracketOpen;
+	private Boolean isBracketClosed;
+	private String logic="";
 	
 	public FilterAttribute(){
 		
 	}
-	
+
 	public String getAttributeName(){
 		return this.attributeName;
 	}
@@ -39,6 +43,31 @@ public class FilterAttribute {
 		return this.changeable;
 	}
 	
+	
+	public Boolean getIsBracketOpen() {
+		return isBracketOpen;
+	}
+
+	public void setIsBracketOpen(Boolean isBracketOpen) {
+		this.isBracketOpen = isBracketOpen;
+	}
+
+	public Boolean getIsBracketClosed() {
+		return isBracketClosed;
+	}
+
+	public void setIsBracketClosed(Boolean isBracketClosed) {
+		this.isBracketClosed = isBracketClosed;
+	}
+
+	public String getLogic() {
+		return logic;
+	}
+
+	public void setLogic(String logic) {
+		this.logic = logic;
+	}
+
 	public void setAttributeName(String at){
 		this.attributeName=at;
 	}

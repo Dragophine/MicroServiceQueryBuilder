@@ -7,18 +7,28 @@ import org.neo4j.ogm.annotation.GraphId;
 
 import ch.qos.logback.core.filter.Filter;
 
+
+
 public class Node {
-	@GraphId private Long id;
+	
 	private String type;
+	
 	private Set<ReturnAttribute> returnAttributes  = new HashSet<ReturnAttribute>(0);
+	
+
 	private Set<FilterAttribute> filterAttributes  = new HashSet<FilterAttribute>(0);
+	
+	
 	private Set<OrderByAttribute> orderByAttributes  = new HashSet<OrderByAttribute>(0);
+	
+
 	private Set<Relationship> relationship= new HashSet<Relationship>();
 	
 	
 	public Node(){
 		
 	}
+
 	
 	public String getType(){
 		if (this.type==null) return "";

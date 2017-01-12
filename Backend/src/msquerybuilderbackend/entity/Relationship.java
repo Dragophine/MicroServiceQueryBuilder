@@ -3,10 +3,11 @@ package msquerybuilderbackend.entity;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.neo4j.ogm.annotation.GraphId;
+
+
 
 public class Relationship {
-	@GraphId private Long id;
+	
 	private String relationshipType="";
 	private String direction ="";
 	private String optional="";
@@ -19,6 +20,8 @@ public class Relationship {
 
 		return this.relationshipType;
 	}
+	
+
 	
 	public String getDirection(){
 		return this.direction;

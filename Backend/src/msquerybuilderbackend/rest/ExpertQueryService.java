@@ -47,6 +47,8 @@ public class ExpertQueryService {
 			
 		    @RequestMapping(value="/expertqueries/execute",  method=RequestMethod.POST)
 		    public ResponseEntity<Result> preExecuteQuery(@RequestBody ExpertQuery expertQuery) throws Exception {
+				
+				
 		    	Map<String,Object> paramsMap = new HashMap<String,Object>();
 		    	Result result=null;
 		    	if (expertQuery.getParameter() !=null)

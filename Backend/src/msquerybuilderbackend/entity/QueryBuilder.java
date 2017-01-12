@@ -12,7 +12,6 @@ public class QueryBuilder {
 
 
 
-@GraphId private Long id;
 private String name;
 private String description;
 
@@ -33,9 +32,6 @@ public Node getNode(){
 	return this.node;
 }
 
-public Long getId(){
-	return this.id;
-}
 
 public String getLimitCount(){
 	return this.limitCount;
