@@ -12,8 +12,8 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	var self = this;
 	
 	self.name = "";
-	self.nodeName = "";					// Knotenname. Beispiel: Serivce, ServiceHost, Port, etc.
-	self.attributeName = "";			// Attributename. Beispiel: host, creationDate, etc.
+//	self.nodeName = "";					// Knotenname. Beispiel: Serivce, ServiceHost, Port, etc.
+//	self.attributeName = "";			// Attributename. Beispiel: host, creationDate, etc.
 	self.type = "";						//int, string...
 	self.filterType = "";				//sowas wie "in","like","=",">"
 	self.email = "";
@@ -23,6 +23,8 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	self.text = [];
 	self.selectedAlertName = "";
 	self.executeAlertResult = "";
+	self.queries = [];
+	self.selectedQuery = "";
 	
 	var missingDataModal = document.getElementById('myModalMissingData');
 	var missingDataOkButton = document.getElementById("missingDataOk");
@@ -78,19 +80,68 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	}
 	$requests.getNodes(self.getNodesCB);
 	
-	/**
-	Methods on attribute
-	*/
-	self.getAttributesCB = function($success, $data, $status){
+	self.queriesCB = function($success, $data, $status){
 		self.hasError = !$success;
-		if($success){
-			self.availableAttributeNames = $data;
+		if($success)
+		{
+			self.queries = $data;
+			
+//			/**
+//			 * Da die Query auch Parameter, etc. returniert
+//			 * müssen die Queries rausgesucht werden.
+//			 */
+//			self.queries = [];
+//			
+//			var i;
+//			// queries mit Parameter
+//			for(i = 0; i < $data.length; i++)
+//			{
+//				if($data[i].n != null && !contains(self.queries, $data[i].n))
+//				{
+//					self.queries.push($data[i].n);
+//				}
+//			}
+//			
+//			// queries ohne Parameter
+//			for(i = 0; i < $data.length; i++)
+//			{
+//				if($data[i].m != null && !contains(self.queries, $data[i].m))
+//				{
+//					self.queries.push($data[i].m);
+//				}
+//			}
 		}
 		else
 		{
 			self.error = $data;
 		}
 	}
+	$requests.loadAllQueries(self.queriesCB);
+	
+	/**
+	Methods on attribute
+	*/
+	self.getQueryByNameCB = function($success, $data, $status){
+		self.hasError = !$success;
+		if($success){
+			self.selectedQuery = $data.name;
+		}
+		else
+		{
+			self.error = $data;
+		}
+	}
+	
+//	self.getAlertsCB = function($success, $data, $status) {
+//		self.hasError = !$success;
+//		if($success){
+//			self.existingAlerts = $data;
+//		}
+//		else
+//		{
+//			self.error = $data;
+//		}
+//	}	
 	
 	self.getAlertsCB = function($success, $data, $status) {
 		self.hasError = !$success;
@@ -111,7 +162,7 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
         }
         else
 		{
-			$requests.addAlert(self.name, self.nodeName, self.attributeName, self.type, self.filterType,
+			$requests.addAlert(self.name, self.selectedQuery, self.type, self.filterType,
 			self.email, self.value, self.getAlertsCB);
 			$requests.getAllAlertNames(self.getAlertsCB);
 			self.resetValues();
@@ -125,7 +176,7 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
         }
         else
 		{
-			$requests.saveAlert(self.selectedAlertName, self.name, self.nodeName, self.attributeName, self.type, self.filterType,
+			$requests.saveAlert(self.selectedAlertName, self.name, self.selectedQuery, self.type, self.filterType,
 			self.email, self.value, self.callback);
         }
     };
@@ -159,12 +210,15 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 		{
 			self.text.push("Der angegebene Name existiert bereits, geben Sie bitte einen anderen Namen an.");
 		}
-        if(self.nodeName === null || self.nodeName === ""){
-            self.text.push("Bitte geben Sie einen Knotenname ein.");
+        if(self.selectedQuery === null || self.selectedQuery === ""){
+            self.text.push("Bitte wählen Sie eine gültige Query aus.");
         }
-        if(self.attributeName === null || self.attributeName === ""){
-            self.text.push("Bitte geben Sie einen Attributename ein.");
-        }
+//        if(self.nodeName === null || self.nodeName === ""){
+//            self.text.push("Bitte geben Sie einen Knotenname ein.");
+//        }
+//        if(self.attributeName === null || self.attributeName === ""){
+//            self.text.push("Bitte geben Sie einen Attributename ein.");
+//        }
         if(!validateEmail(self.email)){
             self.text.push("Bitte geben Sie eine korrekte Email Adresse ein.");
         }
@@ -179,15 +233,17 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
         }
 	}
 	
-	self.selectLoad = function($query) {		
+	self.selectLoad = function($query) {
+		$requests.getQueryByName($query.query, self.getQueryByNameCB);
 		self.name = $query.name;
-		self.nodeName = $query.nodeName;
+//		self.nodeName = $query.nodeName;
 		/**
 		 * Wenn ein Alert mit einem neuen Node geladen wird, müssen die Attribute
 		 * zum Node ermittelt werden.
 		 */
-		$requests.getKeys(self.nodeName, self.getAttributesCB);
-		self.attributeName = $query.attributeName;
+//		$requests.getKeys(self.nodeName, self.getAttributesCB);
+//		self.attributeName = $query.attributeName;
+
 		self.type = $query.type;
 		self.filterType = $query.filterType;
 		self.email = $query.email;
@@ -200,49 +256,50 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 		$requests.deleteAlert($query.name, self.callback);
 	}
 	
-	self.setNode = function() {		
-		$requests.getKeys(self.nodeName, self.getAttributesCB);
-	}
+//	self.setNode = function() {		
+//		$requests.getKeys(self.nodeName, self.getAttributesCB);
+//	}
 	
 	self.resetValues = function($query) {		
 		self.name = "";
-		self.nodeName = "";
-		self.attributeName = "";
+//		self.nodeName = "";
+//		self.attributeName = "";
 		self.type = "";
 		self.filterType = "";
 		self.email = "";
 		self.value = "";
+		self.selectedQuery = "";
 		
 		self.selectedAlertName = "";
 	}
 	
-	setInterval(function ()
-	{
-		if(self.existingAlerts == null || self.existingAlerts.length <= 0)
-		{
-			/**
-			 * Wenn es noch keine definierten Alerts gibt soll
-			 * periodisch geprüft werden ob welche existieren.
-			 */
-			$requests.getAllAlertNames(self.getAlertsCB);
-		}
-		else
-		{
-			for (var i = 0; i < self.existingAlerts.length; i++)
-		    {
-				$requests.executeAlert(self.existingAlerts[i].name, self.executeAlertCB);
-				if(self.executeAlertResult != null && self.executeAlertResult.length > 0)
-				{
-					sendMail(self.existingAlerts[i].email, self.existingAlerts[i].name,
-							self.existingAlerts[i].nodeName, self.existingAlerts[i].attributeName,
-							self.existingAlerts[i].filterType, self.existingAlerts[i].value);
-				}
-				
-		    }
-		}
-	}, 10000);
-	
-	function sendMail($email, $name, $nodeName, $attributeName, $filterType, $value) {
+//	setInterval(function ()
+//	{
+//		if(self.existingAlerts == null || self.existingAlerts.length <= 0)
+//		{
+//			/**
+//			 * Wenn es noch keine definierten Alerts gibt soll
+//			 * periodisch geprüft werden ob welche existieren.
+//			 */
+//			$requests.getAllAlertNames(self.getAlertsCB);
+//		}
+//		else
+//		{
+//			for (var i = 0; i < self.existingAlerts.length; i++)
+//		    {
+//				$requests.executeAlert(self.existingAlerts[i].name, self.executeAlertCB);
+//				if(self.executeAlertResult != null && self.executeAlertResult.length > 0)
+//				{
+//					sendMail(self.existingAlerts[i].email, self.existingAlerts[i].name,
+//							self.existingAlerts[i].selectedQuery, self.existingAlerts[i].filterType, 
+//							self.existingAlerts[i].value);
+//				}
+//				
+//		    }
+//		}
+//	}, 10000);
+//	
+//	function sendMail($email, $name, $selectedQuery, $filterType, $value) {
 //	    var link = "mailto:" + $email +
 //	             //+ "?cc=myCCaddress@example.com"
 //	             + "&subject=" + escape("Alert " + $name + " hat kritischen Wert passiert")
@@ -252,6 +309,5 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 //	    ;
 //
 //	    window.location.href = link;
-	}
-	
+//	}
 }]);

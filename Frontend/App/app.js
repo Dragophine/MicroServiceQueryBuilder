@@ -14,6 +14,7 @@ var app = angular.module('queryBuilder', [
   'queryBuilder.querybuilderrelationshipdialog',
   'OutputTable',
   'queryBuilder.alerting',
+  'queryBuilder.category',
 
 ])
 .config(['$routeProvider', function($routeProvider) {
