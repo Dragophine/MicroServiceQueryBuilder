@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
-
+import msquerybuilderbackend.business.CategoryBusiness;
 import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
 import msquerybuilderbackend.repository.CategoryRepository;
@@ -30,7 +30,8 @@ public class CategoryService {
 	Neo4jTemplate temp;
 	@Autowired
 	CategoryRepository categoryRepository;
-
+	@Autowired
+	CategoryBusiness categoryBusiness;
 	
 	
 	@CrossOrigin 
@@ -42,7 +43,7 @@ public class CategoryService {
 	@RequestMapping(value="/categories",  method=RequestMethod.GET)
 	public ResponseEntity<List<Category>> getCategories() {
 		List<Category> categories= categoryRepository.getAllCategories();
-		return new ResponseEntity<List<Category>>(categories, HttpStatus.OK);
+		return new ResponseEntity<List<Category>>(categoryBusiness.getAllCategories(), HttpStatus.OK);
     }
 	
 	
@@ -52,22 +53,16 @@ public class CategoryService {
 	@Transactional
 	@RequestMapping(value="/categories",  method=RequestMethod.POST)
 	public ResponseEntity<Long> postCategory(@RequestBody Category category) throws Exception {
-		Category alreadyUsedName= categoryRepository.findByName(category.getName());
-		if (alreadyUsedName != null){
-			
-			return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);	
-		}else{
-			categoryRepository.save(category);
-			Category newCategory = categoryRepository.findByName(category.getName());
-			return new ResponseEntity<Long>( newCategory.getId(),HttpStatus.OK);
-		}
+		Long newID=categoryBusiness.createCategory(category);
+		if (newID==0L) return new ResponseEntity<Long>( 0L,HttpStatus.CONFLICT);
+			return new ResponseEntity<Long>(newID,HttpStatus.OK);
+		
 	}
 	
 	@CrossOrigin 
 	@RequestMapping(value="/categories/name-list",  method=RequestMethod.GET)
 	public ResponseEntity<List<String>> getCategoriesNames(){
-		List<String> names = categoryRepository.getNames();
-		return new ResponseEntity<List<String>>(names, HttpStatus.OK);
+		return new ResponseEntity<List<String>>(categoryBusiness.getNameList(), HttpStatus.OK);
     }
 	
 	
@@ -75,31 +70,15 @@ public class CategoryService {
 	@CrossOrigin 
 	@RequestMapping(value="/categories/{categoryId}",  method=RequestMethod.PUT)
 	@Transactional
-	public ResponseEntity<Category> upateCategory( @PathVariable String categoryId, @RequestBody Category cat) throws Exception{
-		Category category=null;
-		if (Long.parseLong(categoryId) >=0){
-			 category= categoryRepository.findOne(Long.parseLong(categoryId));
-		} else{
-			 category= categoryRepository.findByName(categoryId);
-		}
-		
-		category.setName(cat.getName());
-		category.setDescription(cat.getDescription());
-		categoryRepository.save(category);		
-		return new ResponseEntity<Category>(category, HttpStatus.OK);
+	public ResponseEntity<Category> upateCategory( @PathVariable String categoryId, @RequestBody Category cat) throws Exception{	
+		return new ResponseEntity<Category>(categoryBusiness.updateCategory(categoryId, cat), HttpStatus.OK);
     }
 	
 	@CrossOrigin 
 	@RequestMapping(value="/categories/{categoryId}",  method=RequestMethod.DELETE)
 	@Transactional
 	public ResponseEntity<Result> deleteCategory( @PathVariable String categoryId){
-		Category category=null;
-		if (Long.parseLong(categoryId) >=0){
-			 category= categoryRepository.findOne(Long.parseLong(categoryId));
-		} else{
-			 category= categoryRepository.findByName(categoryId);
-		}
-		categoryRepository.delete(category);		
+		categoryBusiness.deleteCategory(categoryId);	
 		return new ResponseEntity<Result>(HttpStatus.OK);
     }
 }

@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import msquerybuilderbackend.business.AlertBusiness;
 import msquerybuilderbackend.entity.Alert;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Parameter;
@@ -36,7 +37,8 @@ import msquerybuilderbackend.repository.ExpertQueryRepository;
 @Component
 public class AlertService {
 
-	
+	@Autowired
+	AlertBusiness alertBusiness;
 	@Autowired
 	Neo4jOperations neo4jOperations;
 	Neo4jTemplate temp;
@@ -53,101 +55,20 @@ public class AlertService {
 	//Pleas add @CrossOrigin to every request.
 	@RequestMapping(value="/alerts",  method=RequestMethod.GET)
 	public ResponseEntity<List<Alert>> getAlerts() {
-		List<Alert> alerts= alertRepository.getAllAlerts();
-		return new ResponseEntity<List<Alert>>(alerts, HttpStatus.OK);
+		return new ResponseEntity<List<Alert>>(alertBusiness.getAllAlerts(), HttpStatus.OK);
     }
 	
 
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}",  method=RequestMethod.GET)
 	public ResponseEntity<Alert> getAlert( @PathVariable String alertId){
-		Alert alert=null;
-		if (Long.parseLong(alertId) >=0){
-			 alert= alertRepository.findOne(Long.parseLong(alertId));
-		} else{
-			 alert= alertRepository.findByName(alertId);
-		}
-		
-		return new ResponseEntity<Alert>(alert, HttpStatus.OK);
+		return new ResponseEntity<Alert>(alertBusiness.getAlert(alertId), HttpStatus.OK);
     }
 	
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}/execute",  method=RequestMethod.GET)
 	public ResponseEntity<Result> executeAlert( @PathVariable String alertId){
-		Alert alert=null;
-		Long id = new Long(-1);
-		
-		try
-		{
-			id = Long.parseLong(alertId);
-		}
-		catch(NumberFormatException P_ex)
-		{
-			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
-			 */
-		}
-		
-		if (id >=0){
-			 alert= alertRepository.findOne(id);
-		} else{
-			 alert= alertRepository.findByName(alertId);
-		}
-		
-		if (alert.getQuery() != null)
-		{
-			String queryName = alert.getQuery();
-			ExpertQuery expertQuery = expertQueryRepository.findByName(queryName);
-			
-			if(expertQuery != null)
-			{
-				try
-				{
-					String F_queryString = expertQuery.getQuery();
-					if(F_queryString != null)
-					{
-						/**
-						 * Exists parameter?
-						 */
-						Map<String,Object> paramsMap = new HashMap<String,Object>();
-						Result queryResult;
-				    	if (expertQuery.getParameter() !=null)
-				    	{
-				    		for (Parameter p:expertQuery.getParameter())
-				    		{	
-					    		paramsMap.put(p.getKey(), p.getValue());
-					    	}
-				    		queryResult = neo4jOperations.query(expertQuery.getQuery(), paramsMap,true);
-				    	}
-				    	else
-				    	{
-				    		queryResult = neo4jOperations.query(expertQuery.getQuery(),new HashMap<String, String>(), true);
-				    	}
-			    		System.out.println("AlertCheck: " + expertQuery.getName() + " returns: " + queryResult);
-						return new ResponseEntity<Result>(queryResult, HttpStatus.OK);
-					}
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
-			}			
-			
-//			String[] queryParts = queryString.split("return");
-//			if (alert.getType().equalsIgnoreCase("String"))
-//			{
-//				 queryString = "MATCH (n:"+alert.getNodeName()+") where n."+alert.getAttributeName()+alert.getFilterType()+
-//						 "'"+(String)alert.getValue()+"' return n as "+alert.getNodeName();
-////				 queryString = "MATCH (n:"+alert.getNodeName()+") where n."+alert.getAttributeName()+alert.getFilterType()+
-////						 "'"+(String)alert.getValue()+"' return n as "+alert.getNodeName();
-//			}
-//			else
-//			{
-//				 queryString = "MATCH (n:"+alert.getNodeName()+") where n."+alert.getAttributeName()+alert.getFilterType()+
-//						 alert.getValue()+" return n as "+alert.getNodeName();
-//			}
-		}
-		return null;
+		return alertBusiness.executeAlert(alertId);
     }
 	
 //	@CrossOrigin 
@@ -191,63 +112,22 @@ public class AlertService {
 	@Transactional
 	@RequestMapping(value="/alerts",  method=RequestMethod.POST)
 	public ResponseEntity<Long> postAlert(@RequestBody Alert alert) throws Exception {
-		Alert alreadyUsedName= alertRepository.findByName(alert.getName());
-		if (alreadyUsedName != null){
-			
-			return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);	
-		}else{
-			testTypes(alert);
-			alertRepository.save(alert);
-			
-			Alert newAlert = alertRepository.findByName(alert.getName());
-			return new ResponseEntity<Long>(newAlert.getId(), HttpStatus.OK);
-		}
+		Long newID=alertBusiness.createAlert(alert);
+		if (newID==0L) return new ResponseEntity<Long>(0L, HttpStatus.CONFLICT);
+		return new ResponseEntity<Long>(newID, HttpStatus.OK);
 	}
 	
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/name-list",  method=RequestMethod.GET)
-	public ResponseEntity<List<String>> getAlertNames(){
-		List<String> names = alertRepository.getNames();
-		return new ResponseEntity<List<String>>(names, HttpStatus.OK);
+	public ResponseEntity<List<String>> getAlertNames(){		
+		return new ResponseEntity<List<String>>(alertBusiness.getNameList(), HttpStatus.OK);
     }
 	
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}",  method=RequestMethod.PUT)
 	@Transactional
-	public ResponseEntity<Alert> updateAlert( @PathVariable String alertId, @RequestBody Alert al) throws Exception{
-		testTypes(al);
-		Alert alert=null;		
-		Long id = new Long(-1);
-		
-		try
-		{
-			id = Long.parseLong(alertId);
-		}
-		catch(NumberFormatException P_ex)
-		{
-			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
-			 */
-		}
-		
-		if (id >=0){
-			 alert= alertRepository.findOne(id);
-		} else{
-			 alert= alertRepository.findByName(alertId);
-		}
-		
-		alert.setName(al.getName());
-//		alert.setNodeName(al.getNodeName());
-//		alert.setAttributeName(al.getAttributeName());
-		alert.setQuery(al.getQuery());
-		alert.setType(al.getType());
-		alert.setFilterType(al.getFilterType());
-		alert.setValue(al.getValue());
-		alert.setEmail(al.getEmail());
-		alertRepository.save(alert);		
-		return new ResponseEntity<Alert>(alert, HttpStatus.OK);
+	public ResponseEntity<Alert> updateAlert( @PathVariable String alertId, @RequestBody Alert al) throws Exception{			
+		return new ResponseEntity<Alert>(alertBusiness.updateAlert(alertId, al), HttpStatus.OK);
     }
 	
 
@@ -256,161 +136,45 @@ public class AlertService {
 	@RequestMapping(value="/alerts/{alertId}",  method=RequestMethod.DELETE)
 	@Transactional
 	public ResponseEntity<Result> deleteAlert( @PathVariable String alertId){
-		Alert alert=null;
-		Long id = new Long(-1);
-		
-		try
-		{
-			id = Long.parseLong(alertId);
-		}
-		catch(NumberFormatException P_ex)
-		{
-			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
-			 */
-		}
-		
-		
-		if (id >=0){
-			 alert= alertRepository.findOne(id);
-		} else{
-			 alert= alertRepository.findByName(alertId);
-		}
-		alertRepository.delete(alert);		
+		alertBusiness.deleteAlert(alertId);		
 		return new ResponseEntity<Result>(HttpStatus.OK);
     }
 	
 	@Scheduled(fixedRate = 5000)
 	public void executeAllAlerts()
 	{
-		StringBuffer F_mailMessageBuffer = new StringBuffer("");
-		ResponseEntity<List<Alert>> F_alerts = getAlerts();
-		if(F_alerts != null)
-		{
-			for(Alert F_alert : F_alerts.getBody())
-			{
-				ResponseEntity<Result> F_result = executeAlert(F_alert.getId().toString());
-				if(F_result != null)
-				{
-					Iterator<Map<String, Object>> F_res = F_result.getBody().queryResults().iterator();
-					while(F_res.hasNext())
-					{
-						Map<String, Object> F_map = F_res.next();
-						for(Object F_obj : F_map.values())
-						{
-							/**
-							 * TODO: Auf FileType überprüfen und gegebenfalls Mail senden
-							 * Eventuelle Möglichkeiten um Mails zu senden:
-							 * - http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html
-							 * - https://java.net/projects/javamail/pages/Home
-							 */
-						}
-					}
-				}
-				System.out.println("TEST");
-			}
-		}
-		System.out.println("TEST");
+//		StringBuffer F_mailMessageBuffer = new StringBuffer("");
+//		ResponseEntity<List<Alert>> F_alerts = getAlerts();
+//		if(F_alerts != null)
+//		{
+//			for(Alert F_alert : F_alerts.getBody())
+//			{
+//				ResponseEntity<Result> F_result = executeAlert(F_alert.getId().toString());
+//				if(F_result != null)
+//				{
+//					Iterator<Map<String, Object>> F_res = F_result.getBody().queryResults().iterator();
+//					while(F_res.hasNext())
+//					{
+//						Map<String, Object> F_map = F_res.next();
+//						for(Object F_obj : F_map.values())
+//						{
+//							/**
+//							 * TODO: Auf FileType überprüfen und gegebenfalls Mail senden
+//							 * Eventuelle Möglichkeiten um Mails zu senden:
+//							 * - http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html
+//							 * - https://java.net/projects/javamail/pages/Home
+//							 */
+//						}
+//					}
+//				}
+//				System.out.println("TEST");
+//			}
+//		}
+//		System.out.println("TEST");
+		alertBusiness.executeAllAlerts();
 	}
 	
 	
 	
-	 private void testTypes(Alert a) throws Exception{
-	    	switch(a.getType()){
- 		case "int":
- 		case "integer":
- 		case "Integer":
- 			try{
- 				
-			/**
-			 * Castet man einen Integer mittels (String) auf einen Stringwert kommt es zu einen Fehler:
-			 * java.lang.ClassCastException: java.lang.Integer cannot be cast to java.lang.String
-			 * at msquerybuilderbackend.rest.AlertService.executeAlert(AlertService.java:95) ~[classes/:na]
-			 * --> Stattdessen wird toString() verwendet.
-			 */
- 			int i = Integer.parseInt(a.getValue().toString());
- 			a.setValue(i);
- 			}catch (Exception e){
- 				throw new InvalidTypeException("alert with name "+a.getName()+" is not from Type "+a.getType());
- 				
- 			}
- 		break;
- 		
- 		case "double":
- 		case "Double":
- 			try{
-	    			double i = Double.parseDouble((String)a.getValue());
-	    			a.setValue(i);
-	    			}catch (Exception e){
-	     				throw new InvalidTypeException("alert with name "+a.getName()+" is not from Type "+a.getType());
-	    			}
- 			break;
- 		
- 		case "char":
- 		case "Char":
- 			try{
-	    			char i=(char) a.getValue();
-	    			a.setValue(i);
-	    			}catch (Exception e){
-	     				throw new InvalidTypeException("alert with name "+a.getName()+" is not from Type "+a.getType());
-	    			}
- 			break;
- 			
- 		case "boolean":
- 		case "Boolean":
- 			try{
-	    			boolean i=(boolean) a.getValue();
-	    			a.setValue(i);
-	    			}catch (Exception e){
-	     				throw new InvalidTypeException("alert with name "+a.getName()+" is not from Type "+a.getType());
-	    			}
- 			break;
- 			
- 		case "float":
- 		case "Float":
- 			try{
-	    			float i = Float.parseFloat((String)a.getValue());
-	    			a.setValue(i);
-	    			}catch (Exception e){
-	     				throw new InvalidTypeException("alert with name "+a.getName()+" is not from Type "+a.getType());
-	    			}
- 			break;
- 		
- 		case "long":
- 		case "Long":
- 			try{
-	    			long i = Long.parseLong((String)a.getValue());
-	    			a.setValue(i);
-	    			}catch (Exception e){
-	     				throw new InvalidTypeException("alert with name "+a.getName()+" is not from Type "+a.getType());
-	    			}
- 			break;
- 			
- 		case "short":
- 		case "Short":
- 			try{
-	    			short i = Short.parseShort((String)a.getValue());
-	    			a.setValue(i);
-	    			}catch (Exception e){
-	     				throw new InvalidTypeException("alert with name "+a.getName()+" is not from Type "+a.getType());
-	    			}
- 			break;
- 			
- 		case "byte":
- 		case "Byte":
- 			try{
-	    			byte i = Byte.parseByte((String)a.getValue());
-	    			a.setValue(i);
-	    			}catch (Exception e){
-	     				throw new InvalidTypeException("alert with name "+a.getName()+" is not from Type "+a.getType());
-	    			}
- 			break;
- 			
- 		default: 
- 			
- 			break;
- 		}
-	    }	
+	
 }
