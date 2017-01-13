@@ -137,13 +137,16 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     ]);
     */
 
-    self.showInfoDialog = function($data){
+    self.showInfoDialog = function($data, infoClosePromis){
     	var dialog = ngDialog.open({ template: 'querybuilder/infoDialog.html',
         				className: 'ngdialog-theme-default custom-width',
         				controller: 'querybuilderInfoDialogCtrl',
         				controllerAs: 'ctrl',
         				data:$data
         		 });
+    	if(infoClosePromis !== undefined){
+    		dialog.closePromise.then(infoClosePromis);
+    	}
     }
 	
 
@@ -528,18 +531,65 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
     self.openNodeDialog = function(params, network){
     	var $network = network;
+    	var params = params;
+    	var node = self.nodeIDStore[params["nodes"][0]];
 
     	var dialog = ngDialog.open({ template: 'querybuilder/nodeDialogTemplate.html',
         				className: 'ngdialog-theme-default custom-width',
         				controller: 'queryBuilderNodeDialogCtrl',
         				controllerAs: 'ctrl',
-        				data: self.nodeIDStore[params["nodes"][0]]});
+        				data: node});
 
 
-	         dialog.closePromise.then(function (data) {
-			     self.transfairToGraph($network);
-			    
-			});
+	    dialog.closePromise.then(function (data) {
+	    	
+	    	var wrongAttributesNames = "";
+
+	    	if(node.filterAttributes != undefined){
+	    		for (var i = 0; i < node.filterAttributes.length; i++) {
+	    			
+	    			var bracketCount = 0;
+
+	    			if(node.filterAttributes[i].filters != undefined){
+	    				for (var k = 0; k < node.filterAttributes[i].filters.length; k++) {
+			    			if(node.filterAttributes[i].filters[k].isBracketOpen){
+			    				bracketCount = bracketCount +1;
+			    			}
+							if(node.filterAttributes[i].filters[k].isBracketClosed){
+			    				bracketCount = bracketCount - 1;
+			    			}
+
+			    			if(bracketCount < 0){
+			    				break;
+			    			}
+			    		}	
+	    			}   
+
+	    			if(bracketCount != 0){
+	    				if(wrongAttributesNames != ""){
+	    					wrongAttributesNames = wrongAttributesNames + ", ";
+	    				}
+	    				wrongAttributesNames  = wrongAttributesNames + node.filterAttributes[i].attributeName;
+	    			} 		
+	    		}
+	    	}
+	    	
+	    	if(wrongAttributesNames != ""){
+	    		var $dataForDialog = {
+					"head":"Error on closing",
+					"content":"Wrong brackes in filter: " + wrongAttributesNames
+				};
+
+				var infoClosePromis = function(data){
+					self.openNodeDialog(params, network);
+				}
+				self.showInfoDialog($dataForDialog, infoClosePromis);
+	    		
+	    	}
+	    	
+			self.transfairToGraph($network);
+			 
+		});
     };
 
     self.openEdgeDialog = function(params, network){
