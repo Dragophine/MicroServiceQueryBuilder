@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import msquerybuilderbackend.business.QueryBuilderBusiness;
 import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Node;
@@ -41,7 +42,7 @@ import msquerybuilderbackend.repository.ParameterRepository;
 import msquerybuilderbackend.repository.QueryBuilderJsonStringRepository;
 
 @RestController
-public class QueryBuilderJsonStringObjectService {
+public class QueryBuilderService {
 
 	
 	 @Autowired
@@ -57,6 +58,9 @@ public class QueryBuilderJsonStringObjectService {
 		@Autowired
 		CategoryRepository categoryRepository;
 		
+		@Autowired
+		QueryBuilderBusiness queryBuilderBusiness;
+		
 	
 			@CrossOrigin 
 			//CrossOrigin request allow to call a different server from
@@ -67,52 +71,16 @@ public class QueryBuilderJsonStringObjectService {
 			
 		    @RequestMapping(value="/queryBuilder/execute",  method=RequestMethod.POST)
 		    public ResponseEntity<Result> preExecuteQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
-		    	Map<String,Object> paramsMap = new HashMap<String,Object>();
-		    	Result result=null;
-		    	
-//		    		result = neo4jOperations.query(queryBuilder.getQuery(),new HashMap<String, String>(), true);
-		    	
-		
-			return new ResponseEntity<Result>(result, HttpStatus.OK);
+				return new ResponseEntity<Result>(queryBuilderBusiness.executeQueryBuilderQuery(queryBuilder), HttpStatus.OK);
 		    }	
 			
 			@Transactional
 			@CrossOrigin 
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.POST)	 
 		    public ResponseEntity<Long> saveQuery(@RequestBody QueryBuilder queryBuilder) throws Exception{
-			
-			QueryBuilderJsonStringObject alreadyUsedName= queryBuilderJsonStringObjectRepository.findByName(queryBuilder.getName());
-			if (alreadyUsedName != null){
-				
-				return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);	
-			}else{
-				Category category = categoryRepository.findByName(queryBuilder.getCategory());
-				
-/**
- * Interpretation des Querybuilders wie bei execute ausständig
- */				
-//				expertQuery.setName(queryBuilder.getName());
-//				expertQuery.setDescription(queryBuilder.getDescription());
-//				expertQuery.setCategory(category);
-		//		queryBuilderJsonStringObject.addExpertQuery(expertquery);
-				
-				/**
-				 * ExpertQuery auch den Namen und Beschreibung geben
-				 */
-				QueryBuilderJsonStringObject qbjso = new QueryBuilderJsonStringObject();
-				qbjso.setName(queryBuilder.getName());
-				qbjso.setDescription(queryBuilder.getDescription());
-				qbjso.setCategory(category);
-				ObjectWriter mapper = new ObjectMapper().writer().withDefaultPrettyPrinter();
-				String queryBuilderJsonString = mapper.writeValueAsString(queryBuilder);
-				qbjso.setQueryBuilderJson(queryBuilderJsonString);
-				
-				qbjso.setExpertQuery(null);
-		    	queryBuilderJsonStringObjectRepository.save(qbjso);
-		    	QueryBuilderJsonStringObject returnNew=queryBuilderJsonStringObjectRepository.findByName(queryBuilder.getName());
-		
-		    	return new ResponseEntity<Long>(returnNew.getId(),HttpStatus.OK);
-			}
+				Long newId=queryBuilderBusiness.createQueryBuilder(queryBuilder);
+				if (newId==0L) return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);
+				return new ResponseEntity<Long>(newId,HttpStatus.OK);		
 		    }
 			
 			
