@@ -26,6 +26,10 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	holdes the selected node in the vis network
     */
     self.selectedNode = undefined;
+    /**
+	holdes the selected node in the vis network
+    */
+    self.selectedRelation = undefined;
 	/**
 	Holdes the available nodes at the beginning of the selection prozess.
 	*/
@@ -96,7 +100,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
     			var $rootNode = self.query["node"];
     		 	//Root node
-    			 self.nodes.add([{id: 1, label: $rootNode["type"], x: 0, y: 0}]);
+    			 self.nodes.add([{id: 1, label: $rootNode["type"], color: '#009900'}]);
     			 self.nodeIDStore[1] = $rootNode;
 
     			 //every additional node
@@ -399,6 +403,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		//if node is head
 		if(self.query.node ===  self.selectedNode){
 			self.selectedNode = undefined;
+			self.selectedRelation = undefined;
 			self.query.node = undefined;
 			$requests.getNodes(self.getNodesCB);
 		}
@@ -406,10 +411,12 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		else{
 			if(self.deleteRecursion(self.query.node, self.selectedNode) === 1){
 				self.selectedNode = undefined;
+				self.selectedRelation = undefined;
 			};
 		}
 		
 		self.transfairToGraph();
+		$scope.$apply();
 	}
 
 	self.deleteRecursion = function($nodeToCheck, $nodeToDelete){
@@ -448,7 +455,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     self.network_options = {
     	
     	width:  '100%',
-    	height: '400px',
+    	height: '500px',
 		edges:{
 		    arrows: {
 		      to:     {enabled: true, scaleFactor:1, type:'arrow'},
@@ -465,7 +472,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		      nodeSpacing: 100,
 		      treeSpacing: 200,
 		      blockShifting: true,
-		      edgeMinimization: true,
+		      edgeMinimization: false,
 		      parentCentralization: true,
 		      direction: 'UD',        // UD, DU, LR, RL
 		      sortMethod: 'directed'   // hubsize, directed
@@ -503,6 +510,14 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		else {
 			self.selectedNode = undefined;
 		}
+
+		if(params.edges.length > 0){
+			self.selectedRelation = self.relationshipIDStore[params.edges[0]];
+		}
+		else {
+			self.selectedRelation = undefined;
+		}
+
 		$scope.$apply();
 	}
 

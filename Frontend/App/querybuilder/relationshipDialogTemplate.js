@@ -39,11 +39,14 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
         /******************************
         PROPETY SETTING
         /******************************/
+        
+        //RETURN
+
         self.getReturnAttributes = function($key){
             var returnAttribute = undefined;
-            for (var i = self.relationshipType['returnAttributes'].length - 1; i >= 0; i--) {
-                if(self.relationshipType['returnAttributes'][i]['attributeName'] === $key){
-                    returnAttribute = self.relationshipType['returnAttributes'][i];
+            for (var i = self.relationship['returnAttributes'].length - 1; i >= 0; i--) {
+                if(self.relationship['returnAttributes'][i]['attributeName'] === $key){
+                    returnAttribute = self.relationship['returnAttributes'][i];
                     break;
                 }
             }
@@ -63,25 +66,35 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
             var returnAttribute = self.getReturnAttributes($key);
             if(returnAttribute !== undefined){
                 //lösche return Attribute
-                var index = self.relationshipType['returnAttributes'].indexOf(returnAttribute);
-                self.relationshipType['returnAttributes'].splice(index, 1); 
+                var index = self.relationship['returnAttributes'].indexOf(returnAttribute);
+                self.relationship['returnAttributes'].splice(index, 1); 
             }
             else
             {
                 //füge attribut hinzu
-                self.relationshipType['returnAttributes'].push({
+                self.relationship['returnAttributes'].push({
                     "attributeName":$key,
-                    "returnType": ""
+                    "returnType": "",
+                    "aggregation" : "NONE"
                 });
             }
         };
 
+        self.setReturnAttributesValue = function($key, $type, $value){
+            var returnAttribute = self.getReturnAttributes($key);
+            if(returnAttribute !== undefined){
+                returnAttribute[$type] = $value;
+            }
+            console.log(returnAttribute);
+        };
+
+        //ORDER BY 
 
         self.getOrderByAttributes = function($key){
             var orderByAttribute = undefined;
-            for (var i = self.relationshipType['orderByAttributes'].length - 1; i >= 0; i--) {
-                if(self.relationshipType['orderByAttributes'][i]['attributeName'] === $key){
-                    orderByAttribute = self.relationshipType['orderByAttributes'][i];
+            for (var i = self.relationship['orderByAttributes'].length - 1; i >= 0; i--) {
+                if(self.relationship['orderByAttributes'][i]['attributeName'] === $key){
+                    orderByAttribute = self.relationship['orderByAttributes'][i];
                     break;
                 }
             }
@@ -102,13 +115,13 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
             //Toggle attribute
             if(orderByAttribute !== undefined){
                 //lösche return Attribute
-                var index = self.relationshipType['orderByAttributes'].indexOf(orderByAttribute);
-                self.relationshipType['orderByAttributes'].splice(index, 1);    
+                var index = self.relationship['orderByAttributes'].indexOf(orderByAttribute);
+                self.relationship['orderByAttributes'].splice(index, 1);    
             }
             else
             {
                 //füge attribut hinzu
-                self.relationshipType['orderByAttributes'].push({
+                self.relationship['orderByAttributes'].push({
                     "attributeName":$key,
                     "direction": "asc"
                 });
@@ -126,9 +139,9 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
 
         self.getFilterAttributes = function($key){
             var returnFilterAttribute = undefined;
-            for (var i = self.node['filterAttributes'].length - 1; i >= 0; i--) {
-                if(self.node['filterAttributes'][i]['attributeName'] === $key){
-                    returnFilterAttribute = self.node['filterAttributes'][i];
+            for (var i = self.relationship['filterAttributes'].length - 1; i >= 0; i--) {
+                if(self.relationship['filterAttributes'][i]['attributeName'] === $key){
+                    returnFilterAttribute = self.relationship['filterAttributes'][i];
                     break;
                 }
             }
@@ -150,8 +163,8 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
             if(filterAttribute !== undefined){
                 //lösche return Attribute
                 //lösche return Attribute
-                var index = self.node['filterAttributes'].indexOf(filterAttribute);
-                self.node['filterAttributes'].splice(index, 1); 
+                var index = self.relationship['filterAttributes'].indexOf(filterAttribute);
+                self.relationship['filterAttributes'].splice(index, 1); 
             }
             else
             {
@@ -163,7 +176,7 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                         "changeable":false  //ist der Parameter fix oder in der Verwaltung veränderbar?
                 };
                 //füge attribut hinzu
-                self.node['filterAttributes'].push(
+                self.relationship['filterAttributes'].push(
                     newFilterAttribute
                 );
             }

@@ -2,11 +2,13 @@
 <div >
   <h1>{{ctrl.name}} DIRECTION {{ctrl.direction}}</h1>
    <div class="row">
-      <input id="inlineradio0" type="checkbox" class="col-md-2"
+      <div class="col-md-1">
+      </div>
+      <input id="inlineradio0" type="checkbox" class="col-md-1"
               ng-model="optional"
                ng-checked="ctrl.isOptionalChecked()"
                ng-click="ctrl.setOptionalChecked(optional)">
-      <div  class="col-md-10">
+      <div  class="col-md-9">
           OPTIONAL
        </div>
     </div>
@@ -83,20 +85,87 @@
                 </div>
               </div>
               <div class="col-md-3">
-                 <div class="panel panel-default top-buffer-small" >
-                    <div class="panel-heading">
-                        <div class="panel-title pull-left" style="width:15px;">
-                          <input id="inlineradio1" type="checkbox"
+                <div class="panel panel-default top-buffer-small" >
+                  <div class="panel-heading">
+                    <div class="panel-title pull-left" style="width:15px;">
+                      <input id="inlineradio1" type="checkbox"
                                  ng-checked="ctrl.isReturnAttributesChecked(key)"
                                  ng-click="ctrl.setReturnAttributes(key)">
-                          </input>
-                        </div>
-                        <div class="panel-title pull-left left-buffer">
-                            Return
-                        </div>
-                        <div class="clearfix"></div>
+                      </input>
                     </div>
-                 </div>
+                    <div class="panel-title pull-left left-buffer">
+                      Return
+                    </div>
+                    <div class="clearfix"></div>
+                  </div>
+                  <div class="panel-body" ng-if="ctrl.isReturnAttributesChecked(key)"> 
+                    <div class="row">
+                      <input  class="col-xs-2" 
+                              style="margin-left: 8.8%"
+                             type="checkbox" 
+                            name="{{'checkbox' + key + 'returnType'}}"
+                            ng-true-value="'distinct'"
+                            ng-false-value="''"
+                            value="distinct"
+                            ng-model="returnType"
+                            ng-click="ctrl.setReturnAttributesValue(key, 'returnType', returnType)"
+                            ng-watch='ctrl.getReturnAttributes(key)'
+                            ng-watch-object-value="returnType">
+                      </input>
+                      <div class="col-xs-3">Distinct</div>
+                    </div>
+                    <h3>Aggregation</h3>
+                    <div class="row">
+                      <input  class="col-xs-2" 
+                              style="margin-left: 8.8%"
+                              type="radio" 
+                            name="{{'radio' + key + 'aggregation'}}"
+                            value="NONE"
+                            ng-model="aggregation"
+                            ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
+                            ng-watch='ctrl.getReturnAttributes(key)'
+                            ng-watch-object-value="aggregation">
+                      </input>
+                      <div class="col-xs-3">NONE</div>
+                    </div>
+                    <div class="row">
+                      <input  class="col-xs-2" 
+                              style="margin-left: 8.8%" type="radio" 
+                            name="{{'radio' + key + 'aggregation'}}"
+                            value="MIN"
+                            ng-model="aggregation"
+                            ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
+                            ng-watch='ctrl.getReturnAttributes(key)'
+                            ng-watch-object-value="aggregation">
+                      </input>
+                      <div class="col-xs-3">MIN</div>
+                    </div>
+                    <div class="row">
+                      <input  class="col-xs-2" 
+                              style="margin-left: 8.8%" type="radio" 
+                            name="{{'radio' + key + 'aggregation'}}"
+                            value="MAX"
+                            ng-model="aggregation"
+                            ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
+                            ng-watch='ctrl.getReturnAttributes(key)'
+                            ng-watch-object-value="aggregation">
+                      </input>
+                      <div class="col-xs-3">MAX</div>
+                    </div>
+                    <div class="row">
+                      <input  class="col-xs-2" 
+                              style="margin-left: 8.8%" type="radio" 
+                            name="{{'radio' + key + 'aggregation'}}"
+                            value="SUM"
+                            ng-model="aggregation"
+                            ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
+                            ng-watch='ctrl.getReturnAttributes(key)'
+                            ng-watch-object-value="aggregation">
+                      </input>
+                      <div class="col-xs-3">SUM</div>
+                    </div>
+                  </div>
+                </div>
               </div>
               <div class="col-md-3">
                 <div class="panel panel-default top-buffer-small" >
@@ -115,7 +184,8 @@
                     <div class="panel-body" ng-if="ctrl.isOrderByAttributesChecked(key)">
                        
                        <div class="row">
-                          <input  class="col-xs-3" type="radio" 
+                          <input  class="col-xs-2" 
+                              style="margin-left: 8.8%" type="radio" 
                             name="{{'radio' + key}}"
                             value="asc"
                             ng-model="value"
@@ -123,47 +193,23 @@
                             ng-watch='ctrl.getOrderByAttributes(key)'
                             ng-watch-object-value="direction">
                           </input>
-                          <div class="col-xs-9">ASC</div>
+                          <div class="col-xs-3">ASC</div>
                         </div>
                         <div class="row">
                           
-                           <input class="col-xs-3"  class="btn btn-primary" type="radio" 
+                           <input class="col-xs-2" 
+                                style="margin-left: 8.8%"
+                                class="btn btn-primary" type="radio" 
                             name="{{'radio' + key}}"
                             value="desc"
                             ng-model="value"
                             ng-click='ctrl.setOrderByAttributesValue(key, value)'
                             ng-watch='ctrl.getOrderByAttributes(key)'
                             ng-watch-object-value="direction">
-                            <div class="col-xs-9">DESC</div>
+                            <div class="col-xs-3">DESC</div>
                           </input>
                          </div>
                   
-                      <!--
-                      <div>
-                        <input  type="radio" class="col-md-1" 
-                                name="{{'radio' + key}}"
-                                value="asc"
-                                ng-model="value"
-                                ng-change='ctrl.setOrderByAttributesValue(key, value)'
-                                ng-watch='ctrl.getOrderByAttributes(key)'
-                                ng-watch-object-value="direction">
-                        </input>
-                        <div class="col-md-2" >
-                            ASC
-                        </div>
-                      </div> 
-                      <div class="row top-buffer-small">
-                        <input  type="radio" class="col-md-1"
-                                name="{{'radio' + key}}"
-                                value="desc"
-                                ng-model="value"
-                                ng-change='ctrl.setOrderByAttributesValue(key, value)'
-                                ng-watch='ctrl.getOrderByAttributes(key)'
-                                ng-watch-object-value="direction">
-                        </input>
-                        <div class="col-md-2" >
-                            DESC
-                        </div>-->
                       </div>
                     </div>
                 </div>            

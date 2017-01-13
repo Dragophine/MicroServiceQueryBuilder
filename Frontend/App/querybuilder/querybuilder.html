@@ -49,8 +49,10 @@
         </div>
   </div>
   <div class="row" ng-if="ctrl.availableNodes.length === 0">
+    <!--NETWORK-->
     <div class="panel panel-default top-buffer"
-         ng-class="{'col-md-8': ctrl.selectedNode != undefined, 
+         ng-class="{'col-md-8': ctrl.selectedNode != undefined || 
+          ctrl.selectedRelation != undefined, 
                     'col-md-12': ctrl.selectedNode == undefined}">
       <div class="panel-body">
         <vis-network ng-if="ctrl.availableNodes.length == 0"
@@ -62,15 +64,67 @@
         </vis-network>
       </div>
     </div>
-    <div class="col-md-1">
+    <div class="width: 4%">
     </div>
-    <div class="panel panel-default top-buffer col-md-3" 
-      ng-if="ctrl.selectedNode != undefined">
-      <div class="panel-body">
-        <h1>{{ctrl.selectedNode['type']}}</h1>
-        <button ng-click="ctrl.deleteSelectedNode()">
-          Delete
-        </button>
+    <div class=" col-md-4" 
+      ng-if="ctrl.selectedNode != undefined || ctrl.selectedRelation != undefined">
+
+      <!--SELECTED NODE-->
+      <div class="panel panel-default top-buffer" ng-if="ctrl.selectedNode != undefined">
+        <div class="panel-body">
+          <h1>
+            <span>{{ctrl.selectedNode['type']}}</span>
+            <button class="btn btn-primary pull-right" 
+              ng-click="ctrl.deleteSelectedNode()">
+              Delete
+            </button>
+          </h1>
+            <h3>Return Attributes</h3>
+          <ul>
+            <li ng-repeat="attribute in ctrl.selectedNode.returnAttributes">
+              {{attribute.attributeName}} {{attribute.aggregation}} 
+            </li>
+          </ul>
+          <h3>Filter Attributes</h3>
+          <ul>
+            <li ng-repeat="attribute in ctrl.selectedNode.filterAttributes">
+              {{attribute.attributeName}} {{attribute.filterType}} {{attribute.value}}
+            </li>
+          </ul>
+          <h3>Orderby Attributes</h3>
+          <ul>
+            <li ng-repeat="attribute in ctrl.selectedNode.orderByAttributes">
+              {{attribute.attributeName}} {{attribute.direction}}
+            </li>
+          </ul>
+          
+        </div>
+      </div>
+
+      <!--SELECTED RELATIONSHIP-->
+      <div class="panel panel-default top-buffer"  ng-if="ctrl.selectedRelation != undefined">
+        <div class="panel-body">
+          <h1>{{ctrl.selectedRelation['relationshipType']}} </h1>
+          Optional: {{ctrl.selectedRelation['optional']}}  <br />
+          <h3>Return Attributes</h3>
+          <ul>
+            <li ng-repeat="attribute in ctrl.selectedRelation.returnAttributes">
+              {{attribute.attributeName}} {{attribute.aggregation}} 
+            </li>
+          </ul>
+          <h3>Filter Attributes</h3>
+          <ul>
+            <li ng-repeat="attribute in ctrl.selectedRelation.filterAttributes">
+              {{attribute.attributeName}} {{attribute.filterType}} {{attribute.value}}
+            </li>
+          </ul>
+          <h3>Orderby Attributes</h3>
+          <ul>
+            <li ng-repeat="attribute in ctrl.selectedRelation.orderByAttributes">
+              {{attribute.attributeName}} {{attribute.direction}}
+            </li>
+          </ul>
+        </div>
       </div>
     </div>
   </div>
