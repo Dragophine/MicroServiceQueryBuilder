@@ -107,7 +107,7 @@ public class ExpertQueryBusiness {
 	}
 	
 	
-	public void updateExpertQuery(String queryId, ExpertQueryJsonObject updatedQuery) throws Exception{
+	public ExpertQuery updateExpertQuery(String queryId, ExpertQueryJsonObject updatedQuery) throws Exception{
 		ExpertQuery expertQuery=null;
 		Long id = new Long(-1);
 		
@@ -129,27 +129,35 @@ public class ExpertQueryBusiness {
 		} else{
 			 expertQuery= expertQueryRepository.findByName(queryId);
 		}
-    	for (Parameter p : expertQuery.getParameter())
-    	{			    	
-	    	parameterRepository.delete(p.getId());
-    	}
+		
+		ExpertQuery alreadyUsedName=expertQueryRepository.findByName(updatedQuery.getName());
+		if ((updatedQuery.getName().equals(expertQuery.getName()))||(alreadyUsedName==null)){
+		
+	    	for (Parameter p : expertQuery.getParameter())
+	    	{			    	
+		    	parameterRepository.delete(p.getId());
+	    	}
+	    	
+	    	for (Parameter p : updatedQuery.getParameter())
+	    	{			    	
+		    	AttributeTypes.testTypes(p);
+	    	}
+	    	
     	
-    	for (Parameter p : updatedQuery.getParameter())
-    	{			    	
-	    	AttributeTypes.testTypes(p);
-    	}
     	
-    	
-    	
-    	expertQuery.setDescription(updatedQuery.getDescription());
-    	expertQuery.setName(updatedQuery.getName());
-    	expertQuery.setQuery(updatedQuery.getQuery());
-    	Category cat = categoryRepository.findByName(updatedQuery.getCategory());
-    	
-    	expertQuery.setCategory(cat);
-    	expertQuery.setParameter(updatedQuery.getParameter());
-    	
-    	expertQueryRepository.save(expertQuery);
+	    	expertQuery.setDescription(updatedQuery.getDescription());
+	    	expertQuery.setName(updatedQuery.getName());
+	    	expertQuery.setQuery(updatedQuery.getQuery());
+	    	Category cat = categoryRepository.findByName(updatedQuery.getCategory());
+	    	
+	    	expertQuery.setCategory(cat);
+	    	expertQuery.setParameter(updatedQuery.getParameter());
+	    	
+	    	expertQueryRepository.save(expertQuery);
+	    	return expertQuery;
+		}	else{
+			return null;
+		}
 	}
 	
 	public Set<ExpertQueryJsonObject> getAllExpertQueries(){

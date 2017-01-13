@@ -85,7 +85,8 @@ public class ExpertQueryService {
 			@Transactional
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.PUT)	 
 		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody ExpertQueryJsonObject updatedQuery) throws Exception	{
-				expertQueryBusiness.updateExpertQuery(queryId, updatedQuery);	
+				ExpertQuery updatedObject = expertQueryBusiness.updateExpertQuery(queryId, updatedQuery);	
+				if(updatedObject==null) return new ResponseEntity<Result>(HttpStatus.CONFLICT);
 				return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
 			

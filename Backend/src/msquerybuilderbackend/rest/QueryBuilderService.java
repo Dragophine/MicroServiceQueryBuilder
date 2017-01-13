@@ -89,48 +89,8 @@ public class QueryBuilderService {
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.DELETE)	 
 		    public ResponseEntity<Result> deleteQuery(@PathVariable String queryId) throws Exception	{
-				QueryBuilderJsonStringObject qbjso=null;
-				Long id = new Long(-1);
-				
-				try
-				{
-					id = Long.parseLong(queryId);
-				}
-				catch(NumberFormatException P_ex)
-				{
-					/**
-					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-					 * eindeutige Name sein. 
-					 */
-				}
-				
-				if (id >=0){
-					 qbjso= queryBuilderJsonStringObjectRepository.findOne(id);
-				} else{
-					 qbjso= queryBuilderJsonStringObjectRepository.findByName(queryId);
-				}
-//				
-//				
-//				Set<ExpertQuery> expertqueries = qbjso.getExpertQuery();
-//				Iterator iter = expertqueries.iterator();
-//		
-//				while (iter.hasNext()){
-//					ExpertQuery eq= (ExpertQuery) iter.next();
-				if (qbjso.getExpertQuery()!=null){
-					for (Parameter p : qbjso.getExpertQuery().getParameter())
-			    	{
-				    	parameterRepository.delete(p.getId());
-			    	}
-					expertQueryRepository.delete(qbjso.getExpertQuery().getId());
-				}
-				
-
-		    	
-		    	
-		    	queryBuilderJsonStringObjectRepository.delete(qbjso.getId());
-		
-			return new ResponseEntity<Result>(HttpStatus.OK);
+				queryBuilderBusiness.deleteQueryBuilder(queryId);
+				return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
 			
 			
@@ -138,76 +98,9 @@ public class QueryBuilderService {
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.PUT)	 
 		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody QueryBuilder updatedQuery) throws Exception	{
-				QueryBuilderJsonStringObject qbjso=null;
-				Long id = new Long(-1);
-				
-				try
-				{
-					id = Long.parseLong(queryId);
-				}
-				catch(NumberFormatException P_ex)
-				{
-					/**
-					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-					 * eindeutige Name sein. 
-					 */
-				}
-				
-				if (id >=0){
-					 qbjso= queryBuilderJsonStringObjectRepository.findOne(Long.parseLong(queryId));
-				} else{
-					 qbjso= queryBuilderJsonStringObjectRepository.findByName(queryId);
-				}
-				
-				/**
-				 * Interpretation der Query in ExpertQuery ausständig wie bei execute
-				 */
-				 
-				if (qbjso.getExpertQuery()!=null){
-//			    	for (ExpertQuery q : qbjso.getExpertQuery())
-//			    	{			    	
-//				    	expertQueryRepository.delete(q.getId());
-//			    	}
-					expertQueryRepository.delete(qbjso.getExpertQuery());
-				}
-		    	
-		    	
-		    	/**
-		    	 * eventuell nicht notwendig, falls es durch die Beschreibung des RElationships in der Entity funktioniert
-		    	 */
-//		    	for (ExpertQuery q : updatedQuery.getExpertQuery())
-//		    	{			    	
-//			    	expertQueryRepository.save(q);
-//		    	}
-		    	
-//		    	Set<ExpertQuery> updatedQuerySet = new HashSet<ExpertQuery>();
-//		    	updatedQuerySet.add(expertQuery);
-				
-				Category category = categoryRepository.findByName(updatedQuery.getCategory());
-		    	qbjso.setDescription(updatedQuery.getDescription());
-		    	qbjso.setName(updatedQuery.getName());
-		    	qbjso.setCategory(category);
-		    	ObjectWriter mapper = new ObjectMapper().writer().withDefaultPrettyPrinter();
-				String queryBuilderJsonString = mapper.writeValueAsString(updatedQuery);
-				qbjso.setQueryBuilderJson(queryBuilderJsonString);
-		    	
-		    	/**
-		    	 * zusammengebaute ExpertQuery
-		    	 */
-//		    	newExpertQuery.setName(updatedQuery.getName());
-//		    	newExpertQuery.setDescription(updatedQuery.getDescription());
-//		    	newExpertQuery.setCategory(category);
-//		    	qbjso.setExpertQuery(newExpertQuery);
-
-		    	
-		    	
-		    	
-		    	
-		    	
-		    	queryBuilderJsonStringObjectRepository.save(qbjso);
-		
-			return new ResponseEntity<Result>(HttpStatus.OK);
+				QueryBuilderJsonStringObject updatedObject= queryBuilderBusiness.updateQueryBuilder(queryId, updatedQuery);
+				if (updatedObject==null) return new ResponseEntity<Result>(HttpStatus.CONFLICT);
+				return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
 			
 			
@@ -216,171 +109,16 @@ public class QueryBuilderService {
 			@Transactional
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.GET)
 		    public ResponseEntity<Set<QueryBuilder>> getQueries() throws Exception	{
-				Iterable<QueryBuilderJsonStringObject> qbjso= queryBuilderJsonStringObjectRepository.findAll();
-				Set<QueryBuilder> querybuilders = new HashSet<QueryBuilder>();
-				ObjectMapper mapper = new ObjectMapper();
-				for ( QueryBuilderJsonStringObject qb: qbjso ){
-					try {
-
-
-						// Convert JSON string to Object
-						String jsonInString = qb.getQueryBuilderJson();
-						QueryBuilder queryBuilder = mapper.readValue(jsonInString, QueryBuilder.class);
-						queryBuilder.setId(qb.getId());
-						querybuilders.add(queryBuilder);
-
-					} catch (JsonGenerationException e) {
-						e.printStackTrace();
-					} catch (JsonMappingException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-
-				}
-				
-				
-				return new ResponseEntity<Set<QueryBuilder>>(querybuilders, HttpStatus.OK);
-
+				return new ResponseEntity<Set<QueryBuilder>>(queryBuilderBusiness.getAllQueryBuilder(), HttpStatus.OK);
 		    }
 			
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.GET)	 
 		    public ResponseEntity<QueryBuilder> getQuery(@PathVariable String queryId) throws Exception	{
-				QueryBuilderJsonStringObject qbjso=null;
-				Long id = new Long(-1);
-				
-				try
-				{
-					id = Long.parseLong(queryId);
-				}
-				catch(NumberFormatException P_ex)
-				{
-					/**
-					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-					 * eindeutige Name sein. 
-					 */
-				}
-				
-				if (id >=0){
-					 qbjso= queryBuilderJsonStringObjectRepository.findOne(Long.parseLong(queryId));
-				} else{
-					 qbjso= queryBuilderJsonStringObjectRepository.findByName(queryId);
-				}
-					
-				
-				ObjectMapper mapper = new ObjectMapper();
-				QueryBuilder queryBuilder=null;
-					try {
-						// Convert JSON string to Object
-						String jsonInString = qbjso.getQueryBuilderJson();
-						 queryBuilder = mapper.readValue(jsonInString, QueryBuilder.class);
-						 queryBuilder.setId(qbjso.getId());
-
-					} catch (JsonGenerationException e) {
-						e.printStackTrace();
-					} catch (JsonMappingException e) {
-						e.printStackTrace();
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-
-				
-				
-				
-			return new ResponseEntity<QueryBuilder>(queryBuilder,HttpStatus.OK);
+				return new ResponseEntity<QueryBuilder>(queryBuilderBusiness.getQueryBuilder(queryId),HttpStatus.OK);
 		    }
 			
 			
-		    private void testTypes(Parameter p) throws Exception{
-		    	switch(p.getType()){
-	    		case "int":
-	    		case "integer":
-	    		case "Integer":
-	    			try{
-	    			int i = Integer.parseInt((String)p.getValue());
-	    			p.setValue(i);
-	    			}catch (Exception e){
-	    				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-	    				
-	    			}
-	    		break;
-	    		
-	    		case "double":
-	    		case "Double":
-	    			try{
-		    			double i = Double.parseDouble((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    		
-	    		case "char":
-	    		case "Char":
-	    			try{
-		    			char i=(char) p.getValue();
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "boolean":
-	    		case "Boolean":
-	    			try{
-		    			boolean i=(boolean) p.getValue();
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "float":
-	    		case "Float":
-	    			try{
-		    			float i = Float.parseFloat((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    		
-	    		case "long":
-	    		case "Long":
-	    			try{
-		    			long i = Long.parseLong((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "short":
-	    		case "Short":
-	    			try{
-		    			short i = Short.parseShort((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "byte":
-	    		case "Byte":
-	    			try{
-		    			byte i = Byte.parseByte((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		default: 
-	    			
-	    			break;
-	    		}
-		    }
+		  
 }

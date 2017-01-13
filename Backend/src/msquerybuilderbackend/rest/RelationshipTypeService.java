@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import msquerybuilderbackend.business.RelationshipTypeBusiness;
+
 @RestController
 public class RelationshipTypeService {
 	
@@ -21,29 +23,20 @@ public class RelationshipTypeService {
 	Neo4jOperations neo4jOperations;
 	Neo4jTemplate temp;
 	
+	@Autowired
+	RelationshipTypeBusiness relationshipTypeBusiness;
+	
 	
 	@CrossOrigin
 	@RequestMapping(value="/relationshiptypes", method=RequestMethod.GET)
 	public ResponseEntity<Result> getRelationshipTypes() throws Exception {
-
-		
-		String queryRelations = "MATCH ()-[r]->() where type(r)<>\"HAS_PARAMETER\" and type(r)<>\"HAS_CATEGORY\" AND type(r)<>\"HAS_EXPERTQUERY\"   return distinct type(r) AS Relationship";
-	
-		Result result = neo4jOperations.query(queryRelations, new HashMap<String, String>());
-	
-		return new ResponseEntity<Result>(result, HttpStatus.OK);
+		return new ResponseEntity<Result>(relationshipTypeBusiness.getAllRelationshipTypes(), HttpStatus.OK);
 	}
 	
 	@CrossOrigin
 	@RequestMapping(value="/relationshiptypes/{relationId}/keys", method=RequestMethod.GET)
-	public ResponseEntity<Result> getKeys(@PathVariable String relationId) throws Exception {
-		
-		String queryKeys = "MATCH ()-[n:"+relationId+"]->() UNWIND keys(n) AS key " +
-						 "WITH key ORDER BY key RETURN  COLLECT(distinct key) as Keys";
-
-		Result result = neo4jOperations.query(queryKeys, new HashMap<String, String>());
-		
-		return new ResponseEntity<Result>(result, HttpStatus.OK);
+	public ResponseEntity<Result> getKeys(@PathVariable String relationId) throws Exception {	
+		return new ResponseEntity<Result>(relationshipTypeBusiness.getKeysOfCertainRelationshipType(relationId), HttpStatus.OK);
 	}
 	
 }

@@ -49,10 +49,16 @@ public class CategoryBusiness {
 			 category= categoryRepository.findByName(categoryId);
 		}
 		
-		category.setName(cat.getName());
-		category.setDescription(cat.getDescription());
-		categoryRepository.save(category);		
-		return category;
+
+			Category alreadyUsedName=categoryRepository.findByName(cat.getName());
+		if ((cat.getName().equals(category.getName()))||(alreadyUsedName==null)){	
+			category.setName(cat.getName());
+			category.setDescription(cat.getDescription());
+			categoryRepository.save(category);		
+			return category;
+		}else{
+			return null;
+		}
 	}
 	
 	public void deleteCategory(String categoryId){

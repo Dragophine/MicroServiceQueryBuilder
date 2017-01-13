@@ -70,8 +70,10 @@ public class CategoryService {
 	@CrossOrigin 
 	@RequestMapping(value="/categories/{categoryId}",  method=RequestMethod.PUT)
 	@Transactional
-	public ResponseEntity<Category> upateCategory( @PathVariable String categoryId, @RequestBody Category cat) throws Exception{	
-		return new ResponseEntity<Category>(categoryBusiness.updateCategory(categoryId, cat), HttpStatus.OK);
+	public ResponseEntity<Category> upateCategory( @PathVariable String categoryId, @RequestBody Category cat) throws Exception{
+		Category category = categoryBusiness.updateCategory(categoryId, cat);
+		if (category==null) return new ResponseEntity<Category>(category, HttpStatus.CONFLICT);
+		return new ResponseEntity<Category>(category, HttpStatus.OK);
     }
 	
 	@CrossOrigin 
