@@ -1,8 +1,10 @@
 package msquerybuilderbackend.rest;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,10 +21,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import msquerybuilderbackend.entity.Alert;
+import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
+import msquerybuilderbackend.entity.ExpertQueryJsonObject;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
 import msquerybuilderbackend.exception.InvalidTypeException;
+import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
 
@@ -37,6 +42,8 @@ public class ExpertQueryService {
 		ExpertQueryRepository expertQueryRepository;
 		@Autowired
 		ParameterRepository parameterRepository;
+		@Autowired
+		CategoryRepository categoryRepository;
 		
 	
 			@CrossOrigin 
@@ -47,7 +54,7 @@ public class ExpertQueryService {
 			//Pleas add @CrossOrigin to every request.
 			
 		    @RequestMapping(value="/expertqueries/execute",  method=RequestMethod.POST)
-		    public ResponseEntity<Result> preExecuteQuery(@RequestBody ExpertQuery expertQuery) throws Exception {
+		    public ResponseEntity<Result> preExecuteQuery(@RequestBody ExpertQueryJsonObject expertQuery) throws Exception {
 				
 				
 		    	Map<String,Object> paramsMap = new HashMap<String,Object>();
@@ -73,21 +80,28 @@ public class ExpertQueryService {
 			@Transactional
 			@CrossOrigin 
 		    @RequestMapping(value="/expertqueries",  method=RequestMethod.POST)	 
-		    public ResponseEntity<Long> saveQuery(@RequestBody ExpertQuery expertQuery) throws Exception{
+		    public ResponseEntity<Long> saveQuery(@RequestBody ExpertQueryJsonObject expertQueryJsonObject) throws Exception{
 		    
-		    ExpertQuery alreadyUsedName= expertQueryRepository.findByName(expertQuery.getName());
+		    ExpertQuery alreadyUsedName= expertQueryRepository.findByName(expertQueryJsonObject.getName());
 			if (alreadyUsedName != null){
 				
 				return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);	
 			}else{
 			
-//		    	for (Parameter p : expertQuery.getParameter())
-//		    	{
-//					testTypes(p);				
-//		    		parameterRepository.save(p);
-//		    	}
+		    	for (Parameter p : expertQueryJsonObject.getParameter())
+		    	{
+					testTypes(p);				
+		    		
+		    	}
+				ExpertQuery expertQuery = new ExpertQuery();
+				expertQuery.setName(expertQueryJsonObject.getName());;
+				expertQuery.setDescription(expertQueryJsonObject.getDescription());
+				expertQuery.setParameter(expertQueryJsonObject.getParameter());
+				expertQuery.setQuery(expertQueryJsonObject.getQuery());
+				Category cat= categoryRepository.findByName(expertQueryJsonObject.getCategory());
+				expertQuery.setCategory(cat);
 		    	expertQueryRepository.save(expertQuery);
-		    	ExpertQuery newExpertQuery = expertQueryRepository.findByName(expertQuery.getName());
+		    	ExpertQuery newExpertQuery = expertQueryRepository.findByName(expertQueryJsonObject.getName());
 		
 		    	return new ResponseEntity<Long>(newExpertQuery.getId(),HttpStatus.OK);
 			}
@@ -134,7 +148,7 @@ public class ExpertQueryService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.PUT)	 
-		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody ExpertQuery updatedQuery) throws Exception	{
+		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody ExpertQueryJsonObject updatedQuery) throws Exception	{
 				ExpertQuery expertQuery=null;
 				Long id = new Long(-1);
 				
@@ -163,14 +177,17 @@ public class ExpertQueryService {
 		    	
 		    	for (Parameter p : updatedQuery.getParameter())
 		    	{			    	
-			    	parameterRepository.save(p);
+			    	testTypes(p);
 		    	}
+		    	
 		    	
 		    	
 		    	expertQuery.setDescription(updatedQuery.getDescription());
 		    	expertQuery.setName(updatedQuery.getName());
 		    	expertQuery.setQuery(updatedQuery.getQuery());
-		    	expertQuery.setCategory(updatedQuery.getCategory());
+		    	Category cat = categoryRepository.findByName(updatedQuery.getCategory());
+		    	
+		    	expertQuery.setCategory(cat);
 		    	expertQuery.setParameter(updatedQuery.getParameter());
 		    	
 		    	expertQueryRepository.save(expertQuery);
@@ -178,6 +195,7 @@ public class ExpertQueryService {
 			return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
 			
+			@Deprecated
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueriesold",  method=RequestMethod.GET)
@@ -203,20 +221,28 @@ public class ExpertQueryService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries",  method=RequestMethod.GET)
-		    public ResponseEntity<Iterable<ExpertQuery>> getQueries() throws Exception	{
+		    public ResponseEntity<Set<ExpertQueryJsonObject>> getQueries() throws Exception	{
 				Iterable<ExpertQuery> expertqueries= expertQueryRepository.findAll();
-				return new ResponseEntity<Iterable<ExpertQuery>>(expertqueries, HttpStatus.OK);
-//				String queryNodesQuery = "MATCH (expertquery:ExpertQuery) return expertquery";			
-//				Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
+				
+				Set<ExpertQueryJsonObject> expertqueriesjson = new HashSet<ExpertQueryJsonObject>();
+				for (ExpertQuery eq:expertqueries){
+					ExpertQueryJsonObject eqjo = new ExpertQueryJsonObject();
+					eqjo.setName(eq.getName());
+					eqjo.setDescription(eq.getDescription());
+					eqjo.setParameter(eq.getParameter());
+					eqjo.setId(eq.getId());
+					eqjo.setQuery(eq.getQuery());
+					eqjo.setCategory(eq.getCategory().getName());
+					expertqueriesjson.add(eqjo);
+				}
+				return new ResponseEntity<Set<ExpertQueryJsonObject>>(expertqueriesjson, HttpStatus.OK);
 
-//	
-//			return new ResponseEntity<Result>(resultQuery, HttpStatus.OK);
 		    }
 			
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.GET)	 
-		    public ResponseEntity<ExpertQuery> getQuery(@PathVariable String queryId) throws Exception	{
+		    public ResponseEntity<ExpertQueryJsonObject> getQuery(@PathVariable String queryId) throws Exception	{
 				ExpertQuery expertQuery=null;
 				Long id = new Long(-1);
 				
@@ -238,8 +264,16 @@ public class ExpertQueryService {
 				} else{
 					 expertQuery= expertQueryRepository.findByName(queryId);
 				}
+				
+				ExpertQueryJsonObject eqjo = new ExpertQueryJsonObject();
+				eqjo.setName(expertQuery.getName());
+				eqjo.setDescription(expertQuery.getDescription());
+				eqjo.setParameter(expertQuery.getParameter());
+				eqjo.setId(expertQuery.getId());
+				eqjo.setQuery(expertQuery.getQuery());
+				eqjo.setCategory(expertQuery.getCategory().getName());
 
-			return new ResponseEntity<ExpertQuery>(expertQuery,HttpStatus.OK);
+			return new ResponseEntity<ExpertQueryJsonObject>(eqjo,HttpStatus.OK);
 		    }
 			
 			
