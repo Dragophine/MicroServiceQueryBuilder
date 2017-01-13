@@ -1,8 +1,10 @@
 package msquerybuilderbackend.rest;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,10 +20,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import msquerybuilderbackend.business.ExpertQueryBusiness;
 import msquerybuilderbackend.entity.Alert;
+import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
+import msquerybuilderbackend.entity.ExpertQueryJsonObject;
 import msquerybuilderbackend.entity.Parameter;
+import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
 import msquerybuilderbackend.exception.InvalidTypeException;
+import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
 
@@ -36,6 +43,10 @@ public class ExpertQueryService {
 		ExpertQueryRepository expertQueryRepository;
 		@Autowired
 		ParameterRepository parameterRepository;
+		@Autowired
+		CategoryRepository categoryRepository;
+		@Autowired
+		ExpertQueryBusiness expertQueryBusiness;
 		
 	
 			@CrossOrigin 
@@ -46,42 +57,17 @@ public class ExpertQueryService {
 			//Pleas add @CrossOrigin to every request.
 			
 		    @RequestMapping(value="/expertqueries/execute",  method=RequestMethod.POST)
-		    public ResponseEntity<Result> preExecuteQuery(@RequestBody ExpertQuery expertQuery) throws Exception {
-				
-				
-		    	Map<String,Object> paramsMap = new HashMap<String,Object>();
-		    	Result result=null;
-		    	if (expertQuery.getParameter() !=null)
-		    	{
-		    		for (Parameter p:expertQuery.getParameter())
-		    		{
-		    			testTypes(p); 		
-			    		paramsMap.put(p.getKey(), p.getValue());
-			    		System.out.println(p.getKey() + " "+p.getValue());
-			    	}
-		    		result= neo4jOperations.query(expertQuery.getQuery(), paramsMap,true);	    		
-		    	}
-		    	else
-		    	{
-		    		result = neo4jOperations.query(expertQuery.getQuery(),new HashMap<String, String>(), true);
-		    	}
-		
-			return new ResponseEntity<Result>(result, HttpStatus.OK);
+		    public ResponseEntity<Result> preExecuteQuery(@RequestBody ExpertQueryJsonObject expertQuery) throws Exception {			
+				return new ResponseEntity<Result>(expertQueryBusiness.executeExpertQuery(expertQuery), HttpStatus.OK);
 		    }	
 			
 			@Transactional
 			@CrossOrigin 
 		    @RequestMapping(value="/expertqueries",  method=RequestMethod.POST)	 
-		    public ResponseEntity<Result> saveQuery(@RequestBody ExpertQuery expertQuery) throws Exception
-			{
-		    	for (Parameter p : expertQuery.getParameter())
-		    	{
-					testTypes(p);				
-		    		parameterRepository.save(p);
-		    	}
-		    	expertQueryRepository.save(expertQuery);
-		
-			return new ResponseEntity<Result>(HttpStatus.OK);
+		    public ResponseEntity<Long> saveQuery(@RequestBody ExpertQueryJsonObject expertQueryJsonObject) throws Exception{	    
+			   Long newID= expertQueryBusiness.createExpertQuery(expertQueryJsonObject);
+			   if (newID==0L)return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);			
+			   return new ResponseEntity<Long>(newID,HttpStatus.OK);			
 		    }
 			
 			
@@ -90,85 +76,21 @@ public class ExpertQueryService {
 			@Transactional
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.DELETE)	 
 		    public ResponseEntity<Result> deleteQuery(@PathVariable String queryId) throws Exception	{
-				ExpertQuery expertQuery=null;
-				Long id = new Long(-1);
-				
-				try
-				{
-					id = Long.parseLong(queryId);
-				}
-				catch(NumberFormatException P_ex)
-				{
-					/**
-					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-					 * eindeutige Name sein. 
-					 */
-				}
-				
-				if (id >=0){
-					 expertQuery= expertQueryRepository.findOne(id);
-				} else{
-					 expertQuery= expertQueryRepository.findByName(queryId);
-				}
-		    	for (Parameter p : expertQuery.getParameter())
-		    	{
-			    	parameterRepository.delete(p.getId());
-		    	}
-		    	
-		    	expertQueryRepository.delete(expertQuery.getId());
-		
-			return new ResponseEntity<Result>(HttpStatus.OK);
+				expertQueryBusiness.deleteExpertQuery(queryId);
+				return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
 			
 			
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.PUT)	 
-		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody ExpertQuery updatedQuery) throws Exception	{
-				ExpertQuery expertQuery=null;
-				Long id = new Long(-1);
-				
-				try
-				{
-					id = Long.parseLong(queryId);
-				}
-				catch(NumberFormatException P_ex)
-				{
-					/**
-					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-					 * eindeutige Name sein. 
-					 */
-				}
-				
-				if (id >=0){
-					 expertQuery= expertQueryRepository.findOne(Long.parseLong(queryId));
-				} else{
-					 expertQuery= expertQueryRepository.findByName(queryId);
-				}
-		    	for (Parameter p : expertQuery.getParameter())
-		    	{			    	
-			    	parameterRepository.delete(p.getId());
-		    	}
-		    	
-		    	for (Parameter p : updatedQuery.getParameter())
-		    	{			    	
-			    	parameterRepository.save(p);
-		    	}
-		    	
-		    	
-		    	expertQuery.setDescription(updatedQuery.getDescription());
-		    	expertQuery.setName(updatedQuery.getName());
-		    	expertQuery.setQuery(updatedQuery.getQuery());
-		    	expertQuery.setCategory(updatedQuery.getCategory());
-		    	expertQuery.setParameter(updatedQuery.getParameter());
-		    	
-		    	expertQueryRepository.save(expertQuery);
-		
-			return new ResponseEntity<Result>(HttpStatus.OK);
+		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody ExpertQueryJsonObject updatedQuery) throws Exception	{
+				ExpertQuery updatedObject = expertQueryBusiness.updateExpertQuery(queryId, updatedQuery);	
+				if(updatedObject==null) return new ResponseEntity<Result>(HttpStatus.CONFLICT);
+				return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
 			
+			@Deprecated
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueriesold",  method=RequestMethod.GET)
@@ -194,133 +116,17 @@ public class ExpertQueryService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries",  method=RequestMethod.GET)
-		    public ResponseEntity<Iterable<ExpertQuery>> getQueries() throws Exception	{
-				Iterable<ExpertQuery> expertqueries= expertQueryRepository.findAll();
-				return new ResponseEntity<Iterable<ExpertQuery>>(expertqueries, HttpStatus.OK);
-//				String queryNodesQuery = "MATCH (expertquery:ExpertQuery) return expertquery";			
-//				Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
-
-//	
-//			return new ResponseEntity<Result>(resultQuery, HttpStatus.OK);
+		    public ResponseEntity<Set<ExpertQueryJsonObject>> getQueries() throws Exception	{
+				return new ResponseEntity<Set<ExpertQueryJsonObject>>(expertQueryBusiness.getAllExpertQueries(), HttpStatus.OK);
 		    }
 			
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.GET)	 
-		    public ResponseEntity<ExpertQuery> getQuery(@PathVariable String queryId) throws Exception	{
-				ExpertQuery expertQuery=null;
-				Long id = new Long(-1);
-				
-				try
-				{
-					id = Long.parseLong(queryId);
-				}
-				catch(NumberFormatException P_ex)
-				{
-					/**
-					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-					 * eindeutige Name sein. 
-					 */
-				}
-				
-				if (id >=0){
-					 expertQuery= expertQueryRepository.findOne(Long.parseLong(queryId));
-				} else{
-					 expertQuery= expertQueryRepository.findByName(queryId);
-				}
+		    public ResponseEntity<ExpertQueryJsonObject> getQuery(@PathVariable String queryId) throws Exception	{
+				return new ResponseEntity<ExpertQueryJsonObject>(expertQueryBusiness.getExpertQuery(queryId),HttpStatus.OK);
+		    }
+			
+			
 
-			return new ResponseEntity<ExpertQuery>(expertQuery,HttpStatus.OK);
-		    }
-			
-			
-		    private void testTypes(Parameter p) throws Exception{
-		    	switch(p.getType()){
-	    		case "int":
-	    		case "integer":
-	    		case "Integer":
-	    			try{
-	    			int i = Integer.parseInt((String)p.getValue());
-	    			p.setValue(i);
-	    			}catch (Exception e){
-	    				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-	    				
-	    			}
-	    		break;
-	    		
-	    		case "double":
-	    		case "Double":
-	    			try{
-		    			double i = Double.parseDouble((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    		
-	    		case "char":
-	    		case "Char":
-	    			try{
-		    			char i=(char) p.getValue();
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "boolean":
-	    		case "Boolean":
-	    			try{
-		    			boolean i=(boolean) p.getValue();
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "float":
-	    		case "Float":
-	    			try{
-		    			float i = Float.parseFloat((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    		
-	    		case "long":
-	    		case "Long":
-	    			try{
-		    			long i = Long.parseLong((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "short":
-	    		case "Short":
-	    			try{
-		    			short i = Short.parseShort((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "byte":
-	    		case "Byte":
-	    			try{
-		    			byte i = Byte.parseByte((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		default: 
-	    			
-	    			break;
-	    		}
-		    }
 }

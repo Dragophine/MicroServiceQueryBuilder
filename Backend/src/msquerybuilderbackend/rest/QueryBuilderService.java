@@ -1,5 +1,6 @@
 package msquerybuilderbackend.rest;
   
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -21,14 +22,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+
+import msquerybuilderbackend.business.QueryBuilderBusiness;
+import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Node;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.entity.QueryBuilder;
+import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
+import msquerybuilderbackend.entity.QueryBuilderStringObject;
 import msquerybuilderbackend.exception.InvalidTypeException;
+import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
-import msquerybuilderbackend.repository.QueryBuilderRepository;
+import msquerybuilderbackend.repository.QueryBuilderJsonStringRepository;
 
 @RestController
 public class QueryBuilderService {
@@ -38,11 +49,17 @@ public class QueryBuilderService {
 		Neo4jOperations neo4jOperations;
 		Neo4jTemplate temp;
 		@Autowired
-		QueryBuilderRepository queryBuilderRepository;
+		QueryBuilderJsonStringRepository queryBuilderJsonStringObjectRepository;
 		@Autowired
 		ParameterRepository parameterRepository;
 		@Autowired
 		ExpertQueryRepository expertQueryRepository;
+		
+		@Autowired
+		CategoryRepository categoryRepository;
+		
+		@Autowired
+		QueryBuilderBusiness queryBuilderBusiness;
 		
 	
 			@CrossOrigin 
@@ -54,39 +71,16 @@ public class QueryBuilderService {
 			
 		    @RequestMapping(value="/queryBuilder/execute",  method=RequestMethod.POST)
 		    public ResponseEntity<Result> preExecuteQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
-		    	Map<String,Object> paramsMap = new HashMap<String,Object>();
-		    	Result result=null;
-		    	
-//		    		result = neo4jOperations.query(queryBuilder.getQuery(),new HashMap<String, String>(), true);
-		    	
-		
-			return new ResponseEntity<Result>(result, HttpStatus.OK);
+				return new ResponseEntity<Result>(queryBuilderBusiness.executeQueryBuilderQuery(queryBuilder), HttpStatus.OK);
 		    }	
 			
 			@Transactional
 			@CrossOrigin 
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.POST)	 
 		    public ResponseEntity<Long> saveQuery(@RequestBody QueryBuilder queryBuilder) throws Exception{
-			
-			QueryBuilder alreadyUsedName= queryBuilderRepository.findByName(queryBuilder.getName());
-			if (alreadyUsedName != null){
-				
-				return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);	
-			}else{
-				
-/**
- * Interpretation des Querybuilders wie bei execute ausständig
- */
-		//		queryBuilder.addExpertQuery(expertquery);
-				/**
-				 * ExpertQuery auch den Namen und Beschreibung geben
-				 */
-				queryBuilder.setExpertQuery(null);
-		    	queryBuilderRepository.save(queryBuilder);
-		    	QueryBuilder returnNew=queryBuilderRepository.findByName(queryBuilder.getName());
-		
-			return new ResponseEntity<Long>(0L,HttpStatus.OK);
-			}
+				Long newId=queryBuilderBusiness.createQueryBuilder(queryBuilder);
+				if (newId==0L) return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);
+				return new ResponseEntity<Long>(newId,HttpStatus.OK);		
 		    }
 			
 			
@@ -95,47 +89,8 @@ public class QueryBuilderService {
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.DELETE)	 
 		    public ResponseEntity<Result> deleteQuery(@PathVariable String queryId) throws Exception	{
-				QueryBuilder queryBuilder=null;
-				Long id = new Long(-1);
-				
-				try
-				{
-					id = Long.parseLong(queryId);
-				}
-				catch(NumberFormatException P_ex)
-				{
-					/**
-					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-					 * eindeutige Name sein. 
-					 */
-				}
-				
-				if (id >=0){
-					 queryBuilder= queryBuilderRepository.findOne(id);
-				} else{
-					 queryBuilder= queryBuilderRepository.findByName(queryId);
-				}
-				
-				
-				Set<ExpertQuery> expertqueries = queryBuilder.getExpertQuery();
-				Iterator iter = expertqueries.iterator();
-		
-				while (iter.hasNext()){
-					ExpertQuery eq= (ExpertQuery) iter.next();
-					for (Parameter p : eq.getParameter())
-			    	{
-				    	parameterRepository.delete(p.getId());
-			    	}
-					expertQueryRepository.delete(eq.getId());
-				}
-				
-
-		    	
-		    	
-		    	queryBuilderRepository.delete(0L);
-		
-			return new ResponseEntity<Result>(HttpStatus.OK);
+				queryBuilderBusiness.deleteQueryBuilder(queryId);
+				return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
 			
 			
@@ -143,65 +98,9 @@ public class QueryBuilderService {
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.PUT)	 
 		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody QueryBuilder updatedQuery) throws Exception	{
-				QueryBuilder queryBuilder=null;
-				Long id = new Long(-1);
-				
-				try
-				{
-					id = Long.parseLong(queryId);
-				}
-				catch(NumberFormatException P_ex)
-				{
-					/**
-					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-					 * eindeutige Name sein. 
-					 */
-				}
-				
-				if (id >=0){
-					 queryBuilder= queryBuilderRepository.findOne(Long.parseLong(queryId));
-				} else{
-					 queryBuilder= queryBuilderRepository.findByName(queryId);
-				}
-				
-				/**
-				 * Interpretation der Query in ExpertQuery ausständig wie bei execute
-				 */
-				 
-				if (queryBuilder.getExpertQuery()!=null){
-			    	for (ExpertQuery q : queryBuilder.getExpertQuery())
-			    	{			    	
-				    	expertQueryRepository.delete(q.getId());
-			    	}
-				}
-		    	
-		    	
-		    	/**
-		    	 * eventuell nicht notwendig, falls es durch die Beschreibung des RElationships in der Entity funktioniert
-		    	 */
-//		    	for (ExpertQuery q : updatedQuery.getExpertQuery())
-//		    	{			    	
-//			    	expertQueryRepository.save(q);
-//		    	}
-		    	
-		    	Set<ExpertQuery> updatedQuerySet = new HashSet<ExpertQuery>();
-//		    	updatedQuerySet.add(expertQuery);
-		    	queryBuilder.setDescription(updatedQuery.getDescription());
-		    	queryBuilder.setName(updatedQuery.getName());
-		    	queryBuilder.setExpertQuery(updatedQuerySet);
-		    	queryBuilder.setCategory(updatedQuery.getCategory());
-		    	queryBuilder.setLimitcount(updatedQuery.getLimitCount());
-		    	queryBuilder.setNode(updatedQuery.getNode());
-		    
-		    	
-		    	
-		    	
-		    	
-		    	
-		    	queryBuilderRepository.save(queryBuilder);
-		
-			return new ResponseEntity<Result>(HttpStatus.OK);
+				QueryBuilderJsonStringObject updatedObject= queryBuilderBusiness.updateQueryBuilder(queryId, updatedQuery);
+				if (updatedObject==null) return new ResponseEntity<Result>(HttpStatus.CONFLICT);
+				return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
 			
 			
@@ -209,129 +108,17 @@ public class QueryBuilderService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.GET)
-		    public ResponseEntity<Iterable<QueryBuilder>> getQueries() throws Exception	{
-				Iterable<QueryBuilder> queryBuilder= queryBuilderRepository.findAll();
-				return new ResponseEntity<Iterable<QueryBuilder>>(queryBuilder, HttpStatus.OK);
-
+		    public ResponseEntity<Set<QueryBuilder>> getQueries() throws Exception	{
+				return new ResponseEntity<Set<QueryBuilder>>(queryBuilderBusiness.getAllQueryBuilder(), HttpStatus.OK);
 		    }
 			
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.GET)	 
 		    public ResponseEntity<QueryBuilder> getQuery(@PathVariable String queryId) throws Exception	{
-				QueryBuilder queryBuilder=null;
-				Long id = new Long(-1);
-				
-				try
-				{
-					id = Long.parseLong(queryId);
-				}
-				catch(NumberFormatException P_ex)
-				{
-					/**
-					 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-					 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-					 * eindeutige Name sein. 
-					 */
-				}
-				
-				if (id >=0){
-					 queryBuilder= queryBuilderRepository.findOne(Long.parseLong(queryId));
-				} else{
-					 queryBuilder= queryBuilderRepository.findByName(queryId);
-				}
-
-			return new ResponseEntity<QueryBuilder>(queryBuilder,HttpStatus.OK);
+				return new ResponseEntity<QueryBuilder>(queryBuilderBusiness.getQueryBuilder(queryId),HttpStatus.OK);
 		    }
 			
 			
-		    private void testTypes(Parameter p) throws Exception{
-		    	switch(p.getType()){
-	    		case "int":
-	    		case "integer":
-	    		case "Integer":
-	    			try{
-	    			int i = Integer.parseInt((String)p.getValue());
-	    			p.setValue(i);
-	    			}catch (Exception e){
-	    				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-	    				
-	    			}
-	    		break;
-	    		
-	    		case "double":
-	    		case "Double":
-	    			try{
-		    			double i = Double.parseDouble((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    		
-	    		case "char":
-	    		case "Char":
-	    			try{
-		    			char i=(char) p.getValue();
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "boolean":
-	    		case "Boolean":
-	    			try{
-		    			boolean i=(boolean) p.getValue();
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "float":
-	    		case "Float":
-	    			try{
-		    			float i = Float.parseFloat((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    		
-	    		case "long":
-	    		case "Long":
-	    			try{
-		    			long i = Long.parseLong((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "short":
-	    		case "Short":
-	    			try{
-		    			short i = Short.parseShort((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		case "byte":
-	    		case "Byte":
-	    			try{
-		    			byte i = Byte.parseByte((String)p.getValue());
-		    			p.setValue(i);
-		    			}catch (Exception e){
-		      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
-		    			}
-	    			break;
-	    			
-	    		default: 
-	    			
-	    			break;
-	    		}
-		    }
+		  
 }
