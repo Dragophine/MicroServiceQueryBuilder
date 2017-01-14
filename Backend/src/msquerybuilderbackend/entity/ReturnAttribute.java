@@ -3,20 +3,29 @@ package msquerybuilderbackend.entity;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
-@NodeEntity
+
 public class ReturnAttribute {
-	@GraphId private Long id;
+
 	private String attributeName ="";
 	private String returnType ="";
+	private String aggregation="";
 	
 	
 	public ReturnAttribute(){
 		
 	}
 	
-	public Long getId(){
-		return this.id;
+	
+	public String getAggregation() {
+		return aggregation;
 	}
+
+
+	public void setAggregation(String aggregation) {
+		this.aggregation = aggregation;
+	}
+
+
 	public String getAttributeName(){
 		return this.attributeName;
 	}
