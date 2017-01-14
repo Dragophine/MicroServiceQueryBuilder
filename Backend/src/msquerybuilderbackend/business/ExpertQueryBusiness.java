@@ -171,7 +171,10 @@ public class ExpertQueryBusiness {
 			eqjo.setParameter(eq.getParameter());
 			eqjo.setId(eq.getId());
 			eqjo.setQuery(eq.getQuery());
-			eqjo.setCategory(eq.getCategory().getName());
+			if(eq.getCategory() != null)
+			{
+				eqjo.setCategory(eq.getCategory().getName());	
+			}
 			expertqueriesjson.add(eqjo);
 		}
 		return expertqueriesjson;
@@ -207,7 +210,10 @@ public class ExpertQueryBusiness {
 		eqjo.setParameter(expertQuery.getParameter());
 		eqjo.setId(expertQuery.getId());
 		eqjo.setQuery(expertQuery.getQuery());
-		eqjo.setCategory(expertQuery.getCategory().getName());
+		if(expertQuery.getCategory() != null)
+		{
+			eqjo.setCategory(expertQuery.getCategory().getName());	
+		}
 
 		return eqjo;
 	}

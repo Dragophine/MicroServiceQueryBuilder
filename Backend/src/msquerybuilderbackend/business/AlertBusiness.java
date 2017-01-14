@@ -1,9 +1,18 @@
 package msquerybuilderbackend.business;
 
+import java.sql.Date;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
+
+import javax.mail.*;
+import javax.activation.*;
+import javax.mail.internet.*;
+import javax.mail.util.*;
 
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +30,17 @@ import msquerybuilderbackend.repository.ExpertQueryRepository;
 
 @Component
 public class AlertBusiness {
+	
+	public static final String EQUALS = "EQUALS";
+	public static final String GREATER = "GREATER";
+	public static final String SMALLER = "SMALLER";	
+	public static final String GREATER_EQUAL = "GREATER EQUAL";
+	public static final String SMALLER_EQUAL = "SMALLER EQUAL";
+	public static final String EXISTS = "EXISTS";
+	public static final String NOT_EXISTS = "NOT EXISTS";
+	public static final String COUNT = "COUNT";
+	public static final String DATE = "DATE";
+	public static final String DOUBLE = "DOUBLE";
 
 	@Autowired
 	Neo4jOperations neo4jOperations;
@@ -208,33 +228,275 @@ public class AlertBusiness {
 	}
 	
 	public void executeAllAlerts(){
-		StringBuffer F_mailMessageBuffer = new StringBuffer("");
 		List<Alert> F_alerts = getAllAlerts();
 		if(F_alerts != null)
 		{
 			for(Alert F_alert : F_alerts)
 			{
+				StringBuffer F_mailMessageBuffer = new StringBuffer("");
 				ResponseEntity<Result> F_result = executeAlert(F_alert.getId().toString());
 				if(F_result != null)
 				{
-					Iterator<Map<String, Object>> F_res = F_result.getBody().queryResults().iterator();
+					Iterable<Map<String, Object>> F_resultArrayList = F_result.getBody().queryResults();
+					Iterator<Map<String, Object>> F_res = F_resultArrayList.iterator();
 					while(F_res.hasNext())
 					{
 						Map<String, Object> F_map = F_res.next();
+						// Die Variable stellt sicher, dass der COUNT nur einmal per Alert geprüft wird.
+						boolean Fb_countWasCheckedForAlert = false; 
 						for(Object F_obj : F_map.values())
 						{
-							/**
-							 * TODO: Auf FileType überprüfen und gegebenfalls Mail senden
-							 * Eventuelle Möglichkeiten um Mails zu senden:
-							 * - http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html
-							 * - https://java.net/projects/javamail/pages/Home
-							 */
+							String Fs_alertFilterType = F_alert.getFilterType();
+							if(Fs_alertFilterType.equalsIgnoreCase(EQUALS))
+							{
+								if(F_obj.equals(F_alert.getValue()))
+								{
+									F_mailMessageBuffer.append(F_alert.getName() + 
+											" zeichnete einen Alert auf! Der returnierte Wert der "
+											+ "Query ist gleich dem beim Alert hinterlegten Wert! " +
+											F_alert.getQuery() + " returnierte den gleichen Wert. "
+													+ "Aktueller Wert: " + F_obj + ".\n");													
+								}
+							}
+							else if(F_obj != null && Fs_alertFilterType.equalsIgnoreCase(GREATER))
+							{
+								boolean Fb_addMessageToBuffer = shouldAddToMessageBuffer(F_obj.toString(), F_alert);									
+								if(Fb_addMessageToBuffer)
+								{
+									F_mailMessageBuffer.append(F_alert.getName() + 
+											" zeichnete einen Alert auf! Die Query " +
+											F_alert.getQuery() + " returnierte einen Wert "
+													+ "größer " + F_alert.getValue().toString() + 
+													". Aktueller " + "Wert: " + F_obj.toString() + ".\n");
+								}
+							}
+							else if(Fs_alertFilterType.equalsIgnoreCase(SMALLER) && F_obj != null)
+							{									
+								boolean Fb_addMessageToBuffer = shouldAddToMessageBuffer(F_obj.toString(), F_alert);
+								if(Fb_addMessageToBuffer)
+								{
+									F_mailMessageBuffer.append(F_alert.getName() + 
+											" zeichnete einen Alert auf! Die Query " +
+											F_alert.getQuery() + " returnierte einen Wert "
+													+ "kleiner " + F_alert.getValue() + ". Aktueller "
+															+ "Wert: " + F_obj.toString() + ".\n");
+								}
+							}
+							else if(Fs_alertFilterType.equalsIgnoreCase(GREATER_EQUAL) && F_obj != null)
+							{
+								boolean Fb_addMessageToBuffer = shouldAddToMessageBuffer(F_obj.toString(), F_alert);
+								if(Fb_addMessageToBuffer)
+								{
+									F_mailMessageBuffer.append(F_alert.getName() + 
+											" zeichnete einen Alert auf! Die Query " +
+											F_alert.getQuery() + " returnierte einen Wert "
+													+ "größer gleich " + F_alert.getValue() + ". Aktueller "
+															+ "Wert: " + F_obj.toString() + ".\n");
+								}
+							}
+							else if(Fs_alertFilterType.equalsIgnoreCase(SMALLER_EQUAL) && F_obj != null)
+							{
+								boolean Fb_addMessageToBuffer = shouldAddToMessageBuffer(F_obj.toString(), F_alert);
+								if(Fb_addMessageToBuffer)
+								{
+									F_mailMessageBuffer.append(F_alert.getName() + 
+											" zeichnete einen Alert auf! Die Query " +
+											F_alert.getQuery() + " returnierte einen Wert "
+													+ "kleiner gleich " + F_alert.getValue() + ". Aktueller "
+															+ "Wert: " + F_obj.toString() + ".\n");
+								}
+							}
+							else if(Fs_alertFilterType.equalsIgnoreCase(EXISTS))
+							{
+								if(F_obj != null)
+								{
+									F_mailMessageBuffer.append(F_alert.getName() + 
+											" zeichnete einen Alert auf! Die Query " +
+											F_alert.getQuery() + " returniert einen "
+													+ "existierenden Wert! Returnierter "
+													+ "Wert: " + F_obj + "\n");
+								}
+							}
+							else if(Fs_alertFilterType.equalsIgnoreCase(NOT_EXISTS))	
+							{
+								if(F_obj == null)
+								{
+									F_mailMessageBuffer.append(F_alert.getName() + 
+											" zeichnete einen Alert auf! Die Query " +
+											F_alert.getQuery() + " returnierte keinen "
+													+ "existierenden Wert!\n");
+								}
+							}
+							else if(Fs_alertFilterType.equalsIgnoreCase(COUNT) && !Fb_countWasCheckedForAlert)	
+							{
+								try
+								{
+									Integer Fi_actualValue = Integer.valueOf(F_obj.toString());
+									
+									if(Fi_actualValue == F_map.values().size())
+									{
+										F_mailMessageBuffer.append(F_alert.getName() + 
+												" zeichnete einen Alert auf! Die Query " + F_alert.getQuery() +
+												"returnierte " + Fi_actualValue + "Ergebnisse.\n");	
+									}
+									Fb_countWasCheckedForAlert = true;
+								}
+								catch(NumberFormatException P_ex)
+								{
+									/**
+									 * Ein Vergleich kann nur gemacht werden, wenn der hinterlegte 
+									 * Wert beim Alert in einen Integerwert umgewandelt werden kann.
+									 * Wenn das nicht gegeben ist wird die Überprüfung übersprungen.
+									 */
+								}
+							}
+							else
+							{
+								// noop - Unbekannter Filtertyp
+							}
+						}
+					}
+					
+					/**
+					 * Wenn der Wert nicht existiert wird ein leeres Array returniert,
+					 * darum muss hier die Prüfung gemacht werden, weil hasNext() in
+					 * der while-Schleife false liefert.
+					 */
+					if(F_alert.getFilterType().equalsIgnoreCase(NOT_EXISTS))	
+					{
+						if(F_resultArrayList instanceof ArrayList &&
+								((ArrayList)F_resultArrayList).size() == 0)
+						{
+							
+							F_mailMessageBuffer.append(F_alert.getName() + 
+									" zeichnete einen Alert auf! Die Query " +
+									F_alert.getQuery() + " returnierte keinen "
+											+ "existierenden Wert!\n");
 						}
 					}
 				}
-				System.out.println("TEST");
+				
+				/**
+				 * Prüfen ob ein Mail gesendet werden muss
+				 */
+				if(F_mailMessageBuffer.length() > 0)
+				{
+					sendEmail(F_mailMessageBuffer.toString(), F_alert.getEmail(), F_alert.getName());
+					F_alert.addDate(Calendar.getInstance().getTime());
+				}
 			}
 		}
-		System.out.println("TEST");
+	}
+	
+	/**
+	 * Die Meldung wird nur zum Buffer hinzugefügt wenn die Alert-Bedinung erreicht wurde.
+	 */
+	public boolean shouldAddToMessageBuffer(String Ps_actualValue, Alert P_alert)
+	{
+		boolean Fb_addMessageToBuffer = false;
+		try
+		{
+			if(P_alert.getType().equalsIgnoreCase(DOUBLE))
+			{
+				Double Fd_alertValue = Double.valueOf(P_alert.getValue().toString());
+				Double Fd_actualValue = Double.valueOf(Ps_actualValue);
+				Fb_addMessageToBuffer = checkCompareToValue(Fd_actualValue.compareTo(Fd_alertValue),
+						P_alert.getFilterType());
+			}
+			else if(P_alert.getType().equalsIgnoreCase(DATE))
+			{
+				String[] Fs_alertValue = P_alert.getValue().toString().split(".");
+				String[] Fs_actualValue = Ps_actualValue.split(".");
+				java.util.Date F_alertValue = new Date(Integer.valueOf(Fs_alertValue[0]),
+						Integer.valueOf(Fs_alertValue[1]),
+						Integer.valueOf(Fs_alertValue[2]));
+				java.util.Date F_actualValue = new Date(Integer.valueOf(Fs_actualValue[0]),
+						Integer.valueOf(Fs_actualValue[1]),
+						Integer.valueOf(Fs_actualValue[2]));
+				Fb_addMessageToBuffer = checkCompareToValue(F_actualValue.compareTo(F_alertValue),
+						P_alert.getFilterType());
+			}
+			else
+			{
+				Integer Fi_alertValue = Integer.valueOf(P_alert.getValue().toString());
+				Integer Fi_actualValue = Integer.valueOf(Ps_actualValue);
+				Fb_addMessageToBuffer = checkCompareToValue(Fi_actualValue.compareTo(Fi_alertValue),
+						P_alert.getFilterType());
+			}
+		}
+		catch(NumberFormatException P_ex)
+		{
+			/**
+			 * Ein Vergleich kann nur gemacht werden, wenn der aktuelle
+			 * Wert und der hinterlegte Wert beim Alert in den angegebenen Wert
+			 * beim Alert umgewandelt werden können. Wenn das nicht gegeben ist
+			 * wird die Überprüfung übersprungen.
+			 */
+		}
+		return Fb_addMessageToBuffer;
+	}
+	
+	public boolean checkCompareToValue(int Pi_compareToValue, String Ps_filterType)
+	{
+		boolean Fb_addToMessageBuffer = false;
+		if(Ps_filterType.equalsIgnoreCase(GREATER))
+		{
+			Fb_addToMessageBuffer = Pi_compareToValue > 0 ? true : false;
+		}
+		else if(Ps_filterType.equalsIgnoreCase(SMALLER))
+		{
+			Fb_addToMessageBuffer = Pi_compareToValue < 0 ? true : false;
+		}
+		else if(Ps_filterType.equalsIgnoreCase(GREATER_EQUAL))
+		{
+			Fb_addToMessageBuffer = Pi_compareToValue >= 0 ? true : false;
+		}
+		else if(Ps_filterType.equalsIgnoreCase(SMALLER_EQUAL))
+		{
+			Fb_addToMessageBuffer = Pi_compareToValue <= 0 ? true : false;
+		}
+		return Fb_addToMessageBuffer;
+	}
+	
+	public void sendEmail(String Ps_text, String Ps_empfaenger, String Ps_alertName)
+	{
+		String Fs_gmailUser = "QuerybuilderSE";
+		String Fs_gmailPW = "QueryBuilderSEPR";
+		Properties props = new Properties();
+		props.put("mail.smtp.host", "smtp.gmail.com");
+		props.put("mail.smtp.socketFactory.port", "465");
+		props.put("mail.smtp.socketFactory.class",
+				"javax.net.ssl.SSLSocketFactory");
+		props.put("mail.smtp.auth", "true");
+		props.put("mail.smtp.port", "465");
+
+		Session session = Session.getDefaultInstance(props,
+			new javax.mail.Authenticator() {
+				@Override
+				protected PasswordAuthentication getPasswordAuthentication()
+				{
+					return new PasswordAuthentication(Fs_gmailUser, Fs_gmailPW);
+				}
+			});
+
+		try {
+
+			Message message = new MimeMessage(session);
+			message.setFrom(new InternetAddress(Fs_gmailUser));
+			message.setRecipients(Message.RecipientType.TO,
+					InternetAddress.parse(Ps_empfaenger));
+			message.setSubject("[Querybuilder] Alertmeldung vom Alert " + Ps_alertName);
+			String Fs_emailText = "Lieber QueryBuilderUser,\nFolgende Werte lösten den Alert "
+					+ "aus:\n\n" + Ps_text;
+			message.setText(Fs_emailText);
+
+			Transport.send(message);
+
+			System.out.println("Der Alert " + Ps_alertName + " wurde ausgelöst. " + Ps_empfaenger +
+					" wurde per Email benachrichigt! Emailtext: \n" + Fs_emailText);
+
+		} catch (MessagingException e) {
+			throw new RuntimeException(e);
+		}
 	}
 }

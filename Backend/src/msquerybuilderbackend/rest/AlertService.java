@@ -140,41 +140,11 @@ public class AlertService {
 		return new ResponseEntity<Result>(HttpStatus.OK);
     }
 	
-	@Scheduled(fixedRate = 5000)
+	// Alle 24 Stunden werden die Alerts überprüft
+//	@Scheduled(fixedRate = 5000)
+	@Scheduled(fixedRate = 86400000)
 	public void executeAllAlerts()
 	{
-//		StringBuffer F_mailMessageBuffer = new StringBuffer("");
-//		ResponseEntity<List<Alert>> F_alerts = getAlerts();
-//		if(F_alerts != null)
-//		{
-//			for(Alert F_alert : F_alerts.getBody())
-//			{
-//				ResponseEntity<Result> F_result = executeAlert(F_alert.getId().toString());
-//				if(F_result != null)
-//				{
-//					Iterator<Map<String, Object>> F_res = F_result.getBody().queryResults().iterator();
-//					while(F_res.hasNext())
-//					{
-//						Map<String, Object> F_map = F_res.next();
-//						for(Object F_obj : F_map.values())
-//						{
-//							/**
-//							 * TODO: Auf FileType überprüfen und gegebenfalls Mail senden
-//							 * Eventuelle Möglichkeiten um Mails zu senden:
-//							 * - http://docs.spring.io/spring/docs/current/spring-framework-reference/html/mail.html
-//							 * - https://java.net/projects/javamail/pages/Home
-//							 */
-//						}
-//					}
-//				}
-//				System.out.println("TEST");
-//			}
-//		}
-//		System.out.println("TEST");
 		alertBusiness.executeAllAlerts();
-	}
-	
-	
-	
-	
+	}	
 }
