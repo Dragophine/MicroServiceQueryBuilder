@@ -21,16 +21,19 @@
                   <div ng-if="ctrl.isFilterAttributesChecked(key)" class="panel-body"> 
                     <div ng-repeat="filter in ctrl.getFilterAttributes(key).filters track by $index" class="top-buffer-small">
                       <div class="row top-buffer-small">
-                        <input class="col-xs-2" 
-                          style="margin-left: 8.8%"
-                          checked data-toggle="toggle" 
-                          type="checkbox"
-                          ng-model="isBracketOpen"
-                          ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'isBracketOpen', isBracketOpen)" 
-                          ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
-                          ng-watch-object-value="isBracketOpen"
-                         autocomplete="off"></input> 
-                         <span class="col-xs-2" > (</span>
+                        <div class="col-xs-2 ck-container">
+                          <input class="ck-element ck-box" 
+                            type="checkbox"
+                            ng-model="isBracketOpen"
+                            ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'isBracketOpen', isBracketOpen)" 
+                            ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                            ng-watch-object-value="isBracketOpen"
+                            autocomplete="off">
+                           </input> 
+                           <div class="ck-element ck-content">
+                               <span>(</span> 
+                           </div>
+                        </div>
                       </div>
 
                       <!--Panel-->
@@ -95,9 +98,24 @@
                           </div>
                         </div>
                       </div>
+                      <!--
+<div class="col-xs-2 ck-container">
+                          <input class="ck-element ck-box" 
+                            type="checkbox"
+                            ng-model="isBracketOpen"
+                            ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'isBracketOpen', isBracketOpen)" 
+                            ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                            ng-watch-object-value="isBracketOpen"
+                            autocomplete="off">
+                           </input> 
+                           <div class="ck-element ck-content">
+                               <span>(</span> 
+                           </div>
+                        </div>
+                      -->
                       <div class="row">
-                          <input class="col-xs-2" 
-                           style="margin-left: 8.8%"
+                        <div class="col-xs-2 ck-container">
+                          <input class="ck-element ck-box" 
                             type="checkbox"
                             ng-model="isBracketClosed"
                             ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'isBracketClosed', isBracketClosed)" 
@@ -105,7 +123,10 @@
                             ng-watch-object-value="isBracketClosed"
                            autocomplete="off"> 
                            </input>
-                           <span class="col-xs-2" >)</span>
+                           <div class="ck-element ck-content">
+                              <span> ) </span>
+                           </div>
+                        </div>
                       </div>
                       <div ng-if="ctrl.getFilterAttributes(key).filters.length != ($index + 1)">
                         <div class="row">
