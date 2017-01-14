@@ -1,5 +1,9 @@
 package msquerybuilderbackend.entity;
 
+import java.util.Date;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
@@ -17,6 +21,7 @@ public class Alert {
 	private Object value;
 	private String email;
 	private String query;
+	private List<Date> dates = new ArrayList<Date>(100);
 	
 
 public void setName(String n){
@@ -86,4 +91,18 @@ public String getQuery() {
 public void setQuery(String q) {
 	query = q;
 }
+
+public List<Date> getDates() {
+	return dates;
+}
+
+public void setDates(List<Date> dates) {
+	this.dates = dates;
+}
+
+public void addDate(Date date)
+{
+	this.dates.add(date);
+}
+
 }
