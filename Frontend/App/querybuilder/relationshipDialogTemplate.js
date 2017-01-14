@@ -158,6 +158,9 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
         /**
         Toggles the value every time the checkbox is klicked.
         */
+        /**
+        Toggles the value every time the checkbox is klicked.
+        */
         self.setFilterAttributes = function($key){
             var filterAttribute = self.getFilterAttributes($key);
             if(filterAttribute !== undefined){
@@ -170,25 +173,99 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
             {
                 var newFilterAttribute = {
                         "attributeName":$key,
-                        "type":"string",         //int, string...
-                        "filterType": "=",  //sowas wie "in","like","=",">"
-                        "value":"", 
-                        "changeable":false  //ist der Parameter fix oder in der Verwaltung veränderbar?
+                        "filters": [
+                            {
+                                "id":0,         //Fuer Frontend
+                                "type":"string",         //int, string...
+                                "filterType": "=",  //sowas wie "in","like","=",">"
+                                "value":"", 
+                                "changeable":false,
+                                "isBracketOpen": false,
+                                "isBracketClosed": false,
+                                "logic":"AND"           //“AND/OR”
+                            }
+                        ]   //ist der Parameter fix oder in der Verwaltung veränderbar?
                 };
                 //füge attribut hinzu
                 self.relationship['filterAttributes'].push(
                     newFilterAttribute
                 );
             }
-            console.log(self.node);
+            console.log(self.relationship);
         };
 
-        self.setFilterAttributesDynamic = function($key, $type, $value){
+        self.getFilterAttributesFilter = function($key, $id){
             var filterAttributes = self.getFilterAttributes($key);
-            if(filterAttributes !== undefined){
-                filterAttributes[$type] = $value;
+
+            if(filterAttributes !== undefined && 
+                filterAttributes.filters !== undefined){
+                for (var i = filterAttributes.filters.length - 1; i >= 0; i--) {
+                    if(filterAttributes.filters[i].id === $id){
+                        return filterAttributes.filters[i]; 
+                    }
+                }
             }
-            console.log("Set key: " + $key + ", type: " + $type + ", value: " + $value );
+
+            return undefined;
+        }
+
+        self.setFilterAttributesFilterValue = function($key, $id, $type, $value){
+            var filterAttributesFilter = self.getFilterAttributesFilter($key, $id);
+
+            if(filterAttributesFilter != undefined){
+                filterAttributesFilter[$type] = $value;
+            }
+
+            console.log("Set key: " + $key + ", type: " + $type + 
+                            + ", id: " + $id + ", value: " + $value );
         };
+
+        self.addFilterAttributesFilter = function($key){
+            var filterAttributes = self.getFilterAttributes($key);
+
+            if( filterAttributes !== undefined &&
+                filterAttributes !== null &&
+                filterAttributes.filters !== undefined &&
+                filterAttributes.filters !== null ){
+                //sort filters ascending
+                filterAttributes.filters.sort(function(x, y) {
+                    if (x['id'] == y['id']) return 0;
+                    else if (parseInt(x['id']) < parseInt(y['id'])) return -1;
+                    else return 1;
+                });
+                //there must be at least one filter in the filters array
+                //otherwise: invalid state
+                var id = filterAttributes.filters[filterAttributes.filters.length - 1].id;
+                id = id +1;
+                filterAttributes.filters.push(
+                {
+                    "id":id,            //Fuer Frontend
+                    "type":"string",    //int, string...
+                    "filterType": "=",  //sowas wie "in","like","=",">"
+                    "value":"", 
+                    "changeable":false,
+                    "isBracketOpen": false,
+                    "isBracketClosed": false,
+                    "logic":"AND"       //“AND/OR”
+                });
+            }
+        }
+
+        self.deleteFilterAttributesFilter = function($key, $id){
+            var filterAttributes = self.getFilterAttributes($key);
+
+            if(filterAttributes !== undefined){
+                //There must be at least one filter in the array
+                if(filterAttributes.filters != undefined &&
+                    filterAttributes.filters.length > 1){
+                    //Delete filter
+                    var filterAttributesFilter = self.getFilterAttributesFilter($key, $id);
+                    if(filterAttributesFilter != undefined){
+                        var index = filterAttributes.filters.indexOf(filterAttributesFilter);
+                        filterAttributes.filters.splice(index, 1);  
+                    }
+                }   
+            }
+        }
 	
 }]);

@@ -56,7 +56,8 @@
                     'col-md-12': ctrl.selectedNode == undefined}">
       <div class="panel-body">
         <vis-network ng-if="ctrl.availableNodes.length == 0"
-              ng-model="ctrl.network_data"
+              ng-model="ctrl.network"
+              data="ctrl.network_data"
               options="ctrl.network_options" 
               on-select-click="ctrl.onSelectClick(params, network)"
               on-double-click="ctrl.onDoubleClick(params, network)"
@@ -79,16 +80,21 @@
               Delete
             </button>
           </h1>
-            <h3>Return Attributes</h3>
+          <h3>Return Attributes</h3>
           <ul>
             <li ng-repeat="attribute in ctrl.selectedNode.returnAttributes">
-              {{attribute.attributeName}} {{attribute.aggregation}} 
+              {{attribute.attributeName}}, Type: {{attribute.aggregation}} {{attribute.returnType}}
             </li>
           </ul>
           <h3>Filter Attributes</h3>
           <ul>
             <li ng-repeat="attribute in ctrl.selectedNode.filterAttributes">
-              {{attribute.attributeName}} {{attribute.filterType}} {{attribute.value}}
+              {{attribute.attributeName}} <br />
+              <ul>
+                <li ng-repeat="filter in attribute.filters">
+                  {{filter.type}} {{filter.filterType}} {{filter.value}}
+                </li>
+              </ul>
             </li>
           </ul>
           <h3>Orderby Attributes</h3>
@@ -96,8 +102,7 @@
             <li ng-repeat="attribute in ctrl.selectedNode.orderByAttributes">
               {{attribute.attributeName}} {{attribute.direction}}
             </li>
-          </ul>
-          
+          </ul>   
         </div>
       </div>
 
@@ -109,13 +114,18 @@
           <h3>Return Attributes</h3>
           <ul>
             <li ng-repeat="attribute in ctrl.selectedRelation.returnAttributes">
-              {{attribute.attributeName}} {{attribute.aggregation}} 
+              {{attribute.attributeName}}, Type: {{attribute.aggregation}} {{attribute.returnType}}
             </li>
           </ul>
           <h3>Filter Attributes</h3>
           <ul>
             <li ng-repeat="attribute in ctrl.selectedRelation.filterAttributes">
-              {{attribute.attributeName}} {{attribute.filterType}} {{attribute.value}}
+              {{attribute.attributeName}} <br />
+              <ul>
+                <li ng-repeat="filter in attribute.filters">
+                  {{filter.type}} {{filter.filterType}} {{filter.value}}
+                </li>
+              </ul>
             </li>
           </ul>
           <h3>Orderby Attributes</h3>

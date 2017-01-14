@@ -31,6 +31,7 @@ app.directive('visNetwork', function() {
         require: '^ngModel',
         scope: {
             ngModel: '=',
+            data: '=',
             options: '=',
             onNodeClick: '&',
             onEdgeClick: '&',
@@ -38,8 +39,11 @@ app.directive('visNetwork', function() {
             onDoubleClick: '&'
         },
         link: function($scope, $element, $attrs, ngModel) {
-            var $network = new vis.Network($element[0], $scope.ngModel, $scope.options || {});
-           
+            var $network = new vis.Network($element[0], $scope.data || 
+                  {nodes: undefined,
+                    edges: undefined}, $scope.options || {});
+            $scope.ngModel = $network;
+
             var onNodeClick = $scope.onNodeClick || function(prop) {};
             var onEdgeClick = $scope.onEdgeClick || function(prop) {};
             var onSelectClick = $scope.onSelectClick || function(prop) {};

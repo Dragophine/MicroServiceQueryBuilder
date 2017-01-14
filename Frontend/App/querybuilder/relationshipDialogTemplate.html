@@ -16,7 +16,7 @@
          <div ng-repeat="key in keyNode['Keys']" ng-init="parentIndex = $index">
             <h2>{{key}}</h2>
             <div class="row panel" >
-              <div class="col-md-5">
+                            <div class="col-md-5">
                 <div class="panel panel-default top-buffer-small" >
                   <div class="panel-heading">
                         <div class="pull-left" style="width:15px;">
@@ -30,58 +30,134 @@
                         <div class="clearfix"></div>
                   </div>
                   <div ng-if="ctrl.isFilterAttributesChecked(key)" class="panel-body"> 
-                      <div>
-                       Type
+                    <div ng-repeat="filter in ctrl.getFilterAttributes(key).filters track by $index" class="top-buffer-small">
+                      <div class="row top-buffer-small">
+                        <div class="col-xs-2 ck-container">
+                          <input class="ck-element ck-box" 
+                            type="checkbox"
+                            ng-model="isBracketOpen"
+                            ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'isBracketOpen', isBracketOpen)" 
+                            ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                            ng-watch-object-value="isBracketOpen"
+                            autocomplete="off">
+                           </input> 
+                           <div class="ck-element ck-content">
+                               <span>(</span> 
+                           </div>
+                        </div>
                       </div>
-                      <select name="singleSelect" id="singleSelect" class="form-control"
-                        ng-model="type"
-                        ng-change="ctrl.setFilterAttributesDynamic(key, 'type', type)" 
-                        ng-watch='ctrl.getFilterAttributes(key)'
-                        ng-watch-object-value="type">
-                        <option value="string">STRING</option> 
-                        <option value="integer">INT</option>
-                        <option value="double">DOUBLE</option>
-                        <option value="date">DATE</option>
-                      </select>
-                      <div class="top-buffer-small">
-                        Filter Type
-                      </div>
-                      <select name="singleSelect" id="singleSelect" class="form-control"
-                      ng-model="filterType"
-                      ng-change="ctrl.setFilterAttributesDynamic(key, 'filterType', filterType)" 
-                      ng-watch='ctrl.getFilterAttributes(key)'
-                      ng-watch-object-value="filterType">
-                        <option value="=">EQUALS</option> 
-                        <option value="<">GREATER</option>
-                        <option value=">">SMALLER</option>
-                       <option value="<=">GREATER EQUAL</option>
-                        <option value=">=">SMALLER EQUAL</option>
-                      </select>
-                      <div class="top-buffer-small">
-                         Filter
-                      </div>
-                      <input type="textarea" class="form-control" id="query" 
-                          ng-change="ctrl.setFilterAttributesDynamic(key, 'value', value)" 
-                          ng-watch='ctrl.getFilterAttributes(key)'
-                          ng-watch-object-value="value"
-                          ng-model="value"/>
-                      </input>
-                      <div class="input-group top-buffer-small">
-                          <div class="panel-title pull-left" style="width:15px;">
-                            <input type="checkbox" 
-                             ng-value="true"
-                             ng-model="changeable"
-                             ng-change="ctrl.setFilterAttributesDynamic(key, 'changeable', changeable)"
-                             ng-watch='ctrl.getFilterAttributes(key)'
-                             ng-watch-object-value="changeable">
-                            </input>
+
+                      <!--Panel-->
+                      <div class="panel panel-primary" >
+                        <div class="panel-body">
+                          <button ng-if="ctrl.getFilterAttributes(key).filters.length > 1"
+                                  class="btn pull-right" 
+                                  ng-click="ctrl.deleteFilterAttributesFilter(key, filter.id)"> 
+                           Remove
+                          </button>
+                          
+                          <div>
+                           Type
                           </div>
-                          <div class="panel-title pull-left left-buffer ">
-                            Cangeable
+                          <select name="singleSelect" id="singleSelect" class="form-control"
+                            ng-model="type"
+                            ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'type', type)" 
+                            ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                            ng-watch-object-value="type">
+                            <option value="string">STRING</option> 
+                            <option value="integer">INT</option>
+                            <option value="double">DOUBLE</option>
+                            <option value="date">DATE</option>
+                          </select>
+                          <div class="top-buffer-small">
+                            Filter Type
                           </div>
-                          <div class="clearfix"></div> 
+                          <select name="singleSelect" id="singleSelect" class="form-control"
+                          ng-model="filterType"
+                          ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'filterType', filterType)" 
+                          ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                          ng-watch-object-value="filterType">
+                            <option value="=">EQUALS</option> 
+                            <option value="<">GREATER</option>
+                            <option value=">">SMALLER</option>
+                           <option value="<=">GREATER EQUAL</option>
+                            <option value=">=">SMALLER EQUAL</option>
+                          </select>
+                          <div class="top-buffer-small">
+                             Filter
+                          </div>
+                          <input type="textarea" class="form-control" id="query" 
+                              ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'value', value)" 
+                              ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                              ng-watch-object-value="value"
+                              ng-model="value"/>
+                          </input>
+                          <div class="input-group top-buffer-small">
+                            <div class="panel-title pull-left" style="width:15px;">
+                              <input type="checkbox" 
+                                 ng-value="true"
+                                 ng-model="changeable"
+                                 ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'changeable', changeable)"
+                                 ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                                 ng-watch-object-value="changeable">
+                              </input>
+                            </div>
+                            <div class="panel-title pull-left left-buffer ">
+                              Cangeable
+                            </div>
+                            <div class="clearfix"></div> 
+                          </div>
+                        </div>
+                      </div>
+                      <div class="row">
+                        <div class="col-xs-2 ck-container">
+                          <input class="ck-element ck-box" 
+                            type="checkbox"
+                            ng-model="isBracketClosed"
+                            ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'isBracketClosed', isBracketClosed)" 
+                            ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                            ng-watch-object-value="isBracketClosed"
+                           autocomplete="off"> 
+                           </input>
+                           <div class="ck-element ck-content">
+                              <span> ) </span>
+                           </div>
+                        </div>
+                      </div>
+                      <div ng-if="ctrl.getFilterAttributes(key).filters.length != ($index + 1)">
+                        <div class="row">
+                          <input  class="col-xs-2" 
+                                  style="margin-left: 8.8%"
+                                  type="radio" 
+                                name="{{'radio' + key + filter.id +  'andOR'}}"
+                                value="AND"
+                                ng-model="logic"
+                                ng-click="ctrl.setFilterAttributesFilterValue(key, filter.id, 'logic', logic)"
+                                ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                                ng-watch-object-value="logic">
+                          </input>
+                          <div class="col-xs-3">AND</div>
+                        </div>
+                        <div class="row">
+                          <input  class="col-xs-2" 
+                                  style="margin-left: 8.8%"
+                                  type="radio" 
+                                name="{{'radio' + key + filter.id + 'andOR'}}"
+                                value="OR"
+                                ng-model="logic"
+                                ng-click="ctrl.setFilterAttributesFilterValue(key, filter.id, 'logic', logic)"
+                                ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                                ng-watch-object-value="logic">
+                          </input>
+                          <div class="col-xs-3">OR</div>
+                        </div>
                       </div>
                     </div>
+                    <button class="btn" 
+                        ng-click="ctrl.addFilterAttributesFilter(key)"> 
+                        ADD
+                    </button>
+                  </div>
                 </div>
               </div>
               <div class="col-md-3">

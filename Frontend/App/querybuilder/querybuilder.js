@@ -112,6 +112,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     			}
     	}
     	if($network !== undefined){
+    		$network.fit();
     		$network.redraw();
     	}
     	
@@ -294,7 +295,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
         		else{
         			$requests.getNodes(self.getNodesCB);
         		}
-		     	self.transfairToGraph();
+		     	self.transfairToGraph(self.network);
         	}
 		});
 	}
@@ -334,7 +335,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	    	 "node":""
 	    }
 	    $requests.getNodes(self.getNodesCB);
-		self.transfairToGraph();
+		self.transfairToGraph(self.network);
 	}
 
 	/**
@@ -368,7 +369,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 		self.availableNodes = [];
 
-		self.transfairToGraph();
+		self.transfairToGraph(self.network);
 	}
 
 
@@ -418,7 +419,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 			};
 		}
 		
-		self.transfairToGraph();
+		self.transfairToGraph(self.network);
 		$scope.$apply();
 	}
 
@@ -446,7 +447,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	/**
 	Vis settings
 	*/
-
+	self.network = undefined;
 	self.nodes = new vis.DataSet();
     self.edges = new vis.DataSet();
 
@@ -482,7 +483,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		    }
 		},
 		interaction:{
-		    zoomView: false
+		    zoomView: false,
+		    navigationButtons: true,
+	      	keyboard: true
 		}
 	};
 
@@ -528,6 +531,40 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
    /**
 	Open Dilaog
    */
+   self.checkBrackets = function(filterAttributes){
+		var wrongAttributesNames = "";
+		if(filterAttributes != undefined){
+
+	   		for (var i = 0; i < filterAttributes.length; i++) {	
+
+				var bracketCount = 0;
+
+				if(filterAttributes[i].filters != undefined){
+					for (var k = 0; k < filterAttributes[i].filters.length; k++) {
+		    			if(filterAttributes[i].filters[k].isBracketOpen){
+		    				bracketCount = bracketCount +1;
+		    			}
+						if(filterAttributes[i].filters[k].isBracketClosed){
+		    				bracketCount = bracketCount - 1;
+		    			}
+
+		    			if(bracketCount < 0){
+		    				break;
+		    			}
+		    		}	
+				}   
+
+				if(bracketCount != 0){
+					if(wrongAttributesNames != ""){
+						wrongAttributesNames = wrongAttributesNames + ", ";
+					}
+					wrongAttributesNames  = wrongAttributesNames + filterAttributes[i].attributeName;
+				} 		
+			}
+	    }
+	    return wrongAttributesNames;
+   }
+
 
     self.openNodeDialog = function(params, network){
     	var $network = network;
@@ -543,36 +580,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 	    dialog.closePromise.then(function (data) {
 	    	
-	    	var wrongAttributesNames = "";
-
-	    	if(node.filterAttributes != undefined){
-	    		for (var i = 0; i < node.filterAttributes.length; i++) {
-	    			
-	    			var bracketCount = 0;
-
-	    			if(node.filterAttributes[i].filters != undefined){
-	    				for (var k = 0; k < node.filterAttributes[i].filters.length; k++) {
-			    			if(node.filterAttributes[i].filters[k].isBracketOpen){
-			    				bracketCount = bracketCount +1;
-			    			}
-							if(node.filterAttributes[i].filters[k].isBracketClosed){
-			    				bracketCount = bracketCount - 1;
-			    			}
-
-			    			if(bracketCount < 0){
-			    				break;
-			    			}
-			    		}	
-	    			}   
-
-	    			if(bracketCount != 0){
-	    				if(wrongAttributesNames != ""){
-	    					wrongAttributesNames = wrongAttributesNames + ", ";
-	    				}
-	    				wrongAttributesNames  = wrongAttributesNames + node.filterAttributes[i].attributeName;
-	    			} 		
-	    		}
-	    	}
+	    	var wrongAttributesNames = self.checkBrackets(node.filterAttributes);
 	    	
 	    	if(wrongAttributesNames != ""){
 	    		var $dataForDialog = {
@@ -581,7 +589,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 				};
 
 				var infoClosePromis = function(data){
-					self.openNodeDialog(params, network);
+					self.openNodeDialog(params, $network);
 				}
 				self.showInfoDialog($dataForDialog, infoClosePromis);
 	    		
@@ -595,6 +603,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     self.openEdgeDialog = function(params, network){
     		 var edgeId =params["edges"][0];
     		 var relationship =  self.relationshipIDStore[edgeId];
+    		 var params = params;
     		 var $network = network;
 
 	         var dialog = ngDialog.open({ template: 'querybuilder/relationshipDialogTemplate.html',
@@ -605,7 +614,23 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 
 	        dialog.closePromise.then(function (data) {
-			     self.transfairToGraph($network);
+			    
+		    	var wrongAttributesNames = self.checkBrackets(relationship.filterAttributes);
+		    	
+		    	if(wrongAttributesNames != ""){
+		    		var $dataForDialog = {
+						"head":"Error on closing",
+						"content":"Wrong brackes in filter: " + wrongAttributesNames
+					};
+
+					var infoClosePromis = function(data){
+						self.openEdgeDialog(params, $network);
+					}
+					self.showInfoDialog($dataForDialog, infoClosePromis);
+		    		
+		    	}
+		    	
+				self.transfairToGraph($network);
 			});
     }
 
