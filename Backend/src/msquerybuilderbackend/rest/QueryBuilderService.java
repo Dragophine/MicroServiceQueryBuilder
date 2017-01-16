@@ -119,6 +119,20 @@ public class QueryBuilderService {
 				return new ResponseEntity<QueryBuilder>(queryBuilderBusiness.getQueryBuilder(queryId),HttpStatus.OK);
 		    }
 			
+			@CrossOrigin 
+			@Transactional
+		    @RequestMapping(value="/queryBuilder/{queryId}/execute",  method=RequestMethod.GET)	 
+		    public ResponseEntity<Result> getQueryExecute(@PathVariable String queryId) throws Exception	{
+				return new ResponseEntity<Result>(queryBuilderBusiness.getQueryBuilderExecute(queryId),HttpStatus.OK);
+		    }
+			
+			@CrossOrigin 
+			@Transactional
+		    @RequestMapping(value="/queryBuilder/{queryId}/queryString",  method=RequestMethod.GET)	 
+		    public ResponseEntity<ExpertQuery> getQueryString(@PathVariable String queryId) throws Exception	{
+				return new ResponseEntity<ExpertQuery>(queryBuilderBusiness.getQueryBuilderQueryString(queryId),HttpStatus.OK);
+		    }
+			
 			
 		  
 }

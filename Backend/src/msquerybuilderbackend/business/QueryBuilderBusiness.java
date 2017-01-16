@@ -8,6 +8,8 @@ import java.util.Set;
 
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.neo4j.template.Neo4jOperations;
+import org.springframework.data.neo4j.template.Neo4jTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
@@ -39,6 +41,11 @@ public class QueryBuilderBusiness {
 	ParameterRepository parameterRepository;
 	@Autowired
 	QueryBuilderJsonStringRepository queryBuilderJsonStringObjectRepository;
+	 @Autowired
+		Neo4jOperations neo4jOperations;
+		Neo4jTemplate temp;
+	
+	
 	public Result executeQueryBuilderQuery(QueryBuilder queryBuilder){
 		Map<String,Object> paramsMap = new HashMap<String,Object>();
     	Result result=null;
@@ -156,13 +163,14 @@ public class QueryBuilderBusiness {
 		QueryBuilderJsonStringObject alreadyUsedName=queryBuilderJsonStringObjectRepository.findByName(updatedQuery.getName());
 		if ((updatedQuery.getName().equals(qbjso.getName()))||(alreadyUsedName==null)){
 		
-			/**
-			 * Interpretation der Query in ExpertQuery ausständig wie bei execute
-			 */
+			
 			 
 			if (qbjso.getExpertQuery()!=null){
 				expertQueryRepository.delete(qbjso.getExpertQuery());
 			}
+			/**
+			 * Interpretation der Query in ExpertQuery ausständig wie bei execute
+			 */
 	    	
 	    	
 	    	/**
@@ -277,5 +285,71 @@ public class QueryBuilderBusiness {
 		
 		
 			return queryBuilder;
+	}
+	
+	
+	public Result getQueryBuilderExecute(String queryId){
+		QueryBuilderJsonStringObject qbjso=null;
+		Long id = new Long(-1);
+		
+		try
+		{
+			id = Long.parseLong(queryId);
+		}
+		catch(NumberFormatException P_ex)
+		{
+			/**
+			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
+			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
+			 * eindeutige Name sein. 
+			 */
+		}
+		
+		if (id >=0){
+			 qbjso= queryBuilderJsonStringObjectRepository.findOne(Long.parseLong(queryId));
+		} else{
+			 qbjso= queryBuilderJsonStringObjectRepository.findByName(queryId);
+		}
+		
+		
+			
+		
+		Result result=null;
+		Set<Parameter>parameter=qbjso.getExpertQuery().getParameter();
+		Map<String,Object> paramsMap = new HashMap<String,Object>();
+		if (parameter!=null){
+			for (Parameter p:parameter){
+				paramsMap.put(p.getKey(), p.getValue());
+			}
+		}
+
+		result = neo4jOperations.query(qbjso.getExpertQuery().getQuery(),paramsMap, true);
+		return result;
+	}
+	
+	public ExpertQuery getQueryBuilderQueryString(String queryId){
+		QueryBuilderJsonStringObject qbjso=null;
+		Long id = new Long(-1);
+		
+		try
+		{
+			id = Long.parseLong(queryId);
+		}
+		catch(NumberFormatException P_ex)
+		{
+			/**
+			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
+			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
+			 * eindeutige Name sein. 
+			 */
+		}
+		
+		if (id >=0){
+			 qbjso= queryBuilderJsonStringObjectRepository.findOne(Long.parseLong(queryId));
+		} else{
+			 qbjso= queryBuilderJsonStringObjectRepository.findByName(queryId);
+		}
+		
+		return qbjso.getExpertQuery();
 	}
 }

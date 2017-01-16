@@ -41,6 +41,7 @@ public String getQuery(){
 }
 
 public Set<Parameter> getParameter(){
+	if(this.parameter==null) this.parameter= new HashSet<Parameter>();
 	return this.parameter;
 }
 
