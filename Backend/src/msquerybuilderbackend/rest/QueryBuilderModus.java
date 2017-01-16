@@ -1,4 +1,4 @@
-package application.QueryBuilder;
+package msquerybuilderbackend.rest;
 
 import java.util.HashMap;
 import java.util.HashSet;
