@@ -368,14 +368,14 @@ public class QueryBuilderModus {
 			i++;
 			
 			Parameter newParam = new Parameter();
-			newParam.setChangeable(f.getChangeable());
+			newParam.setChangeable(f.getFilter().getChangeable());
 			newParam.setKey(paramName);
-			newParam.setValue(f.getValue());
-			newParam.setType(f.getType());
+			newParam.setValue(f.getFilter().getValue());
+			newParam.setType(f.getFilter().getType());
 			parameter.add(newParam);
-			paramsMap.put(paramName, f.getValue());
+			paramsMap.put(paramName, f.getFilter().getValue());
 			
-			filterStatements.add(synonyms.get(type) + "." + f.getAttributeName() + f.getFilterType() + "{" + paramName + "}");
+			filterStatements.add(synonyms.get(type) + "." + f.getAttributeName() + f.getFilter().getFilterType() + "{" + paramName + "}");
 		}
 	}
 	
