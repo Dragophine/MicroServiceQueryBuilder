@@ -6,7 +6,9 @@ import java.util.List;
 public class FilterAttribute {
 	
 	private String attributeName="";
+
 	private List<Filter> filters;
+
 	
 	public FilterAttribute(){
 		
@@ -21,6 +23,7 @@ public class FilterAttribute {
 		this.attributeName=at;
 	}
 
+
 	public List<Filter> getFilter() {
 		if (filters==null) return new ArrayList<Filter>();
 		return filters;
@@ -29,11 +32,10 @@ public class FilterAttribute {
 	public void setFilter(List<Filter> filter) {
 		this.filters = filter;
 	}
-	
+
 	public void addFilter(Filter filter){
 		if (filter==null) this.filters=new ArrayList<Filter>();
 		this.filters.add(filter);
 	}
-	
-	
+
 }
