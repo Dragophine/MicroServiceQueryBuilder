@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import msquerybuilderbackend.business.AttributeTypes;
+import msquerybuilderbackend.entity.Filter;
 import msquerybuilderbackend.entity.FilterAttribute;
 import msquerybuilderbackend.entity.Node;
 import msquerybuilderbackend.entity.OrderByAttribute;
@@ -48,6 +50,7 @@ public class QueryBuilderModus {
 	Set<Parameter> parameter = new HashSet<Parameter>(0);
 	String query = "";
 	LinkedList<String> filterStatements = new LinkedList<String>();
+	LinkedList<String> actualFilterStatements = new LinkedList<String>();
 	LinkedList<String> orderStatements = new LinkedList<String>();
 	LinkedList<String> returnStatements = new LinkedList<String>();
 	LinkedList<String> cypherquery = new LinkedList<String>();
@@ -65,6 +68,7 @@ public class QueryBuilderModus {
 	public ResponseEntity<Result> buildQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
 //	public String buildQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
 		filterStatements.clear();
+		actualFilterStatements.clear();
 		orderStatements.clear();
 		returnStatements.clear();
 		cypherquery.clear();
@@ -85,15 +89,7 @@ public class QueryBuilderModus {
 			if (it.hasNext()) query += " ";
 		}
 		
-		if (!filterStatements.isEmpty()) query += " WHERE ";
-		
-		//TODO funktioniert momentan nur mit AND!! Vllt benötigen wir ein neues attribut im json objekt?!
-		it = filterStatements.iterator();
-		while (it.hasNext()){
-			query += it.next();
-			if (it.hasNext()) query += " AND ";
-		}
-		
+		//Return-Clause muss vorhanden sein!!
 		query += " RETURN";
 		
 		it = returnStatements.iterator();
@@ -284,7 +280,7 @@ public class QueryBuilderModus {
 	}
 	
 	
-	private void buildNode(Node node, String s){
+	private void buildNode(Node node, String s) throws Exception{
 		
 		String doublePoint = "";
 		if (node.getType() != "") doublePoint = ":";
@@ -310,20 +306,31 @@ public class QueryBuilderModus {
 		}
 		
 		if (node.getRelationship().isEmpty()){
+			
+			if (!filterStatements.isEmpty()) nodeString += " WHERE ";
+			Iterator<String> it = filterStatements.iterator();
+			while (it.hasNext()){
+				nodeString += it.next();
+			}
 			cypherquery.add(nodeString);
+			filterStatements.clear();
+			filterStatements.addAll(actualFilterStatements);
+			actualFilterStatements.clear();
 			return;
 		} else {
 			Iterator<Relationship> it = node.getRelationship().iterator();
 			while (it.hasNext()){
+				
+				actualFilterStatements.addAll(filterStatements);
+				
 				buildRelation(it.next(), nodeString);
 			}
 			return;
-			//return nodeString + buildRelation(node.getRelationship().iterator().next());
 		}	
 	}
 	
 	
-	private void buildRelation(Relationship relation, String s){
+	private void buildRelation(Relationship relation, String s) throws Exception{
 		String relationship = "";
 		
 		if (relation.getDirection().equalsIgnoreCase("outgoing")){
@@ -351,31 +358,41 @@ public class QueryBuilderModus {
 		
 		if (relation.getNode() == null){
 			cypherquery.add(s + relationship);
+			//dieser Zweig wird nie betreten
 			return;
 		} else {
 			
 			buildNode(relation.getNode(), s + relationship);
-			return;// relationship + buildNode(relation.getNode());
+			return;
 		}	
 	}
 	
-	private void solveFilter(Set<FilterAttribute> filterSet, String type){
+	private void solveFilter(Set<FilterAttribute> filterSet, String type) throws Exception{
 		int i = 1;
 		
 		for (FilterAttribute f : filterSet){
+			for (Filter fil: f.getFilter()){	
 			
+			//hier könnte es eventuell zu einem Problem mit der Parameterbezeichnung kommen!!
 			String paramName = type + f.getAttributeName() + i;
 			i++;
 			
 			Parameter newParam = new Parameter();
-			newParam.setChangeable(f.getFilter().getChangeable());
+			newParam.setChangeable(fil.getChangeable());
 			newParam.setKey(paramName);
-			newParam.setValue(f.getFilter().getValue());
-			newParam.setType(f.getFilter().getType());
+			newParam.setValue(fil.getValue());
+			newParam.setType(fil.getType());
 			parameter.add(newParam);
-			paramsMap.put(paramName, f.getFilter().getValue());
+			AttributeTypes.testTypes(newParam);
+			paramsMap.put(paramName, newParam.getValue());
 			
-			filterStatements.add(synonyms.get(type) + "." + f.getAttributeName() + f.getFilter().getFilterType() + "{" + paramName + "}");
+			String statement = "";
+			if (!fil.getLogic().isEmpty()) statement = " " + fil.getLogic() + " ";
+			if (fil.getIsBracketOpen()) statement += "(";
+			statement += (synonyms.get(type) + "." + f.getAttributeName() + fil.getFilterType() + "{" + paramName + "}");
+			if (fil.getIsBracketClosed()) statement += ")";
+			filterStatements.add(statement);	
+			}	
 		}
 	}
 	
@@ -391,8 +408,15 @@ public class QueryBuilderModus {
 	
 	private void solveReturn (Set<ReturnAttribute> retSet, String type){
 		for (ReturnAttribute r : retSet){
-			returnStatements.add(r.getReturnType() + " " + synonyms.get(type) + "." + r.getAttributeName() + " AS " +
-								 type + r.getAttributeName());
+			
+			String returnStatement = " ";
+			if (!r.getReturnType().isEmpty()) returnStatement += (r.getReturnType() + " ");
+
+			if (!r.getAggregation().isEmpty()) returnStatement += (r.getAggregation() + "(");
+			returnStatement += (synonyms.get(type) + "." + r.getAttributeName());
+			if (!r.getAggregation().isEmpty()) returnStatement += ")";
+			returnStatement += (" AS " + type + r.getAttributeName());
+			returnStatements.add(returnStatement);
 		}
 	}
 	
