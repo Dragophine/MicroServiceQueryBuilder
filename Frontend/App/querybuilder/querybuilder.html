@@ -143,10 +143,16 @@
 <!--   <h1>TEST: {{ctrl.table}}</h1> -->
   
   <div class="row top-buffer">
-    <table class="table"  ng-if="!ctrl.hasError">
-        <h1>Result</h1>
+    <div class="table"  ng-if="!ctrl.hasError">
+        <h1>Result JSON</h1>
        {{ctrl.table}}
-    </table>
+
+      <h1>Result Table</h1>
+      <div class="container" ng-controller="Controller">
+        <div outputtable table="setData(ctrl.table)"></div> 
+      </div>
+      </div>
+    </div>
 
 
     <div ng-if="ctrl.hasError">

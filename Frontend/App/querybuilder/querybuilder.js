@@ -174,7 +174,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		if($success){
 			$dataForDialog = {
 				"head":"Successfully saved",
-				"content":"The query was saved successfully saved."
+				"content":"The query was saved successfully."
 			};
 			self.query.id = $data;
 		}
@@ -209,7 +209,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		if($success){
 			$data = {
 				"head":"Successfully updated",
-				"content":"The query was saved successfully updated."
+				"content":"The query was updated successfully."
 			};
 		}
 		else
@@ -285,7 +285,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
         		self.query = $data.value;
         		self.selectedNode = undefined;
         		self.selectedRelation = undefined;
+        		self.table = "";
         		self.hasError = false;
+
         		if(
         		   $data.value.node !== undefined &&
         		   $data.value.node !== "" &&
@@ -336,6 +338,11 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	    	"limitCount": "",
 	    	 "node":""
 	    }
+	    self.selectedNode = undefined;
+		self.selectedRelation = undefined;
+		self.table = "";
+		self.hasError = false;
+
 	    $requests.getNodes(self.getNodesCB);
 		self.transfairToGraph(self.network);
 	}

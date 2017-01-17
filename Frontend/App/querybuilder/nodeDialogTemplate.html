@@ -56,6 +56,7 @@
                             <option value="string">STRING</option> 
                             <option value="integer">INT</option>
                             <option value="double">DOUBLE</option>
+                            <option value="double">DOUBLE</option>
                             <option value="boolean">BOOLEAN</option>
                             <option value="date">DATE</option>
                           </select>
@@ -277,6 +278,18 @@
                             ng-watch-object-value="aggregation">
                       </input>
                       <div class="col-xs-3">SUM</div>
+                    </div>
+                    <div class="row">
+                      <input  class="col-xs-2" 
+                              style="margin-left: 8.8%" type="radio" 
+                            name="{{'radio' + key + 'aggregation'}}"
+                            value="COUNT"
+                            ng-model="aggregation"
+                            ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
+                            ng-watch='ctrl.getReturnAttributes(key)'
+                            ng-watch-object-value="aggregation">
+                      </input>
+                      <div class="col-xs-3">COUNT</div>
                     </div>
                   </div>
                 </div>
