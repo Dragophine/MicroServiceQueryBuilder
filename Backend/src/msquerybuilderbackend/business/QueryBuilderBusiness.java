@@ -82,6 +82,7 @@ public class QueryBuilderBusiness {
 			qbjso.setCategory(category);
 			ObjectWriter mapper = new ObjectMapper().writer().withDefaultPrettyPrinter();
 			String queryBuilderJsonString = mapper.writeValueAsString(queryBuilder);
+			System.out.println(queryBuilderJsonString);
 			qbjso.setQueryBuilderJson(queryBuilderJsonString);
 			
 			qbjso.setExpertQuery(null);

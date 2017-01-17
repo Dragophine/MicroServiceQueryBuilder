@@ -20,7 +20,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import msquerybuilderbackend.business.AttributeTypes;
-import msquerybuilderbackend.entity.Filter;
+import msquerybuilderbackend.entity.Filters;
 import msquerybuilderbackend.entity.FilterAttribute;
 import msquerybuilderbackend.entity.Node;
 import msquerybuilderbackend.entity.OrderByAttribute;
@@ -371,7 +371,7 @@ public class QueryBuilderModus {
 		int i = 1;
 		
 		for (FilterAttribute f : filterSet){
-			for (Filter fil: f.getFilter()){	
+			for (Filters fil: f.getFilters()){	
 			
 			//hier könnte es eventuell zu einem Problem mit der Parameterbezeichnung kommen!!
 			String paramName = type + f.getAttributeName() + i;

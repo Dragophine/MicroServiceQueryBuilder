@@ -1,13 +1,15 @@
 package msquerybuilderbackend.entity;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class FilterAttribute {
 	
 	private String attributeName="";
 
-	private List<Filter> filters;
+	private Set<Filters> filters = new HashSet<Filters>(0);
 
 	
 	public FilterAttribute(){
@@ -24,17 +26,17 @@ public class FilterAttribute {
 	}
 
 
-	public List<Filter> getFilter() {
-		if (filters==null) return new ArrayList<Filter>();
+	public Set<Filters> getFilters() {
+		if (filters==null) return new HashSet<Filters>();
 		return filters;
 	}
 
-	public void setFilter(List<Filter> filter) {
+	public void setFilters(Set<Filters> filter) {
 		this.filters = filter;
 	}
 
-	public void addFilter(Filter filter){
-		if (filter==null) this.filters=new ArrayList<Filter>();
+	public void addFilters(Filters filter){
+		if (filter==null) this.filters=new HashSet<Filters>();
 		this.filters.add(filter);
 	}
 

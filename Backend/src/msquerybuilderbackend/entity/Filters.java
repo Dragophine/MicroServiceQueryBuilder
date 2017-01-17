@@ -1,6 +1,6 @@
 package msquerybuilderbackend.entity;
 
-public class Filter {
+public class Filters {
 	private long id;
 	
 	private String filterType="";
@@ -12,7 +12,7 @@ public class Filter {
 	private Boolean isBracketClosed;
 	private String logic="";
 	
-	public Filter(){
+	public Filters(){
 		
 	}
 	

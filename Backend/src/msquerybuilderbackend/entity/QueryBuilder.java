@@ -20,7 +20,7 @@ private String category;
 private String limitCount;
 //private Set<Parameter> parameter = new HashSet<Parameter>(0);
 private Node node;
-
+ 
  
 
 public QueryBuilder(){
