@@ -55,10 +55,10 @@ public class QueryBuilderBusiness {
 	
 	//required global variables
 	Map<String,String> synonyms = new HashMap<String,String>();
-	Map<String,Object> paramsMap = new HashMap<String,Object>();
+//	Map<String,Object> paramsMap = new HashMap<String,Object>();
 	char synonym='a';
 	char end='z';
-	Set<Parameter> parameter = new HashSet<Parameter>(0);
+//	Set<Parameter> parameter = new HashSet<Parameter>(0);
 	String query = "";
 	LinkedList<String> filterStatements = new LinkedList<String>();
 	LinkedList<String> actualFilterStatements = new LinkedList<String>();
@@ -68,10 +68,13 @@ public class QueryBuilderBusiness {
 
 	public Result executeQueryBuilderQuery(QueryBuilder queryBuilder) throws Exception{
 	//	Map<String,Object> paramsMap = new HashMap<String,Object>();
-		
+		Map<String,Object> paramsMap = new HashMap<String,Object>();
 		Result result = null;
-		String query = execute(queryBuilder);
-		result = neo4jOperations.query(query, paramsMap, true);	
+		ExpertQuery expertQuery = buildQueryString(queryBuilder);
+		for (Parameter p:expertQuery.getParameter()){
+			paramsMap.put(p.getKey(), p.getValue());
+		}
+		result = neo4jOperations.query(expertQuery.getQuery(), paramsMap, true);	
 		return result;
 	}
 	
@@ -92,16 +95,16 @@ public class QueryBuilderBusiness {
 			//an QueryBuilderJsonStringObject anhängen und das ganze speichern
 			//???
 			
-			String s = execute(queryBuilder);
+			ExpertQuery expertQuery = buildQueryString(queryBuilder);
 			
-			ExpertQuery expertQuery = new ExpertQuery();
+
 			expertQuery.setName(queryBuilder.getName());
 			expertQuery.setDescription(queryBuilder.getDescription());
 			expertQuery.setCategory(category);
-			expertQuery.setQuery(s);
-			for (Parameter p: parameter){
-				expertQuery.addParameter(p);
-			}
+//			expertQuery.setQuery(s);
+//			for (Parameter p: parameter){
+//				expertQuery.addParameter(p);
+//			}
 			
 			/**
 			 * ExpertQuery auch den Namen und Beschreibung geben
@@ -122,6 +125,12 @@ public class QueryBuilderBusiness {
 	    	return returnNew.getId();
 		}
 	}
+
+	
+	public ExpertQuery generateQueryBuilderQueryString(QueryBuilder queryBuilder) throws Exception{
+		return buildQueryString(queryBuilder);
+	}
+	
 	
 	public void deleteQueryBuilder(String queryId){
 		QueryBuilderJsonStringObject qbjso=null;
@@ -231,16 +240,16 @@ public class QueryBuilderBusiness {
 	//    	newExpertQuery.setCategory(category);
 	//    	qbjso.setExpertQuery(newExpertQuery);
 	
-			String s = execute(updatedQuery);
+			ExpertQuery expertQuery = buildQueryString(updatedQuery);
 			
-			ExpertQuery expertQuery = new ExpertQuery();
+			
 			expertQuery.setName(updatedQuery.getName());
 			expertQuery.setDescription(updatedQuery.getDescription());
 			expertQuery.setCategory(category);
-			expertQuery.setQuery(s);
-			for (Parameter p: parameter){
-				expertQuery.addParameter(p);
-			}
+//			expertQuery.setQuery(s);
+//			for (Parameter p: parameter){
+//				expertQuery.addParameter(p);
+//			}
 			qbjso.setExpertQuery(expertQuery);
 	    	
 	    	queryBuilderJsonStringObjectRepository.save(qbjso);
@@ -396,10 +405,11 @@ public class QueryBuilderBusiness {
 
 //######################### logic for executing query ##################
 
-	private String execute(QueryBuilder queryBuilder) throws Exception{
+	private ExpertQuery buildQueryString(QueryBuilder queryBuilder) throws Exception{
+		ExpertQuery expertQuery = new ExpertQuery();
 		//initialise maps
-		paramsMap.clear();
-		parameter.clear();
+//		paramsMap.clear();
+//		parameter.clear();
 		filterStatements.clear();
 		actualFilterStatements.clear();
 		orderStatements.clear();
@@ -413,7 +423,7 @@ public class QueryBuilderBusiness {
 		
 		//TODO erste relation auf optional prüfen!!
 		//build the query
-		buildNode(node, "");
+		buildNode(node, "", expertQuery);
 		
 		Iterator<String> it = cypherquery.iterator();
 		while (it.hasNext()){
@@ -445,10 +455,11 @@ public class QueryBuilderBusiness {
 		//erstellen des results
 //		Result result = null;
 //		result = neo4jOperations.query(query, paramsMap, true);
-		return query;
+		expertQuery.setQuery(query);
+		return expertQuery;
 	}
 	
-	private void buildNode(Node node, String s) throws Exception{
+	private void buildNode(Node node, String s, ExpertQuery expertQuery) throws Exception{
 		
 		String doublePoint = "";
 		if (node.getType() != "") doublePoint = ":";
@@ -460,7 +471,7 @@ public class QueryBuilderBusiness {
 		
 		//filter zusammenstellen
 		if (!node.getFilterAttributes().isEmpty()){
-			solveFilter(node.getFilterAttributes(), node.getType());
+			solveFilter(node.getFilterAttributes(), node.getType(), expertQuery);
 		}
 		
 		//order zusammenstellen
@@ -491,14 +502,14 @@ public class QueryBuilderBusiness {
 				
 				actualFilterStatements.addAll(filterStatements);
 				
-				buildRelation(it.next(), nodeString);
+				buildRelation(it.next(), nodeString, expertQuery);
 			}
 			return;
 		}	
 	}
 	
 	
-	private void buildRelation(Relationship relation, String s) throws Exception{
+	private void buildRelation(Relationship relation, String s, ExpertQuery expertQuery) throws Exception{
 		String relationship = "";
 		
 		if (relation.getDirection().equalsIgnoreCase("outgoing")){
@@ -511,7 +522,7 @@ public class QueryBuilderBusiness {
 		
 		//filter zusammenstellen
 		if (!relation.getFilterAttributes().isEmpty()){
-			solveFilter(relation.getFilterAttributes(), relation.getRelationshipType());
+			solveFilter(relation.getFilterAttributes(), relation.getRelationshipType(), expertQuery);
 		}
 		
 		//order zusammenstellen
@@ -530,12 +541,12 @@ public class QueryBuilderBusiness {
 			return;
 		} else {
 			
-			buildNode(relation.getNode(), s + relationship);
+			buildNode(relation.getNode(), s + relationship, expertQuery);
 			return;
 		}	
 	}
 	
-	private void solveFilter(Set<FilterAttribute> filterSet, String type) throws Exception{
+	private void solveFilter(Set<FilterAttribute> filterSet, String type, ExpertQuery expertQuery) throws Exception{
 		int i = 1;
 		
 		for (FilterAttribute f : filterSet){
@@ -550,9 +561,10 @@ public class QueryBuilderBusiness {
 			newParam.setKey(paramName);
 			newParam.setValue(fil.getValue());
 			newParam.setType(fil.getType());
-			parameter.add(newParam);
+//			parameter.add(newParam);
+			expertQuery.addParameter(newParam);
 			AttributeTypes.testTypes(newParam);
-			paramsMap.put(paramName, newParam.getValue());
+//			paramsMap.put(paramName, newParam.getValue());
 			
 			String statement = "";
 			if (fil.getIsBracketOpen()) statement += "(";

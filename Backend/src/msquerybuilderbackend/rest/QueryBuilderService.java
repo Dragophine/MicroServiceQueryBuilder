@@ -74,6 +74,11 @@ public class QueryBuilderService {
 				return new ResponseEntity<Result>(queryBuilderBusiness.executeQueryBuilderQuery(queryBuilder), HttpStatus.OK);
 		    }	
 			
+			 @RequestMapping(value="/queryBuilder/queryString",  method=RequestMethod.POST)
+			    public ResponseEntity<ExpertQuery> generateQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
+					return new ResponseEntity<ExpertQuery>(queryBuilderBusiness.generateQueryBuilderQueryString(queryBuilder), HttpStatus.OK);
+			    }
+			
 			@Transactional
 			@CrossOrigin 
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.POST)	 
