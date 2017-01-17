@@ -103,6 +103,7 @@ public class AlertBusiness {
 		alert.setFilterType(al.getFilterType());
 		alert.setValue(al.getValue());
 		alert.setEmail(al.getEmail());
+		alert.setDates(al.getDates());
 		alertRepository.save(alert);	
 		return alert;
 	}
@@ -383,6 +384,7 @@ public class AlertBusiness {
 				{
 					sendEmail(F_mailMessageBuffer.toString(), F_alert.getEmail(), F_alert.getName());
 					F_alert.addDate(Calendar.getInstance().getTime());
+					alertRepository.save(F_alert);
 				}
 			}
 		}
