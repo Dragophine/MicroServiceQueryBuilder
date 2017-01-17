@@ -580,9 +580,17 @@ public class QueryBuilderBusiness {
 			String returnStatement = " ";
 			if (!r.getReturnType().isEmpty()) returnStatement += (r.getReturnType() + " ");
 
-			if (!r.getAggregation().isEmpty()) returnStatement += (r.getAggregation() + "(");
+			if (!r.getAggregation().isEmpty()){
+				if (r.getAggregation().equalsIgnoreCase("none") == false){
+					returnStatement += (r.getAggregation() + "(");
+				}
+			}
 			returnStatement += (synonyms.get(type) + "." + r.getAttributeName());
-			if (!r.getAggregation().isEmpty()) returnStatement += ")";
+			if (!r.getAggregation().isEmpty()){
+				if (r.getAggregation().equalsIgnoreCase("none") == false){
+					returnStatement += ")";
+				}
+			}
 			returnStatement += (" AS " + type + r.getAttributeName());
 			returnStatements.add(returnStatement);
 		}
