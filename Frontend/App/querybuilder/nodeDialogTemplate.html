@@ -56,7 +56,7 @@
                             <option value="string">STRING</option> 
                             <option value="integer">INT</option>
                             <option value="double">DOUBLE</option>
-                            <option value="double">DOUBLE</option>
+                            <option value="long">LONG</option>
                             <option value="boolean">BOOLEAN</option>
                             <option value="date">DATE</option>
                           </select>
@@ -99,7 +99,8 @@
                               ng-model="value"
                               placeholder="0"/>
                             <!--DOUBLE-->
-                            <input ng-if="(ctrl.getFilterAttributesFilter(key, filter.id)).type === 'double' " 
+                            <input ng-if="(ctrl.getFilterAttributesFilter(key, filter.id)).type === 'double' ||
+                            (ctrl.getFilterAttributesFilter(key, filter.id)).type === 'long'" 
                               type="textarea" class="form-control" id="query" 
                               ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'value', value)" 
                               ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
@@ -142,7 +143,7 @@
                               </input>
                             </div>
                             <div class="panel-title pull-left left-buffer ">
-                              Cangeable
+                              Changeable
                             </div>
                             <div class="clearfix"></div> 
                           </div>
