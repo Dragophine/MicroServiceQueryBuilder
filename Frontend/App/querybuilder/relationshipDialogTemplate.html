@@ -68,6 +68,7 @@
                             <option value="integer">INT</option>
                             <option value="double">DOUBLE</option>
                             <option value="date">DATE</option>
+                            <option value="boolean">BOOLEAN</option>
                           </select>
                           <div class="top-buffer-small">
                             Filter Type
@@ -86,12 +87,62 @@
                           <div class="top-buffer-small">
                              Filter
                           </div>
-                          <input type="textarea" class="form-control" id="query" 
+
+                        <!--Text-->
+                          <input ng-if="(ctrl.getFilterAttributesFilter(key, filter.id)).type === 'string'" 
+                              type="textarea" class="form-control" id="query" 
                               ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'value', value)" 
                               ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
                               ng-watch-object-value="value"
                               ng-model="value"/>
-                          </input>
+                         
+                          <div class="form-group"
+                                  ng-class="(
+                                  (ctrl.getFilterAttributesFilter(key, filter.id)).value == undefined 
+                                  || (ctrl.getFilterAttributesFilter(key, filter.id)).value == '' 
+                                  || (ctrl.getFilterAttributesFilter(key, filter.id)).value == null) ? 'has-error' : ''">
+                             <!--Integer-->
+                            <input ng-if="(ctrl.getFilterAttributesFilter(key, filter.id)).type === 'integer' " 
+                              type="number" step="1" class="form-control" id="query" 
+                              ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'value', value)" 
+                              ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                              ng-watch-object-value="value"
+                              ng-model="value"
+                              placeholder="0"/>
+                            <!--DOUBLE-->
+                            <input ng-if="(ctrl.getFilterAttributesFilter(key, filter.id)).type === 'double' " 
+                              type="textarea" class="form-control" id="query" 
+                              ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'value', value)" 
+                              ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                              ng-watch-object-value="value"
+                              ng-model="value"
+                              value="0" 
+                              placeholder="0.0"
+                              ng-pattern="/^[0-9]+\.?[0-9]{0,15}$/"/>
+                           <!--DATE-->
+                            <input type="textarea" class="form-control" id="query" 
+                              ng-if="(ctrl.getFilterAttributesFilter(key, filter.id)).type === 'date'"
+                              ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'value', value)" 
+                              ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                              ng-watch-object-value="value"
+                              ng-model="value"
+                              name="date" 
+                              placeholder="dd.mm.yyyy"
+                              ng-pattern="/^([0-2][1-9]|10|20|30|31).(01|02|03|04|05|06|07|08|09|10|11|12).[0-9]{4}$/"
+                                />
+                                <!--Boolean-->
+                            <select ng-if="(ctrl.getFilterAttributesFilter(key, filter.id)).type === 'boolean'" 
+                              name="singleSelect" id="singleSelect"  class="form-control"
+                              ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'value', value)" 
+                              ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
+                              ng-watch-object-value="value"
+                              ng-model="value">
+                              <option value="true">TRUE</option> 
+                              <option value="false">FALSE</option>
+                            </select>
+                          </div>       
+
+
                           <div class="input-group top-buffer-small">
                             <div class="panel-title pull-left" style="width:15px;">
                               <input type="checkbox" 

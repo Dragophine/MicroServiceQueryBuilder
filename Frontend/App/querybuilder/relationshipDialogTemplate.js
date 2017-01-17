@@ -212,8 +212,12 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
         self.setFilterAttributesFilterValue = function($key, $id, $type, $value){
             var filterAttributesFilter = self.getFilterAttributesFilter($key, $id);
 
-            if(filterAttributesFilter != undefined){
+            if(filterAttributesFilter != undefined && 
+                filterAttributesFilter[$type] !== $value){
                 filterAttributesFilter[$type] = $value;
+                if($type === 'type'){
+                    filterAttributesFilter['value'] = undefined; 
+                }
             }
 
             console.log("Set key: " + $key + ", type: " + $type + 

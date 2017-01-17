@@ -283,7 +283,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
         		$data.value.category !== undefined)
         	{
         		self.query = $data.value;
-
+        		self.selectedNode = undefined;
+        		self.selectedRelation = undefined;
+        		self.hasError = false;
         		if(
         		   $data.value.node !== undefined &&
         		   $data.value.node !== "" &&
