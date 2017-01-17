@@ -204,7 +204,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 								"changeable":false,
 								"isBracketOpen": false,
 								"isBracketClosed": false,
-								"logic":"AND"  			//“AND/OR”
+								"logic":""  			//“AND/OR”
 							}
 						]	//ist der Parameter fix oder in der Verwaltung veränderbar?
 				};
@@ -263,6 +263,11 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			    });
 				//there must be at least one filter in the filters array
 				//otherwise: invalid state
+
+				if(filterAttributes.filters.length > 0){
+					filterAttributes.filters[filterAttributes.filters.length - 1].logic = "AND";
+				}
+
 				var id = filterAttributes.filters[filterAttributes.filters.length - 1].id;
 				id = id +1;
 				filterAttributes.filters.push(
@@ -274,8 +279,10 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 					"changeable":false,
 					"isBracketOpen": false,
 					"isBracketClosed": false,
-					"logic":"AND"  		//“AND/OR”
+					"logic":""  		//“AND/OR”
 				});
+
+
 			}
 		}
 
@@ -290,6 +297,10 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 					var filterAttributesFilter = self.getFilterAttributesFilter($key, $id);
 					if(filterAttributesFilter != undefined){
 						var index = filterAttributes.filters.indexOf(filterAttributesFilter);
+						if(filterAttributes.filters.length - 1 === index){
+							filterAttributes.filters[index - 1].logic = "";
+						}
+
 						filterAttributes.filters.splice(index, 1);	
 					}
 				}	

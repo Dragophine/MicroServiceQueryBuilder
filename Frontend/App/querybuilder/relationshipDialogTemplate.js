@@ -182,7 +182,7 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                                 "changeable":false,
                                 "isBracketOpen": false,
                                 "isBracketClosed": false,
-                                "logic":"AND"           //“AND/OR”
+                                "logic":""           //“AND/OR”
                             }
                         ]   //ist der Parameter fix oder in der Verwaltung veränderbar?
                 };
@@ -237,6 +237,10 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                     else if (parseInt(x['id']) < parseInt(y['id'])) return -1;
                     else return 1;
                 });
+
+                if(filterAttributes.filters.length > 0){
+                    filterAttributes.filters[filterAttributes.filters.length - 1].logic = "AND";
+                }
                 //there must be at least one filter in the filters array
                 //otherwise: invalid state
                 var id = filterAttributes.filters[filterAttributes.filters.length - 1].id;
@@ -250,7 +254,7 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                     "changeable":false,
                     "isBracketOpen": false,
                     "isBracketClosed": false,
-                    "logic":"AND"       //“AND/OR”
+                    "logic":""       //“AND/OR”
                 });
             }
         }
@@ -266,6 +270,10 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                     var filterAttributesFilter = self.getFilterAttributesFilter($key, $id);
                     if(filterAttributesFilter != undefined){
                         var index = filterAttributes.filters.indexOf(filterAttributesFilter);
+                        if(filterAttributes.filters.length - 1 === index){
+                            filterAttributes.filters[index - 1].logic = "";
+                        }
+                        
                         filterAttributes.filters.splice(index, 1);  
                     }
                 }   
