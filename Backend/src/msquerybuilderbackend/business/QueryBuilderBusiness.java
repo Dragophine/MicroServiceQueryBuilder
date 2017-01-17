@@ -75,7 +75,7 @@ public class QueryBuilderBusiness {
 		return result;
 	}
 	
-	public Long createQueryBuilder(QueryBuilder queryBuilder) throws JsonProcessingException{
+	public Long createQueryBuilder(QueryBuilder queryBuilder) throws JsonProcessingException, Exception{
 
 		QueryBuilderJsonStringObject alreadyUsedName= queryBuilderJsonStringObjectRepository.findByName(queryBuilder.getName());
 		if (alreadyUsedName != null){
@@ -86,11 +86,19 @@ public class QueryBuilderBusiness {
 			
 /**
 * Interpretation des Querybuilders wie bei execute ausständig
-*/				
-//			expertQuery.setName(queryBuilder.getName());
-//			expertQuery.setDescription(queryBuilder.getDescription());
-//			expertQuery.setCategory(category);
-	//		queryBuilderJsonStringObject.addExpertQuery(expertquery);
+*/			
+			//Hoffe ich hab das so richtig verstanden...
+			
+			String s = execute(queryBuilder);
+			
+			ExpertQuery expertQuery = new ExpertQuery();
+			expertQuery.setName(queryBuilder.getName());
+			expertQuery.setDescription(queryBuilder.getDescription());
+			expertQuery.setCategory(category);
+			expertQuery.setQuery(s);
+			for (Parameter p: parameter){
+				expertQuery.addParameter(p);
+			}
 			
 			/**
 			 * ExpertQuery auch den Namen und Beschreibung geben
@@ -104,7 +112,7 @@ public class QueryBuilderBusiness {
 			System.out.println(queryBuilderJsonString);
 			qbjso.setQueryBuilderJson(queryBuilderJsonString);
 			
-			qbjso.setExpertQuery(null);
+			qbjso.setExpertQuery(expertQuery);
 	    	queryBuilderJsonStringObjectRepository.save(qbjso);
 	    	QueryBuilderJsonStringObject returnNew=queryBuilderJsonStringObjectRepository.findByName(queryBuilder.getName());
 	
@@ -381,6 +389,7 @@ public class QueryBuilderBusiness {
 	private String execute(QueryBuilder queryBuilder) throws Exception{
 		//initialise maps
 		paramsMap.clear();
+		parameter.clear();
 		filterStatements.clear();
 		actualFilterStatements.clear();
 		orderStatements.clear();
