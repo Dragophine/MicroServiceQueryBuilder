@@ -88,6 +88,9 @@ public class QueryBuilderBusiness {
 * Interpretation des Querybuilders wie bei execute ausständig
 */			
 			//Hoffe ich hab das so richtig verstanden...
+			//ExpertQuery erstellen, QueryString und Parameter übergeben,
+			//an QueryBuilderJsonStringObject anhängen und das ganze speichern
+			//???
 			
 			String s = execute(queryBuilder);
 			
@@ -164,7 +167,7 @@ public class QueryBuilderBusiness {
 
 	}
 	
-	public QueryBuilderJsonStringObject updateQueryBuilder(String queryId, QueryBuilder updatedQuery) throws JsonProcessingException{
+	public QueryBuilderJsonStringObject updateQueryBuilder(String queryId, QueryBuilder updatedQuery) throws JsonProcessingException, Exception{
 		QueryBuilderJsonStringObject qbjso=null;
 		Long id = new Long(-1);
 		
@@ -199,7 +202,7 @@ public class QueryBuilderBusiness {
 			/**
 			 * Interpretation der Query in ExpertQuery ausständig wie bei execute
 			 */
-	    	
+			
 	    	
 	    	/**
 	    	 * eventuell nicht notwendig, falls es durch die Beschreibung des RElationships in der Entity funktioniert
@@ -228,10 +231,17 @@ public class QueryBuilderBusiness {
 	//    	newExpertQuery.setCategory(category);
 	//    	qbjso.setExpertQuery(newExpertQuery);
 	
-	    	
-	    	
-	    	
-	    	
+			String s = execute(updatedQuery);
+			
+			ExpertQuery expertQuery = new ExpertQuery();
+			expertQuery.setName(updatedQuery.getName());
+			expertQuery.setDescription(updatedQuery.getDescription());
+			expertQuery.setCategory(category);
+			expertQuery.setQuery(s);
+			for (Parameter p: parameter){
+				expertQuery.addParameter(p);
+			}
+			qbjso.setExpertQuery(expertQuery);
 	    	
 	    	queryBuilderJsonStringObjectRepository.save(qbjso);
 	    	return qbjso;
