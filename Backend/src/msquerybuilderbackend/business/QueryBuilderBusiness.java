@@ -555,10 +555,10 @@ public class QueryBuilderBusiness {
 			paramsMap.put(paramName, newParam.getValue());
 			
 			String statement = "";
-			if (!fil.getLogic().isEmpty()) statement = " " + fil.getLogic() + " ";
 			if (fil.getIsBracketOpen()) statement += "(";
 			statement += (synonyms.get(type) + "." + f.getAttributeName() + fil.getFilterType() + "{" + paramName + "}");
 			if (fil.getIsBracketClosed()) statement += ")";
+			if (!fil.getLogic().isEmpty()) statement += " " + fil.getLogic() + " ";
 			filterStatements.add(statement);	
 			}	
 		}
