@@ -97,7 +97,7 @@
               </ul>
             </li>
           </ul>
-          <h3>Orderby Attributes</h3>
+          <h3>Order by Attributes</h3>
           <ul>
             <li ng-repeat="attribute in ctrl.selectedNode.orderByAttributes">
               {{attribute.attributeName}} {{attribute.direction}}
@@ -128,7 +128,7 @@
               </ul>
             </li>
           </ul>
-          <h3>Orderby Attributes</h3>
+          <h3>Order by Attributes</h3>
           <ul>
             <li ng-repeat="attribute in ctrl.selectedRelation.orderByAttributes">
               {{attribute.attributeName}} {{attribute.direction}}
@@ -143,16 +143,19 @@
 <!--   <h1>TEST: {{ctrl.table}}</h1> -->
   
   <div class="row top-buffer">
-    <div class="table"  ng-if="!ctrl.hasError">
-        <h1>Result JSON</h1>
-       {{ctrl.table}}
-
+    <div class="table"  ng-if="!ctrl.hasError && ctrl.table !== ''
+                              && ctrl.table !== undefined && ctrl.table !== null">
+       
       <h1>Result Table</h1>
       <div class="container" ng-controller="Controller">
         <div outputtable table="ctrl.table"></div> 
       </div>
-      </div>
+
+       <h1>Result JSON</h1>
+       {{ctrl.table}}
+
     </div>
+  </div>
 
 
     <div ng-if="ctrl.hasError">

@@ -189,31 +189,68 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				//lösche return Attribute
 				//lösche return Attribute
 				var index = self.node['filterAttributes'].indexOf(filterAttribute);
+				
+				if(self.node['filterAttributes'].length - 1 === index && index !== 0){
+					self.node['filterAttributes'][index - 1].logic = "";
+				}
 				self.node['filterAttributes'].splice(index, 1);	
 			}
 			else
 			{
+				
 				var newFilterAttribute = {
 						"attributeName":$key,
+						"logic":"",
 						"filters": [
 							{
 								"id":0,			//Fuer Frontend
 								"type":"string",		 //int, string...
 								"filterType": "=", 	//sowas wie "in","like","=",">"
 								"value":"", 
-								"changeable":false,
+								"changeable":true,
 								"isBracketOpen": false,
 								"isBracketClosed": false,
 								"logic":""  			//“AND/OR”
 							}
 						]	//ist der Parameter fix oder in der Verwaltung veränderbar?
 				};
+
 				//füge attribut hinzu
 				self.node['filterAttributes'].push(
 					newFilterAttribute
 				);
+				//sort alphabetically
+				self.node['filterAttributes'].sort(function(x, y) {
+			        if (x['attributeName'] == y['attributeName']) return 0;
+			        else if (x['attributeName'] < y['attributeName']) return -1;
+			        else return 1;
+			    });
+				//add logic to index +1 and index - 1 if not available
+			    var index = self.node['filterAttributes'].indexOf(newFilterAttribute);
+
+			    if(index > 0){
+					if(self.node['filterAttributes'][index - 1].logic === "" ||
+						self.node['filterAttributes'][index - 1].logic === undefined){
+						self.node['filterAttributes'][index - 1].logic = "AND";
+					};
+				}
+				if(self.node['filterAttributes'].length - 1 > index  ){
+					self.node['filterAttributes'][index].logic = "AND";
+				}
 			}
 			console.log(self.node);
+		};
+
+		self.setFilterAttributesValue = function($key, $type, $value){
+			var filterAttributes = self.getFilterAttributes($key);
+
+			if(filterAttributes != undefined
+				&& filterAttributes[$type] !== $value){
+				filterAttributes[$type] = $value;
+			}
+
+			console.log("Set key: " + $key + ", type: " + $type + 
+							+ ", id: " + $id + ", value: " + $value );
 		};
 
 		self.getFilterAttributesFilter = function($key, $id){
@@ -230,6 +267,9 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 
 			return undefined;
 		}
+
+		
+
 
 		self.setFilterAttributesFilterValue = function($key, $id, $type, $value){
 			var filterAttributesFilter = self.getFilterAttributesFilter($key, $id);
@@ -297,7 +337,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 					var filterAttributesFilter = self.getFilterAttributesFilter($key, $id);
 					if(filterAttributesFilter != undefined){
 						var index = filterAttributes.filters.indexOf(filterAttributesFilter);
-						if(filterAttributes.filters.length - 1 === index){
+						if(filterAttributes.filters.length - 1 === index && index !== 0){
 							filterAttributes.filters[index - 1].logic = "";
 						}
 

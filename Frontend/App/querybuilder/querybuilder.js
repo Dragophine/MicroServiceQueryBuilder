@@ -418,6 +418,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 			self.selectedNode = undefined;
 			self.selectedRelation = undefined;
 			self.query.node = undefined;
+			self.table = "";
+			self.hasError = false;
 			$requests.getNodes(self.getNodesCB);
 		}
 		//if node is not head
