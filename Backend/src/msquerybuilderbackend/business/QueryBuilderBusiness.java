@@ -3,6 +3,8 @@ package msquerybuilderbackend.business;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,9 +24,15 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 
 import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
+import msquerybuilderbackend.entity.FilterAttribute;
+import msquerybuilderbackend.entity.Filters;
+import msquerybuilderbackend.entity.Node;
+import msquerybuilderbackend.entity.OrderByAttribute;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.entity.QueryBuilder;
 import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
+import msquerybuilderbackend.entity.Relationship;
+import msquerybuilderbackend.entity.ReturnAttribute;
 import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
@@ -42,18 +50,29 @@ public class QueryBuilderBusiness {
 	@Autowired
 	QueryBuilderJsonStringRepository queryBuilderJsonStringObjectRepository;
 	 @Autowired
-		Neo4jOperations neo4jOperations;
-		Neo4jTemplate temp;
+	Neo4jOperations neo4jOperations;
+	Neo4jTemplate temp;
 	
-	
-	public Result executeQueryBuilderQuery(QueryBuilder queryBuilder){
-		Map<String,Object> paramsMap = new HashMap<String,Object>();
-    	Result result=null;
-    	
-//    		result = neo4jOperations.query(queryBuilder.getQuery(),new HashMap<String, String>(), true);
-    	
+	//required global variables
+	Map<String,String> synonyms = new HashMap<String,String>();
+	Map<String,Object> paramsMap = new HashMap<String,Object>();
+	char synonym='a';
+	char end='z';
+	Set<Parameter> parameter = new HashSet<Parameter>(0);
+	String query = "";
+	LinkedList<String> filterStatements = new LinkedList<String>();
+	LinkedList<String> actualFilterStatements = new LinkedList<String>();
+	LinkedList<String> orderStatements = new LinkedList<String>();
+	LinkedList<String> returnStatements = new LinkedList<String>();
+	LinkedList<String> cypherquery = new LinkedList<String>();
 
-	return result;
+	public Result executeQueryBuilderQuery(QueryBuilder queryBuilder) throws Exception{
+	//	Map<String,Object> paramsMap = new HashMap<String,Object>();
+		
+		Result result = null;
+		String query = execute(queryBuilder);
+		result = neo4jOperations.query(query, paramsMap, true);	
+		return result;
 	}
 	
 	public Long createQueryBuilder(QueryBuilder queryBuilder) throws JsonProcessingException{
@@ -353,4 +372,203 @@ public class QueryBuilderBusiness {
 		
 		return qbjso.getExpertQuery();
 	}
+
+
+
+
+//######################### logic for executing query ##################
+
+	private String execute(QueryBuilder queryBuilder) throws Exception{
+		//initialise maps
+		paramsMap.clear();
+		filterStatements.clear();
+		actualFilterStatements.clear();
+		orderStatements.clear();
+		returnStatements.clear();
+		cypherquery.clear();
+		synonyms.clear();
+		synonym = 'a';
+		String query = "";
+		
+		Node node = queryBuilder.getNode();
+		
+		//TODO erste relation auf optional prüfen!!
+		//build the query
+		buildNode(node, "");
+		
+		Iterator<String> it = cypherquery.iterator();
+		while (it.hasNext()){
+			query += "MATCH " + it.next();
+			if (it.hasNext()) query += " ";
+		}
+		
+		//Return-Clause muss vorhanden sein!!
+		query += " RETURN";
+		
+		it = returnStatements.iterator();
+		while (it.hasNext()){
+			query += it.next();
+			if (it.hasNext()) query += ",";
+		}
+		
+		if (!orderStatements.isEmpty()) query += " ORDER BY ";
+		
+		it = orderStatements.iterator();
+		while (it.hasNext()){
+			query += it.next();
+			if (it.hasNext()) query += ", ";
+		}
+		
+		if (queryBuilder.getLimitCount() != "") {
+			query += " LIMIT " + queryBuilder.getLimitCount();
+		}
+		
+		//erstellen des results
+//		Result result = null;
+//		result = neo4jOperations.query(query, paramsMap, true);
+		return query;
+	}
+	
+	private void buildNode(Node node, String s) throws Exception{
+		
+		String doublePoint = "";
+		if (node.getType() != "") doublePoint = ":";
+		
+		String nodeString = s + "(" + synonym + doublePoint + node.getType() + ")";
+		
+		synonyms.put(node.getType(),String.valueOf(synonym));		
+		synonym++;
+		
+		//filter zusammenstellen
+		if (!node.getFilterAttributes().isEmpty()){
+			solveFilter(node.getFilterAttributes(), node.getType());
+		}
+		
+		//order zusammenstellen
+		if (!node.getOrderByAttributes().isEmpty()){
+			solveOrder(node.getOrderByAttributes(), node.getType());
+		}
+		
+		//return zusammenstellen
+		if (!node.getReturnAttributes().isEmpty()){
+			solveReturn(node.getReturnAttributes(), node.getType());
+		}
+		
+		if (node.getRelationship().isEmpty()){
+			
+			if (!filterStatements.isEmpty()) nodeString += " WHERE ";
+			Iterator<String> it = filterStatements.iterator();
+			while (it.hasNext()){
+				nodeString += it.next();
+			}
+			cypherquery.add(nodeString);
+			filterStatements.clear();
+			filterStatements.addAll(actualFilterStatements);
+			actualFilterStatements.clear();
+			return;
+		} else {
+			Iterator<Relationship> it = node.getRelationship().iterator();
+			while (it.hasNext()){
+				
+				actualFilterStatements.addAll(filterStatements);
+				
+				buildRelation(it.next(), nodeString);
+			}
+			return;
+		}	
+	}
+	
+	
+	private void buildRelation(Relationship relation, String s) throws Exception{
+		String relationship = "";
+		
+		if (relation.getDirection().equalsIgnoreCase("outgoing")){
+			relationship = "-[" + synonym + ":" + relation.getRelationshipType() + "]->";
+		} else {
+			relationship = "<-[" + synonym + ":" + relation.getRelationshipType()+ "]-";
+		}
+		synonyms.put(relation.getRelationshipType(),String.valueOf(synonym));		
+		synonym++;
+		
+		//filter zusammenstellen
+		if (!relation.getFilterAttributes().isEmpty()){
+			solveFilter(relation.getFilterAttributes(), relation.getRelationshipType());
+		}
+		
+		//order zusammenstellen
+		if (!relation.getOrderByAttributes().isEmpty()){
+			solveOrder(relation.getOrderByAttributes(), relation.getRelationshipType());
+		}
+		
+		//return zusammenstellen
+		if (!relation.getReturnAttributes().isEmpty()){
+			solveReturn(relation.getReturnAttributes(), relation.getRelationshipType());
+		}
+		
+		if (relation.getNode() == null){
+			cypherquery.add(s + relationship);
+			//dieser Zweig wird nie betreten
+			return;
+		} else {
+			
+			buildNode(relation.getNode(), s + relationship);
+			return;
+		}	
+	}
+	
+	private void solveFilter(Set<FilterAttribute> filterSet, String type) throws Exception{
+		int i = 1;
+		
+		for (FilterAttribute f : filterSet){
+			for (Filters fil: f.getFilters()){	
+			
+			//hier könnte es eventuell zu einem Problem mit der Parameterbezeichnung kommen!!
+			String paramName = type + f.getAttributeName() + i;
+			i++;
+			
+			Parameter newParam = new Parameter();
+			newParam.setChangeable(fil.getChangeable());
+			newParam.setKey(paramName);
+			newParam.setValue(fil.getValue());
+			newParam.setType(fil.getType());
+			parameter.add(newParam);
+			AttributeTypes.testTypes(newParam);
+			paramsMap.put(paramName, newParam.getValue());
+			
+			String statement = "";
+			if (!fil.getLogic().isEmpty()) statement = " " + fil.getLogic() + " ";
+			if (fil.getIsBracketOpen()) statement += "(";
+			statement += (synonyms.get(type) + "." + f.getAttributeName() + fil.getFilterType() + "{" + paramName + "}");
+			if (fil.getIsBracketClosed()) statement += ")";
+			filterStatements.add(statement);	
+			}	
+		}
+	}
+	
+	private void solveOrder(Set<OrderByAttribute> obSet, String type){
+		for (OrderByAttribute o : obSet){
+			String dir = "";
+			if (o.getDirection() != ""){
+				dir = " " + o.getDirection();
+			}
+			orderStatements.add(synonyms.get(type) + "." + o.getAttributeName() + dir);
+		}
+	}
+	
+	private void solveReturn (Set<ReturnAttribute> retSet, String type){
+		for (ReturnAttribute r : retSet){
+			
+			String returnStatement = " ";
+			if (!r.getReturnType().isEmpty()) returnStatement += (r.getReturnType() + " ");
+
+			if (!r.getAggregation().isEmpty()) returnStatement += (r.getAggregation() + "(");
+			returnStatement += (synonyms.get(type) + "." + r.getAttributeName());
+			if (!r.getAggregation().isEmpty()) returnStatement += ")";
+			returnStatement += (" AS " + type + r.getAttributeName());
+			returnStatements.add(returnStatement);
+		}
+	}
+	
+	
+
 }
