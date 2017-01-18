@@ -61,6 +61,7 @@ public class QueryBuilderBusiness {
 	char end='z';
 //	Set<Parameter> parameter = new HashSet<Parameter>(0);
 	String query = "";
+	boolean distinct = false;
 	LinkedList<String> filterStatements = new LinkedList<String>();
 	LinkedList<String> actualFilterStatements = new LinkedList<String>();
 	LinkedList<String> orderStatements = new LinkedList<String>();
@@ -419,6 +420,7 @@ public class QueryBuilderBusiness {
 		synonyms.clear();
 		synonym = 'a';
 		String query = "";
+		distinct = queryBuilder.isDistinct();
 		
 		Node node = queryBuilder.getNode();
 		
@@ -599,7 +601,7 @@ public class QueryBuilderBusiness {
 		for (ReturnAttribute r : retSet){
 			
 			String returnStatement = " ";
-			//if (!r.getReturnType().isEmpty()) returnStatement += (r.getReturnType() + " ");
+			if (distinct) returnStatement += ("DISTINCT ");
 			if (!r.getAggregation().isEmpty()){
 				if (r.getAggregation().equalsIgnoreCase("none") == false){
 					returnStatement += (r.getAggregation() + "(");
