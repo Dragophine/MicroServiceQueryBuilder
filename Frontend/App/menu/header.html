@@ -1,12 +1,12 @@
-<!DOCTYPE html>
-<div class="headerContainer" ng-controller="headerCtrl as ctrl">
+<!-- <!DOCTYPE html>
+ <div class="headerContainer" ng-controller="headerCtrl as ctrl">
 	
 	<nav class="navbar navbar-default navbar-fixed-top" role="navigation" >
 		<div class="menuPadding">
 			<div class="navbar-header">
 		       
 		        <!-- You'll want to use a responsive image option so this logo looks good on devices - I recommend using something like retina.js (do a quick Google search for it and you'll find it) -->
-		        <a  class="navbar-brand" href="#/">
+		       <!-- <a  class="navbar-brand" href="#/">
 		        	<span>
 		        		Querybuilder
 		        	</span>
@@ -14,7 +14,7 @@
 		    </div>
 
 		    <!-- Collect the nav links, forms, and other content for toggling -->
-		    <div class="collapse navbar-collapse navbar-ex1-collapse">
+		<!--   <div class="collapse navbar-collapse navbar-ex1-collapse">
 		        <ul class="nav navbar-nav navbar-right">
 		            <li>
 		            	<a href="#/querybuilder">Query Builder</a>
@@ -44,3 +44,25 @@
     
 </div>
 <!-- /.container -->
+
+
+ <div class="headerContainer" ng-controller="headerCtrl as ctrl">
+	
+	<nav class="navbar navbar-default navbar-fixed-top" role="navigation" >
+		<div class="menuPadding">
+			<div class="navbar-header">
+
+				<span>
+		        		Querybuilder
+		        	</span>
+		        </a>
+		    </div>
+
+        <ul class="nav navbar-nav navbar-right">
+            <li ng-repeat="item in items ">
+               <a ng-if="condition(item)" href="#{{item.link}}">{{item.name}}</a> 
+            </li>
+        </ul>
+	</div>
+	</nav>
+	</div>

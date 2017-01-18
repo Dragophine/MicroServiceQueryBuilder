@@ -40,7 +40,8 @@ var app = angular.module('queryBuilder', [
 .run(function ($rootScope, $cookies, $location) {
   $rootScope.$on("$locationChangeStart", function (event, next, current) {
       //console.log("AUTH"+$rootScope.authenticated);
-    if (!$rootScope.authenticated && ($location.path() == "/expertmode" || $location.path() == "/querybuilder" || $location.path() == "/category" || $location.path() == "/alerting")) {
+    if (!$rootScope.authenticated && ($location.path() == "/expertmode" || $location.path() == "/querybuilder" || 
+    $location.path() == "/category" || $location.path() == "/alerting" || $location.path() == "/alertingStatistics")) {
       $location.path("/login");
     }
 

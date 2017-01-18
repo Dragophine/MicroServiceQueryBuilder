@@ -2,19 +2,45 @@
 <div >
   <form ng-controller="LoginCtrl as vm" class="loginform">
 
+<div ng-if="vm.loggedin != true" >
+
     <div class="group">
       <input type="text" ng-model="vm.username"/>
       <span class="highlight"></span>
       <span class="bar"></span>
-      <label>E-Mail</label>
+      <label>Email</label>
     </div>
         <div class="group">
         <input type="password" ng-model="vm.password"/>
         <span class="highlight"></span><span class="bar"></span>
       <label>Passwort</label>
     </div>
-    <button type="button" class="button buttonBlue" ng-click="execlogin()">Login
+    <!--<div ng-if="vm.loggedin != true" > -->
+    <button ng-if= "vm.loggedin != true " type="button" class="button buttonBlue" ng-click="execlogin()">Login
     </button>
+    </div>
+    <button ng-if= "vm.loggedin == true " type="button" class="button buttonBlue" ng-click="execlogout()">Logout
+    </button>
+    <!--</div> -->
     
+  </form>
+</div>
+
+<div class="modal fade" id="loginErrorModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Login error</h4>
+            </div>
+            <div class="modal-body">
+                <label>Login not successfull, check user data</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
   </form>
 </div>

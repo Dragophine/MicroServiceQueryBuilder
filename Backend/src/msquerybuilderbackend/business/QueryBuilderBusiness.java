@@ -420,7 +420,7 @@ public class QueryBuilderBusiness {
 		synonyms.clear();
 		synonym = 'a';
 		String query = "";
-		distinct = queryBuilder.isDistinct();
+		distinct = queryBuilder.getDistinct();
 		
 		Node node = queryBuilder.getNode();
 		
@@ -436,6 +436,7 @@ public class QueryBuilderBusiness {
 		
 		//Return-Clause muss vorhanden sein!!
 		query += " RETURN";
+		if (distinct) query += " DISTINCT ";
 		
 		it = returnStatements.iterator();
 		while (it.hasNext()){
@@ -601,7 +602,7 @@ public class QueryBuilderBusiness {
 		for (ReturnAttribute r : retSet){
 			
 			String returnStatement = " ";
-			if (distinct) returnStatement += ("DISTINCT ");
+//			if (distinct) returnStatement += ("DISTINCT ");
 			if (!r.getAggregation().isEmpty()){
 				if (r.getAggregation().equalsIgnoreCase("none") == false){
 					returnStatement += (r.getAggregation() + "(");
