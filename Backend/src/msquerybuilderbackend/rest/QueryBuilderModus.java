@@ -93,6 +93,7 @@ public class QueryBuilderModus {
 		
 		//Return-Clause muss vorhanden sein!!
 		query += " RETURN";
+		if (distinct) query += "DISTINCT ";
 		
 		it = returnStatements.iterator();
 		while (it.hasNext()){
@@ -412,7 +413,8 @@ public class QueryBuilderModus {
 		for (ReturnAttribute r : retSet){
 			
 			String returnStatement = " ";
-			if (distinct) returnStatement += ("DISTINCT" + " ");
+//			if (distinct) returnStatement += ("DISTINCT" + " ");
+//			distinct = false;
 
 			if (!r.getAggregation().isEmpty()) returnStatement += (r.getAggregation() + "(");
 			returnStatement += (synonyms.get(type) + "." + r.getAttributeName());
