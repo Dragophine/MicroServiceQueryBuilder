@@ -42,7 +42,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		http.cors().and()
 		.authorizeRequests()
 		
-		.regexMatchers("^/api.*").fullyAuthenticated();
+		.regexMatchers("^/api.*", "/user", "/authentications/user").fullyAuthenticated();
 	
 		http.httpBasic();
 		http.csrf().disable();

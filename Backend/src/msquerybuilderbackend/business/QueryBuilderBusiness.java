@@ -1,10 +1,13 @@
 package msquerybuilderbackend.business;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -12,8 +15,6 @@ import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.data.neo4j.template.Neo4jTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -550,7 +551,12 @@ public class QueryBuilderBusiness {
 		int i = 1;
 		
 		for (FilterAttribute f : filterSet){
-			for (Filters fil: f.getFilters()){	
+			
+			Set<Filters> set = f.getFilters();
+			List<Filters> list = new ArrayList<Filters>(set);
+			Collections.sort(list);
+			
+			for (Filters fil: list){	
 			
 			//hier könnte es eventuell zu einem Problem mit der Parameterbezeichnung kommen!!
 			String paramName = type + f.getAttributeName() + i;

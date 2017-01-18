@@ -19,7 +19,9 @@ public class NodeTypeBusiness {
 	
 	public Result getNodeTypes(){
 		
-		String queryNodes = "MATCH (n) WHERE labels(n) <> \"ExpertQuery\" AND labels(n) <> \"Parameter\" AND labels(n)<>\"Alert\" AND labels(n)<>\"Category\" AND labels(n) <> \"QueryBuilderJsonStringObject\" return DISTINCT labels(n) AS Label";
+		String queryNodes = "MATCH (n) WHERE labels(n) <> \"ExpertQuery\" AND labels(n) <> \"Parameter\" "
+				+ "AND labels(n)<>\"Alert\" AND labels(n)<>\"Category\" AND labels(n) <> "
+				+ "\"QueryBuilderJsonStringObject\" AND labels(n) <> \"User\" AND labels(n) <> \"UserAuthority\" return DISTINCT labels(n) AS Label";
 	
 		Result result = neo4jOperations.query(queryNodes, new HashMap<String, String>());
 	

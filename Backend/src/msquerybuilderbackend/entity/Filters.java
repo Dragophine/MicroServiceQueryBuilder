@@ -1,6 +1,6 @@
 package msquerybuilderbackend.entity;
 
-public class Filters {
+public class Filters implements Comparable<Filters>{
 	private long id;
 	
 	private String filterType="";
@@ -63,5 +63,11 @@ public class Filters {
 	}
 	public void setLogic(String logic) {
 		this.logic = logic;
+	}
+
+	@Override
+	public int compareTo(Filters f1) {
+		// TODO Auto-generated method stub
+		return Long.compare(this.id, f1.id);
 	}
 }
