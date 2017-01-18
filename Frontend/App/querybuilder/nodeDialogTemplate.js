@@ -101,7 +101,6 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				//füge attribut hinzu
 				self.node['returnAttributes'].push({
 					"attributeName":$key,
-					"returnType": "",
 					"aggregation" : "NONE"
 				});
 			}

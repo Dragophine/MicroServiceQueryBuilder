@@ -17,6 +17,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	"description":"",
     	"category":"",
     	"limitCount": "",
+    	"distinct":false,
     	"node":""          
     }
 
