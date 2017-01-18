@@ -12,7 +12,7 @@ angular.module('queryBuilder.login', [])
       loginservice.login(vm.username, vm.password).then(function () {
         updateAuthStatus();
       }, function () {
-       // $("#loginErrorModal").modal();
+        $("#loginErrorModal").modal();
       });
     };
 
@@ -44,7 +44,7 @@ angular.module('queryBuilder.login', [])
 
       $rootScope.$broadcast('authenticationChanged');
       if ($rootScope.authenticated) {
-        $location.path("/#/home");
+        $location.path("/querybuilder");
       } else {
         $location.path("/login");
         $("#loginErrorModal").modal();

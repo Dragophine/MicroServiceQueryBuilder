@@ -68,7 +68,7 @@ public class ExpertQueryBusiness {
 			expertQuery.setDescription(expertQueryJsonObject.getDescription());
 			expertQuery.setParameter(expertQueryJsonObject.getParameter());
 			expertQuery.setQuery(expertQueryJsonObject.getQuery());
-			Category cat= categoryRepository.findByName(expertQueryJsonObject.getCategory());
+			Category cat= categoryRepository.findByName(expertQueryJsonObject.getCategory().replaceAll(" ", ""));
 			expertQuery.setCategory(cat);
 	    	expertQueryRepository.save(expertQuery);
 	    	ExpertQuery newExpertQuery = expertQueryRepository.findByName(expertQueryJsonObject.getName());
