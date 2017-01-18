@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import msquerybuilderbackend.business.ExpertQueryBusiness;
@@ -26,6 +27,7 @@ import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.ExpertQueryJsonObject;
 import msquerybuilderbackend.entity.Parameter;
+import msquerybuilderbackend.entity.QueryBuilder;
 import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
 import msquerybuilderbackend.exception.InvalidTypeException;
 import msquerybuilderbackend.repository.CategoryRepository;
@@ -116,9 +118,10 @@ public class ExpertQueryService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries",  method=RequestMethod.GET)
-		    public ResponseEntity<Set<ExpertQueryJsonObject>> getQueries() throws Exception	{
-				return new ResponseEntity<Set<ExpertQueryJsonObject>>(expertQueryBusiness.getAllExpertQueries(), HttpStatus.OK);
-		    }
+		    public ResponseEntity<Set<ExpertQueryJsonObject>> getQueries(@RequestParam(value="name",required=false) String name, @RequestParam(value="category",required=false) String category, @RequestParam(value="description",required=false) String description) throws Exception	{
+				if((category==null)&&(name==null)&&(description==null)) return new ResponseEntity<Set<ExpertQueryJsonObject>>(expertQueryBusiness.getAllExpertQueries(), HttpStatus.OK);
+				return new ResponseEntity<Set<ExpertQueryJsonObject>>(expertQueryBusiness.getExpertQueryBySearch(category,name,description),HttpStatus.OK);
+			}
 			
 			@CrossOrigin 
 			@Transactional

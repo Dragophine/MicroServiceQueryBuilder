@@ -1,7 +1,9 @@
 package msquerybuilderbackend.business;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -13,10 +15,16 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.ExpertQueryJsonObject;
 import msquerybuilderbackend.entity.Parameter;
+import msquerybuilderbackend.entity.QueryBuilder;
+import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
 import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
@@ -216,5 +224,32 @@ public class ExpertQueryBusiness {
 		}
 
 		return eqjo;
+	}
+	
+	
+	public Set<ExpertQueryJsonObject> getExpertQueryBySearch(String category, String name, String description){
+
+		if (category==null)category="";
+		if (name==null) name="";
+		if (description==null)description="";
+		
+		
+		Set<ExpertQuery> expertqueries= expertQueryRepository.searchByParameter(description, name, category );
+		Set<ExpertQueryJsonObject> expertqueriesjson = new HashSet<ExpertQueryJsonObject>();
+		for (ExpertQuery eq:expertqueries){
+			ExpertQueryJsonObject eqjo = new ExpertQueryJsonObject();
+			eqjo.setName(eq.getName());
+			eqjo.setDescription(eq.getDescription());
+			eqjo.setParameter(eq.getParameter());
+			eqjo.setId(eq.getId());
+			eqjo.setQuery(eq.getQuery());
+			if(eq.getCategory() != null)
+			{
+				eqjo.setCategory(eq.getCategory().getName());	
+			}
+			expertqueriesjson.add(eqjo);
+		}
+		return expertqueriesjson;
+		
 	}
 }
