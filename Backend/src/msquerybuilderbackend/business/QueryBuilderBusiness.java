@@ -612,7 +612,9 @@ public class QueryBuilderBusiness {
 				}
 			}
 			//TODO eventuell eigenes Attribut für die ALIAS
-			returnStatement += (" AS " + type + r.getAttributeName());
+			int i = 1;
+			returnStatement += (" AS " + type + r.getAttributeName() + i);
+			i++;
 			returnStatements.add(returnStatement);
 		}
 	}
