@@ -88,7 +88,7 @@ public void setCategory(String c){
 	this.category=c;
 }
 
-public boolean isDistinct() {
+public boolean getDistinct() {
 	return distinct;
 }
 
