@@ -5,8 +5,11 @@ public class OrderByAttribute {
 
 	private String attributeName="";
 	private String direction="";
+	private int id;
 	
-	
+
+
+
 	public OrderByAttribute(){
 		
 	}
@@ -26,5 +29,13 @@ public class OrderByAttribute {
 	
 	public void setDirection(String d){
 		this.direction=d;
+	}
+	
+	public int getId() {
+		return id;
+	}
+
+	public void setId(int id) {
+		this.id = id;
 	}
 }
