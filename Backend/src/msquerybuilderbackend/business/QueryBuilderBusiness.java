@@ -588,11 +588,14 @@ public class QueryBuilderBusiness {
 			if (o.getDirection() != ""){
 				dir = " " + o.getDirection();
 			}
+			//TODO evtl noch eine AGGREGATION bei orderby einfügen!!
 			orderStatements.add(synonyms.get(type) + "." + o.getAttributeName() + dir);
 		}
 	}
 	
 	private void solveReturn (Set<ReturnAttribute> retSet, String type){
+		
+		//TODO Liste filtern ReturnAttribute
 		for (ReturnAttribute r : retSet){
 			
 			String returnStatement = " ";
@@ -608,6 +611,7 @@ public class QueryBuilderBusiness {
 					returnStatement += ")";
 				}
 			}
+			//TODO eventuell eigenes Attribut für die ALIAS
 			returnStatement += (" AS " + type + r.getAttributeName());
 			returnStatements.add(returnStatement);
 		}
