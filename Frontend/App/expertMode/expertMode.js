@@ -321,4 +321,13 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		}
 	}
 	$requests.getAllCategories(self.getCategories);
+
+	self.changeCategories = function() {
+		self.categoryName = self.categoryName;
+	}
+	self.checkCategory = function($category) {
+
+		return " "+$category+" " == self.categoryName || self.categoryName == ""
+
+	};
 }]);

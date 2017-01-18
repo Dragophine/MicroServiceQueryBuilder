@@ -20,7 +20,6 @@ angular.module('queryBuilder.header',[])
 
 
 	$scope.$on('login', function () {
-		console.log("AAAAA");
 		
 	self.loggedin = $rootScope.authenticated;
         // handle login event here
