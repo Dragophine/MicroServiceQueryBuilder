@@ -594,7 +594,7 @@ public class QueryBuilderBusiness {
 	}
 	
 	private void solveReturn (Set<ReturnAttribute> retSet, String type){
-		
+		int i = 1;
 		//TODO Liste filtern ReturnAttribute
 		for (ReturnAttribute r : retSet){
 			
@@ -612,7 +612,7 @@ public class QueryBuilderBusiness {
 				}
 			}
 			//TODO eventuell eigenes Attribut für die ALIAS
-			int i = 1;
+			
 			returnStatement += (" AS " + type + r.getAttributeName() + i);
 			i++;
 			returnStatements.add(returnStatement);
