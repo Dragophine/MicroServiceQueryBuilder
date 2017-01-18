@@ -6,6 +6,7 @@ angular.module('queryBuilder.login', [])
     var vm = this;
     $scope.username;
     $scope.password;
+    vm.loggedin = $rootScope.authenticated;
 
     $rootScope.execlogin = function () {
 
@@ -17,18 +18,16 @@ angular.module('queryBuilder.login', [])
     };
 
     $rootScope.execlogout = function () {
-      loginservice.logout().then(function () {
-        //updateAuthStatus();
-      }, function () {
-        // TODO: Error handling logout
-      });
+
+      loginservice.logout();
       updateAuthStatus();
+      $location.path("/");
+      $rootScope.$broadcast('login');
     };
 
     var updateAuthStatus = function () {
       var authenticated = false;
       if (loginservice.principal && loginservice.authorities) {
-        //console.log("BBB"+loginservice.authorities.length)
         var i = 0;
         while (!false && i < loginservice.authorities.length) {
           
@@ -40,14 +39,13 @@ angular.module('queryBuilder.login', [])
       }
       $rootScope.authenticated = authenticated;
       $rootScope.principal = loginservice.principal;
-  //console.log("ZZZZZZZZ"+$rootScope.principal.username);
 
       $rootScope.$broadcast('authenticationChanged');
       if ($rootScope.authenticated) {
+        $rootScope.$broadcast('login');
         $location.path("/querybuilder");
       } else {
         $location.path("/login");
-        $("#loginErrorModal").modal();
       }
     };
 

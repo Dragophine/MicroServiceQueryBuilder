@@ -13,8 +13,8 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 	
 	self.selectedAlert = "";
 	self.dates = [];
-	self.addRows = [];
-	self.addRows2 = [];
+//	self.addRows = [];
+	self.alertDateAndCount = [];
 	
 	
 	
@@ -35,8 +35,8 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 //	      ]);
 	      
 	      var i;
-	      for (i=0; i<self.addRows2.length; i++) {
-	    	  data.addRow(new Array (new Date (self.addRows2[i].date), self.addRows2[i].counts));
+	      for (i=0; i<self.alertDateAndCount.length; i++) {
+	    	  data.addRow(new Array (new Date (self.alertDateAndCount[i].date), self.alertDateAndCount[i].counts));
 	      }
 
 	      var options = {
@@ -65,56 +65,7 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 				
 //				var i;
 				var firstQuery = self.existingAlerts[0];				
-				var results = {}, rarr = [], i, date;
-
-				var minDate;
-				var maxDate;
-				// count alerts per date, get min and max date
-				for (i=0; i<firstQuery.dates.length; i++) {
-				  // get the date
-					var d = new Date(firstQuery.dates[i]);
-				  date = [d.getFullYear(),d.getMonth()+1,d.getDate()].join("-");
-				  results[date] = results[date] || 0;
-				  results[date]++;
-				  
-				  if(minDate == null || minDate > date)
-				  {
-					  minDate = date;
-				  }
-				  if(maxDate == null || maxDate < date)
-				  {
-					  maxDate = date;
-				  }
-				}
-				
-				// generate array with all values between min and max date
-				var newDates = [],
-			    currentDate = new Date(minDate),
-			    d;
-				var maximumDate = new Date(maxDate);
-
-				while (currentDate <= maximumDate) {
-//				    d = new Date(currentDate);
-				    var dateFormat = currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getDate();
-				    
-				    if(results[dateFormat] == null || results[dateFormat] == 0)
-			    	{
-				    	self.addRows[dateFormat] = 0;
-			    	}
-				    else
-			    	{
-				    	self.addRows[dateFormat] = results[dateFormat];
-			    	}
-				    
-				    currentDate.setDate(currentDate.getDate() + 1);
-				}
-
-				// you can always convert it into an array of objects, if you must
-				for (i in self.addRows) {
-				  if (self.addRows.hasOwnProperty(i)) {
-					  self.addRows2.push({date:i,counts:self.addRows[i]});
-				  }
-				}
+				getDataFromAlert(firstQuery);
 			}			
 		}
 		else
@@ -126,8 +77,7 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 
 	self.selectAlert = function()
 	{
-		self.addRows2 = [];
-		self.addRows = [];
+		self.alertDateAndCount = [];
 		var x;
 		var firstQuery;
 		for(x=0; x<self.existingAlerts.length; x++)
@@ -138,17 +88,23 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 				break;
 			}
 		}
-
-		if(firstQuery != null)
+		getDataFromAlert(firstQuery);
+	}
+	
+	function getDataFromAlert($firstQuery)
+	{
+		if($firstQuery != null)
 		{
+			var zwischenergebnis = [];
 			var results = {}, rarr = [], i, date;
 
 			var minDate;
 			var maxDate;
 			// count alerts per date, get min and max date
-			for (i=0; i<firstQuery.dates.length; i++) {
-			  // get the date
-				var d = new Date(firstQuery.dates[i]);
+			for (i=0; i<$firstQuery.dates.length; i++) {
+			  // get the date without timezone offset
+				var d = new Date($firstQuery.dates[i]);
+				d = new Date(d.valueOf() + d.getTimezoneOffset() * 60000);
 			  date = [d.getFullYear(),d.getMonth()+1,d.getDate()].join("-");
 			  results[date] = results[date] || 0;
 			  results[date]++;
@@ -175,20 +131,20 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 			    
 			    if(results[dateFormat] == null || results[dateFormat] == 0)
 		    	{
-			    	self.addRows[dateFormat] = 0;
+			    	zwischenergebnis[dateFormat] = 0;
 		    	}
 			    else
 		    	{
-			    	self.addRows[dateFormat] = results[dateFormat];
+			    	zwischenergebnis[dateFormat] = results[dateFormat];
 		    	}
 			    
 			    currentDate.setDate(currentDate.getDate() + 1);
 			}
 
 			// you can always convert it into an array of objects, if you must
-			for (i in self.addRows) {
-			  if (self.addRows.hasOwnProperty(i)) {
-				  self.addRows2.push({date:i,counts:self.addRows[i]});
+			for (i in zwischenergebnis) {
+			  if (zwischenergebnis.hasOwnProperty(i)) {
+				  self.alertDateAndCount.push({date:i,counts:zwischenergebnis[i]});
 			  }
 			}
 			drawBasic();
