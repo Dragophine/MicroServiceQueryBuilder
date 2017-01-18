@@ -67,7 +67,7 @@ public class ExpertQueryService {
 		    public ResponseEntity<Long> saveQuery(@RequestBody ExpertQueryJsonObject expertQueryJsonObject) throws Exception{	    
 			   Long newID= expertQueryBusiness.createExpertQuery(expertQueryJsonObject);
 			   if (newID==0L)return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);			
-			   return new ResponseEntity<Long>(newID,HttpStatus.OK);			
+			   return new ResponseEntity<Long>(newID,HttpStatus.CREATED);			
 		    }
 			
 			

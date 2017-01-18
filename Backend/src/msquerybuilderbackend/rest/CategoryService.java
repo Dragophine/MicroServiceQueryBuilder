@@ -55,7 +55,7 @@ public class CategoryService {
 	public ResponseEntity<Long> postCategory(@RequestBody Category category) throws Exception {
 		Long newID=categoryBusiness.createCategory(category);
 		if (newID==0L) return new ResponseEntity<Long>( 0L,HttpStatus.CONFLICT);
-			return new ResponseEntity<Long>(newID,HttpStatus.OK);
+			return new ResponseEntity<Long>(newID,HttpStatus.CREATED);
 		
 	}
 	

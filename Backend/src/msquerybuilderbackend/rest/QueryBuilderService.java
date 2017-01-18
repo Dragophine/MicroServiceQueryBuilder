@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
@@ -85,7 +87,7 @@ public class QueryBuilderService {
 		    public ResponseEntity<Long> saveQuery(@RequestBody QueryBuilder queryBuilder) throws Exception{
 				Long newId=queryBuilderBusiness.createQueryBuilder(queryBuilder);
 				if (newId==0L) return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);
-				return new ResponseEntity<Long>(newId,HttpStatus.OK);		
+				return new ResponseEntity<Long>(newId,HttpStatus.CREATED);		
 		    }
 			
 			
@@ -113,9 +115,10 @@ public class QueryBuilderService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.GET)
-		    public ResponseEntity<Set<QueryBuilder>> getQueries() throws Exception	{
-				return new ResponseEntity<Set<QueryBuilder>>(queryBuilderBusiness.getAllQueryBuilder(), HttpStatus.OK);
-		    }
+		    public ResponseEntity<Set<QueryBuilder>> getQueries(@RequestParam(value="name",required=false) String name, @RequestParam(value="category",required=false) String category, @RequestParam(value="description",required=false) String description) throws Exception	{
+				if((category==null)&&(name==null)&&(description==null)) 				return new ResponseEntity<Set<QueryBuilder>>(queryBuilderBusiness.getAllQueryBuilder(), HttpStatus.OK);
+				return new ResponseEntity<Set<QueryBuilder>>(queryBuilderBusiness.getQueryBuilderBySearch(category,name,description),HttpStatus.OK);
+			}
 			
 			@CrossOrigin 
 			@Transactional
@@ -137,6 +140,13 @@ public class QueryBuilderService {
 		    public ResponseEntity<ExpertQuery> getQueryString(@PathVariable String queryId) throws Exception	{
 				return new ResponseEntity<ExpertQuery>(queryBuilderBusiness.getQueryBuilderQueryString(queryId),HttpStatus.OK);
 		    }
+			
+//			@CrossOrigin 
+//			@Transactional
+//		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.GET, params={"category","name","description"})	 
+//		    public ResponseEntity<List<QueryBuilder>> getQueryBuilderBySearch(@RequestParam(value="category") String category,@RequestParam(value="name") String name, @RequestParam(value="description") String description) throws Exception	{
+//				return new ResponseEntity<List<QueryBuilder>>(queryBuilderBusiness.getQueryBuilderBySearch(category,name,description),HttpStatus.OK);
+//		    }
 			
 			
 		  

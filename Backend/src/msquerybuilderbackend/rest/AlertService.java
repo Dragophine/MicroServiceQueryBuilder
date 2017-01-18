@@ -114,7 +114,7 @@ public class AlertService {
 	public ResponseEntity<Long> postAlert(@RequestBody Alert alert) throws Exception {
 		Long newID=alertBusiness.createAlert(alert);
 		if (newID==0L) return new ResponseEntity<Long>(0L, HttpStatus.CONFLICT);
-		return new ResponseEntity<Long>(newID, HttpStatus.OK);
+		return new ResponseEntity<Long>(newID, HttpStatus.CREATED);
 	}
 	
 	@CrossOrigin 

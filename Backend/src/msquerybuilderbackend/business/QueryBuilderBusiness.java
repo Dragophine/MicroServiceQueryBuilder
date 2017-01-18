@@ -87,7 +87,7 @@ public class QueryBuilderBusiness {
 			
 			return 0L;	
 		}else{
-			Category category = categoryRepository.findByName(queryBuilder.getCategory());
+			Category category = categoryRepository.findByName(queryBuilder.getCategory().trim());
 			
 /**
 * Interpretation des Querybuilders wie bei execute ausständig
@@ -620,5 +620,55 @@ public class QueryBuilderBusiness {
 			i++;
 			returnStatements.add(returnStatement);
 		}
+	}
+	
+	
+	public Set<QueryBuilder> getQueryBuilderBySearch(String category, String name, String description){
+//		String categoryParam="";
+//		if(category!=null) {
+//			categoryParam="c.name='"+category+"'";
+//			if ((name!=null)|| (description!=null)) categoryParam="and "+categoryParam;
+//		}
+//		String nameParam="";
+//		if(name!=null){
+//			nameParam="n.name='.*"+name+".*";
+//			if ((description!=null)) nameParam="and "+nameParam;
+//		}
+//		 
+//		String descParam="";
+//		if(description!=null) descParam="n.description=~ '.*"+description+".*'";;
+//		
+//		
+//		System.out.println(categoryParam);
+//		System.out.println(nameParam);
+//		System.out.println(descParam);
+		if (category==null)category="";
+		if (name==null) name="";
+		if (description==null)description="";
+		
+		
+		List<QueryBuilderJsonStringObject> qbjso= queryBuilderJsonStringObjectRepository.searchByParameter(description, name, category );
+		Set<QueryBuilder> querybuilders = new HashSet<QueryBuilder>();
+		ObjectMapper mapper = new ObjectMapper();
+		for ( QueryBuilderJsonStringObject qb: qbjso ){
+			try {
+
+
+				// Convert JSON string to Object
+				String jsonInString = qb.getQueryBuilderJson();
+				QueryBuilder queryBuilder = mapper.readValue(jsonInString, QueryBuilder.class);
+				queryBuilder.setId(qb.getId());
+				querybuilders.add(queryBuilder);
+
+			} catch (JsonGenerationException e) {
+				e.printStackTrace();
+			} catch (JsonMappingException e) {
+				e.printStackTrace();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+
+		}
+		return querybuilders;
 	}
 }
