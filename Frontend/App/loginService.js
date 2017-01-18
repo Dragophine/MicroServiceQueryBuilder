@@ -48,20 +48,10 @@ angular.module('loginService', [])
       $http.defaults.headers.common['Authorization'] = null;
       clearAuth();
       
-      var url = $serverRestLocation.getValue()+'api/logout';
 
       var deferred = $q.defer();
       console.log("LKOGOUT");
 
-      // Make a logout rest call to the server and set authenticated to false
-      $http.post(url, {}).success(function () {
-        
-        deferred.resolve();
-      }).error(function () {
-        deferred.reject();
-      });
-
-      return deferred.promise;
     };
 
 

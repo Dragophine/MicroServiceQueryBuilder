@@ -24,7 +24,7 @@
 
         if(vm.text != ""){
             //okDialog($mdDialog, 'Folgendes fehlt', vm.text, ev);
-            $("#loginErrorModal").modal();
+            $("#registerErrorModal").modal();
         }
         else {
 
