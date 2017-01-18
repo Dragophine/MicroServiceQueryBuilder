@@ -17,6 +17,9 @@ angular.module('queryBuilder.services', ['ngCookies'])
         return serverRestLocation;
     };
 })
+
+
+
 .service('$requests', ['$serverRestLocation', '$http', function($serverRestLocation, $http) {
     //execute query
     this.getResultFromQuery = function($query, $params, $callback) {
@@ -64,18 +67,19 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
-    //sample method to send login data
-    this.sendLogin = function($email, $passwort, $callback) {
+
+
+    this.register = function($user,  $callback) {  
         $http({
             method : 'POST',
-            url : $serverRestLocation.getValue() + '/login', 
-            headers: { 
-                    'Content-Type':'application/json'
-            },
+            url : $serverRestLocation.getValue()+ '/user/', 
+            headers: {  'Content-Type':'application/json',
+        },
             data: { 
-              "user" : $email,
-              "passwort": $passwort
-            }
+                email : $user.email,
+                password : $user.password,
+                firstName : $user.firstName,
+                lastName : $user.lastName}
         })
         .success(function(data, status) {
             $callback(true, data, status); 
@@ -83,7 +87,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
         .error(function(data, status) {
             $callback(false, data, status);
         });
-    };
+        };
 
 
     //getNodes 
@@ -158,6 +162,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
 
     // save query
     this.saveQuery = function($query, $params, $name, $description, $category, $callback) {
+        console.log($category);
         $http({
             method : 'POST',
             url : $serverRestLocation.getValue() + '/expertqueries', 

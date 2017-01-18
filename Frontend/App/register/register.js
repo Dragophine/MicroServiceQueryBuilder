@@ -1,69 +1,55 @@
-'use strict';
+(function () {
+    'use strict';
 
-angular.module('queryBuilder.register', ['ngRoute'])
+    angular
+        .module('queryBuilder.register', [])
+        .controller('RegisterController', RegisterController);
 
-.config(['$routeProvider', function($routeProvider) {
-  $routeProvider.when('/register', {
-    templateUrl: 'register/register.html',
-  });
-}])
+    RegisterController.$inject = ['$http', '$requests', '$serverRestLocation', '$location', '$rootScope'];
+    function RegisterController($http, $requests, $serverRestLocation, $location, $rootScope) {
+        var vm = this;
 
-.controller('registerCtrl', ['$http', '$mdDialog', '$serverRestLocation', '$location', function($http, $mdDialog, $serverRestLocation, $location) {
-	this.geschlecht = "Frau";
-	this.anrede  = "";
-	this.vorname ="";
-	this.nachname = "";
-	this.email = "";
-	this.strasse = "";
-	this.hausnummer = 0;
-	this.plz = 0;
-	this.ort = "";
-	this.password = "";
-	this.passwordRepeat = "";
+        vm.register = register;
 
-	
-    this.register = function (ev) {
-        this.text = "";
-        if(this.vorname === null || this.vorname === ""){
-            this.text += "Bitte geben Sie einen Vornamen ein. \n";
+        function register() {
+
+             vm.text = "";
+
+            if(!validateEmail(vm.user.email)){
+            vm.text += "Bitte geben Sie eine korrekte Email Adresse ein. \n";
         }
-        if(this.nachname === null || this.nachname === ""){
-            this.text += "Bitte geben Sie einen Nachnamen ein. \n";
-        }
-        if(!validateEmail(this.email)){
-            this.text += "Bitte geben Sie eine korrekte Email Adresse ein. \n";
-        }
-        if(this.strasse === null || this.strasse === ""){
-            this.text += "Bitte geben Sie eine korrekte Strasse ein. \n";
-        }
-        if(isNaN(this.hausnummer) || this.hausnummer < 1 ){
-            this.text += "Bitte geben Sie eine korrekte Hausnummer ein. \n";
-        }
-        if(isNaN(this.plz) || this.plz < 1000){
-            this.text += "Bitte geben Sie eine korrekte Postleitzahl ein. \n";
-        }
-        if(this.ort === null || this.ort === ""){
-            this.text += "Bitte geben Sie einen Ort ein. \n";
-        }
-        if(this.password === null || this.password.length < 6 ){
-            this.text += "Bitte geben Sie einen Passwort mit mindestens 6 Buchstaben ein. \n";
-        }
-        if(this.password !=  this.passwordRepeat){
-            this.text += "Das Passwort und das wiederholte Passwort müssen übereinstimmen. \n";
+        if(vm.user.password !=  vm.user.passwordRepeat){
+            vm.text += "Das Passwort und das wiederholte Passwort müssen übereinstimmen. \n";
         }
 
-        if(this.text != ""){
-            okDialog($mdDialog, 'Folgendes fehlt', this.text, ev);
+        if(vm.text != ""){
+            //okDialog($mdDialog, 'Folgendes fehlt', vm.text, ev);
+            $("#loginErrorModal").modal();
         }
         else {
-    	   sendData($serverRestLocation.getValue() + "/users", this);
+
+            $requests.register(vm.user, vm.callback);
+
         }
-    };
-}]);
+        }
 
 
+        function validateEmail(email) {
+            var re =  /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+            return re.test(email);
+        }
 
-function validateEmail(email) {
-    var re =  /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
-    return re.test(email);
-}
+        vm.callback = function($success, $data, $status) {
+		vm.hasError = !$success;
+		if($success){
+			$location.path("/expertmode");
+		}
+		else
+		{
+			vm.error = $data;
+		}
+	}
+    }
+
+
+})();

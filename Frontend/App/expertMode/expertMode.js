@@ -239,9 +239,10 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		
 		if(!existsQueryName(queryName))
 		{
+			console.log(self.categoryName);
 			self.invalidSaveText = [];
 			$requests.saveQuery(self.myCodeMirror.getValue(), self.params, 
-					queryName, self.description, self.category, self.callback);
+					queryName, self.description, self.categoryName, self.callback);
 			// Zurücksetzen der Werte sonst werden sie beim nächsten Öffnen vom Save-Dialog gleich wieder angezeigt.
 			self.name = "";
 			self.description = "";

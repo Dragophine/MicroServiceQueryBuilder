@@ -7,6 +7,7 @@ var app = angular.module('queryBuilder', [
   'queryBuilder.header',
   'queryBuilder.services',
   'queryBuilder.login',
+  'loginService',
   'queryBuilder.expertMode',
   'queryBuilder.register',
   'queryBuilder.querybuilder',
@@ -22,9 +23,29 @@ var app = angular.module('queryBuilder', [
 ])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/', {
-    templateUrl: 'expertMode/expertMode.html'
+    templateUrl: 'login/login.html',
+    controller: 'LoginCtrl',
+        controllerAs: 'login'
+  })
+  .when('/register', {
+      templateUrl: 'register/register.html'
+  })
+  .when('/login', {
+      templateUrl: 'login/login.html'
+  })
+  .otherwise ({ redirectTo: 'login/login.html'
   });
-}]);
+}])
+
+.run(function ($rootScope, $cookies, $location) {
+  $rootScope.$on("$locationChangeStart", function (event, next, current) {
+      //console.log("AUTH"+$rootScope.authenticated);
+    if (!$rootScope.authenticated && ($location.path() == "/expertmode" || $location.path() == "/querybuilder" || $location.path() == "/category" || $location.path() == "/alerting")) {
+      $location.path("/login");
+    }
+
+  });
+});
 
 app.directive('visNetwork', function() {
     return {

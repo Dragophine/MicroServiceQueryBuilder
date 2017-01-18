@@ -15,7 +15,6 @@ angular.module('queryBuilder.category', ['ngRoute', 'queryBuilder.services'])
 	self.description = "";	
   self.id = "";	
   self.existingCategories = [];
-
 	
 	var missingDataModal = document.getElementById('myModalMissingData');
 	var missingDataOkButton = document.getElementById("missingDataOk");

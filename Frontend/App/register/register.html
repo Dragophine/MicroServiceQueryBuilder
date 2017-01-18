@@ -1,66 +1,52 @@
 <!DOCTYPE html>
-<div  ng-controller="registerCtrl as ctrl">
+<div  ng-controller="RegisterController as vm">
   <form class="loginform">
-    <div class="group" >
-      <select  ng-model="ctrl.geschlecht"
-      style="width: 100%; display:block; margin-bottom: 5px">
-        <option value="Frau">Frau</option>
-        <option value="Mann">Mann</option>
-      </select>
-      <label>Geschlecht*</label>
-    </div>
     <div class="group">
-      <input type="text" ng-model="ctrl.anrede">
+      <input type="text" ng-model="vm.user.firstName">
       <span class="highlight"></span><span class="bar"></span>
-      <label>Anrede</label>
+      <label>Vorname</label>
     </div>
     <div class="group">
-      <input type="text" ng-model="ctrl.vorname">
+      <input type="text" ng-model="vm.user.lastName">
       <span class="highlight"></span><span class="bar"></span>
-      <label>Vorname*</label>
+      <label>Nachname</label>
     </div>
     <div class="group">
-      <input type="text" ng-model="ctrl.nachname">
+      <input type="email" ng-model="vm.user.email">
       <span class="highlight"></span><span class="bar"></span>
-      <label>Nachname*</label>
+      <label>E-Mail*</label>
     </div>
     <div class="group">
-      <input type="email" ng-model="ctrl.email">
-      <span class="highlight"></span><span class="bar"></span>
-      <label>Email*</label>
-    </div>
-    <div class="group">
-      <input type="text" ng-model="ctrl.strasse">
-      <span class="highlight"></span><span class="bar"></span>
-      <label>Straße*</label>
-    </div>
-    <div class="group">
-      <input type="number" ng-model="ctrl.hausnummer">
-      <span class="highlight"></span><span class="bar"></span>
-      <label>Hausnummer*</label>
-    </div>
-    <div class="group">
-      <input type="number" ng-model="ctrl.plz">
-      <span class="highlight"></span><span class="bar"></span>
-      <label>Postleitzahl*</label>
-    </div>
-    <div class="group">
-      <input type="text" ng-model="ctrl.ort">
-      <span class="highlight"></span><span class="bar"></span>
-      <label>Ort*</label>
-    </div>
-    <div class="group">
-      <input type="password" ng-model="ctrl.password">
+      <input type="password" ng-model="vm.user.password">
       <span class="highlight"></span><span class="bar"></span>
       <label>Passwort*</label>
     </div>
     <div class="group">
-      <input type="password" ng-model="ctrl.passwordRepeat">
+      <input type="password" ng-model="vm.user.passwordRepeat">
       <span class="highlight"></span><span class="bar"></span>
       <label>Passwort wiederholen*</label>
     </div>
-    <button type="button" class="button buttonBlue" ng-click="ctrl.register($event)">Register
+    <button type="button" class="button buttonBlue" ng-click="vm.register($event)">Register
      
     </button>
+
+   
+<div class="modal fade" id="loginErrorModal" role="dialog">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <h4 class="modal-title">Register error</h4>
+            </div>
+            <div class="modal-body">
+                <label>Folgende Probleme sind aufgetreten : {{vm.text}}</label>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            </div>
+        </div>
+    </div>
+</div>
   </form>
 </div>
+

@@ -47,7 +47,7 @@
 			<input id="description" name="description" type="text" ng-model="ctrl.description"/>
 			<label for="category">Bitte geben Sie eine Kategorie für die Query an: </label>
       <div class="group" >
-        <select  ng-model="ctrl.categoryName" ng-change="ctrl.categoryName"
+        <select   ng-model="ctrl.categoryName" ng-change="ctrl.categoryName"
           style="width: 100%; display:block; margin-bottom: 5px">
           <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
         </select>
