@@ -1,7 +1,14 @@
 <!DOCTYPE html>
 <div>
   <h1>Query </h1>
+  <select  ng-model="ctrl.category" ng-change="ctrl.changeCategories()"
+      style="width: 100%; display:block; margin-bottom: 5px">
+      <option value="">All</option>
+          <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
+          
+      </select> 
   <div class="row top-buffer panel panel-default" ng-repeat="query in ctrl.loadedQueries">
+    <div ng-if= "ctrl.checkCategory(query.category)"> 
     <div class="col-sm-1">
       {{query.id}}
     </div>
@@ -14,6 +21,8 @@
     <div class="col-sm-3">
       {{query.category}}
     </div>
+   </div> 
+    
     <div class="col-sm-2">
       <button ng-click="ctrl.selectQuery(query)" class="top-buffer-verysmall">
         Load

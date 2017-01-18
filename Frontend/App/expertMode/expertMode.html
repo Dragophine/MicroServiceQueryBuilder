@@ -65,15 +65,22 @@
 	  <!-- Modal content - Load Query -->
 	  <div class="modal-content">
 		<h2>Query laden</h2>
+    <div class="group" >
+        <select ng-model="ctrl.categoryName" ng-change="ctrl.changeCategories()"
+          style="width: 100%; display:block; margin-bottom: 5px">
+          <option value="">All</option>
+          <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
+        </select>
+      </div>
 	    <table class="table">
      				<tbody >
       				<tr ng-repeat = "cell in ctrl.queries"> 
-           				<td>
+
+           				<td ng-if = "ctrl.checkCategory(cell.category)">
            				<label>Name: </label>
              				<button ng:click="ctrl.select(cell)" >{{cell.name}}</button>
              				<label>Beschreibung: {{cell.description}}</label>
            				<label>Kategorie: {{cell.category}}</label>
-           				<!--   <label>Query: {{cell.query}}</label> -->
         					</td>
         				</tr>
     				</tbody>
@@ -90,10 +97,17 @@
 	  <!-- Modal content - Load Query -->
 	  <div class="modal-content">
 		<h2>Query löschen</h2>
+     <div class="group" >
+        <select ng-model="ctrl.categoryName" ng-change="ctrl.changeCategories()"
+          style="width: 100%; display:block; margin-bottom: 5px">
+          <option value="">All</option>
+          <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
+        </select>
+      </div>
 	    <table class="table">
      				<tbody >
       				<tr ng-repeat = "cell in ctrl.queries"> 
-           				<td>
+           				<td ng-if = "ctrl.checkCategory(cell.category)">
            				<label>Name: </label>
              				<button ng:click="ctrl.deleteSelectedQuery(cell)" >{{cell.name}}</button>
              				<label>Beschreibung: {{cell.description}}</label>
