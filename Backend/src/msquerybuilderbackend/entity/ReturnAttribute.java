@@ -7,7 +7,6 @@ import org.neo4j.ogm.annotation.NodeEntity;
 public class ReturnAttribute {
 
 	private String attributeName ="";
-	private String returnType ="";
 	private String aggregation="";
 	
 	
@@ -30,15 +29,9 @@ public class ReturnAttribute {
 		return this.attributeName;
 	}
 	
-	public String getReturnType(){
-		return this.returnType;
-	}
 	
 	public void setAttributeName(String at){
 		this.attributeName=at;
 	}
 	
-	public void setReturnType(String ret){
-		this.returnType=ret;
-	}
 }

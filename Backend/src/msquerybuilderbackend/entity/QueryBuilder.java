@@ -18,6 +18,9 @@ private String description;
 //later to change to type Category
 private String category;
 private String limitCount;
+private boolean distinct;
+
+
 //private Set<Parameter> parameter = new HashSet<Parameter>(0);
 private Node node;
  
@@ -85,6 +88,13 @@ public void setCategory(String c){
 	this.category=c;
 }
 
+public boolean isDistinct() {
+	return distinct;
+}
+
+public void setDistinct(boolean distinct) {
+	this.distinct = distinct;
+}
 
 //public void addParameter(Parameter p){
 //	if (parameter==null)

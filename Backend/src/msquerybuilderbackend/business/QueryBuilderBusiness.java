@@ -599,7 +599,7 @@ public class QueryBuilderBusiness {
 		for (ReturnAttribute r : retSet){
 			
 			String returnStatement = " ";
-			if (!r.getReturnType().isEmpty()) returnStatement += (r.getReturnType() + " ");
+			//if (!r.getReturnType().isEmpty()) returnStatement += (r.getReturnType() + " ");
 			if (!r.getAggregation().isEmpty()){
 				if (r.getAggregation().equalsIgnoreCase("none") == false){
 					returnStatement += (r.getAggregation() + "(");

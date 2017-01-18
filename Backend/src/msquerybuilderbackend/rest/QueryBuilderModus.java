@@ -49,6 +49,7 @@ public class QueryBuilderModus {
 	char end='z';
 	Set<Parameter> parameter = new HashSet<Parameter>(0);
 	String query = "";
+	boolean distinct = false;
 	LinkedList<String> filterStatements = new LinkedList<String>();
 	LinkedList<String> actualFilterStatements = new LinkedList<String>();
 	LinkedList<String> orderStatements = new LinkedList<String>();
@@ -77,6 +78,7 @@ public class QueryBuilderModus {
 		String query = "";
 		
 		QueryBuilderStringObject queryBuilderStringObject = new QueryBuilderStringObject();
+		distinct = queryBuilder.isDistinct();
 		
 		Node node = queryBuilder.getNode();
 		
@@ -410,7 +412,7 @@ public class QueryBuilderModus {
 		for (ReturnAttribute r : retSet){
 			
 			String returnStatement = " ";
-			if (!r.getReturnType().isEmpty()) returnStatement += (r.getReturnType() + " ");
+			if (distinct) returnStatement += ("DISTINCT" + " ");
 
 			if (!r.getAggregation().isEmpty()) returnStatement += (r.getAggregation() + "(");
 			returnStatement += (synonyms.get(type) + "." + r.getAttributeName());
