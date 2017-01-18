@@ -228,21 +228,6 @@
                     <div class="clearfix"></div>
                   </div>
                   <div class="panel-body" ng-if="ctrl.isReturnAttributesChecked(key)"> 
-                    <div class="row">
-                      <input  class="col-xs-2" 
-                              style="margin-left: 8.8%"
-                             type="checkbox" 
-                            name="{{'checkbox' + key + 'returnType'}}"
-                            ng-true-value="'distinct'"
-                            ng-false-value="''"
-                            value="distinct"
-                            ng-model="returnType"
-                            ng-click="ctrl.setReturnAttributesValue(key, 'returnType', returnType)"
-                            ng-watch='ctrl.getReturnAttributes(key)'
-                            ng-watch-object-value="returnType">
-                      </input>
-                      <div class="col-xs-3">Distinct</div>
-                    </div>
                     <h3>Aggregation</h3>
                     <div class="row">
                       <input  class="col-xs-2" 

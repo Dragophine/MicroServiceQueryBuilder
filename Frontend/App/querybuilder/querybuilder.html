@@ -38,7 +38,16 @@
       <input type="textarea" class="form-control" id="query"
             ng-model="ctrl.query['limitCount']"  placeholder="Limit Count" />
   </div>
-  
+  <div class="row">
+      <h1>
+        <div class="panel-title pull-left" style="width:15px;">
+          <input  type="checkbox" 
+                  ng-model="ctrl.query['distinct']">
+          </input>
+        </div>
+      Distinct
+      </h1>
+  </div>
 
   <div class="row" ng-if="ctrl.availableNodes.length > 0">
       <h1>Choose Node</h1>
