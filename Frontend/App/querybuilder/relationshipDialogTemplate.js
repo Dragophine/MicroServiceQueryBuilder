@@ -68,13 +68,16 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                 //lösche return Attribute
                 var index = self.relationship['returnAttributes'].indexOf(returnAttribute);
                 self.relationship['returnAttributes'].splice(index, 1); 
+
+                if(self.getOrderByAttributes($key) !== undefined){
+                    self.setOrderByAttributes($key);
+                }
             }
             else
             {
                 //füge attribut hinzu
                 self.relationship['returnAttributes'].push({
                     "attributeName":$key,
-                    "returnType": "",
                     "aggregation" : "NONE"
                 });
             }
@@ -120,18 +123,22 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
             }
             else
             {
+                if(self.getReturnAttributes($key) === undefined){
+                    self.setReturnAttributes($key);
+                }
                 //füge attribut hinzu
                 self.relationship['orderByAttributes'].push({
                     "attributeName":$key,
+                    "id": 1,
                     "direction": "asc"
                 });
             }
         };
 
-        self.setOrderByAttributesValue = function($key, $value){
+        self.setOrderByAttributesValue = function($key, $type, $value){
             var orderByAttribute = self.getOrderByAttributes($key);
             if(orderByAttribute !== undefined){
-                orderByAttribute["direction"] = $value;
+                orderByAttribute[$type] = $value;
             }
         };
         

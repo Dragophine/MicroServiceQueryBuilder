@@ -44,9 +44,8 @@
           <input  type="checkbox" 
                   ng-model="ctrl.query['distinct']">
           </input>
-        </div>
-      Distinct
-      </h1>
+        </div> Distinct
+       </h1>
   </div>
 
   <div class="row" ng-if="ctrl.availableNodes.length > 0">
@@ -150,7 +149,25 @@
   
 
 <!--   <h1>TEST: {{ctrl.table}}</h1> -->
-  
+  <div class="row top-buffer">
+    <h1>Query</h1>
+    <div>
+    {{ctrl.displayQuery.query}}
+    </div>
+    <div class="panel panel-default col-xs-3 top-buffer" style="display: inline;margin-left: 5px; margin-right: 5px;"
+             ng-repeat="parameter in ctrl.displayQuery.parameter" >
+        <div class="panel-body">
+          <h3>{{parameter.key}}</h3>
+          <div class="left-buffer-0 row">
+            Type: {{parameter.type}}
+          </div>
+          <div  class="left-buffer-0 row">
+           Value: {{parameter.value}}
+          </div>
+        </div>
+    </div>
+  </div>
+
   <div class="row top-buffer">
     <div class="table"  ng-if="!ctrl.hasError && ctrl.table !== ''
                               && ctrl.table !== undefined && ctrl.table !== null">

@@ -21,6 +21,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	"node":""          
     }
 
+   	self.displayQuery = "";
+
     self.nodeIDStore = {};
     self.relationshipIDStore = {};
     /**
@@ -39,6 +41,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	/**
 		Result Properties
 	*/
+
 	self.table = "";
 	self.hasError = false;
 	self.error = "";
@@ -139,6 +142,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     ]);
     */
 
+
+
     self.showInfoDialog = function($data, infoClosePromis){
     	var dialog = ngDialog.open({ template: 'querybuilder/infoDialog.html',
         				className: 'ngdialog-theme-default custom-width',
@@ -155,6 +160,28 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	/**
 	Query Operations
 	*/
+	self.getQueryCallback = function($success, $data, $status){
+		if($success){
+			self.displayQuery = $data;
+		}
+		else
+		{
+			self.displayQuery = "";
+		}
+    }
+
+    self.getQuery = function(){
+    	$requests.getQueryFromQueryQueryBuilder(self.query, self.getQueryCallback);
+    }
+
+    $scope.$watchCollection("self.query.distinct", function (newVal, oldVal) { 
+    	self.getQuery();
+    }, true);
+
+    $scope.$watchCollection("self.query.limitCount", function (newVal, oldVal) { 
+    	self.getQuery();
+    }, true);
+
 	self.executeQueryCallback = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
@@ -167,6 +194,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	}
 
 	self.executeQuery = function() {
+		self.getQuery();
 		$requests.getResultFromQueryQueryBuilder(self.query, self.executeQueryCallback);
 	}
 
@@ -194,6 +222,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 	self.saveQuery = function(){
 		var $data =self.checkInputData();
+
     	if($data === undefined){
 
     		$requests.saveQueryInBuilder(self.query, self.saveQueryCallback);
@@ -202,7 +231,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	{
     		self.showInfoDialog($data);
     	}
-		
+		self.getQuery();
 	}
 
 	self.updateQueryCallback = function($success, $data, $status) {
@@ -233,7 +262,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	{
     		self.showInfoDialog($data);
     	}
-		
+		self.getQuery();
 	}
 
 	self.checkInputData = function(){
@@ -287,6 +316,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
         		self.selectedNode = undefined;
         		self.selectedRelation = undefined;
         		self.table = "";
+        		self.getQuery();
         		self.hasError = false;
 
         		if(
@@ -312,7 +342,6 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 				"head":"Successfully deleted",
 				"content":"The query was saved successfully deleted."
 			};
-			self.newQuery();
 		}
 		else
 		{
@@ -321,7 +350,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 				"content":"Error when deleting the query. Info: " + $data
 			};
 		}
-
+		self.getQuery();
 		 self.showInfoDialog($data);
 	}
 
@@ -342,6 +371,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	    self.selectedNode = undefined;
 		self.selectedRelation = undefined;
 		self.table = "";
+		self.getQuery();
 		self.hasError = false;
 
 	    $requests.getNodes(self.getNodesCB);
@@ -378,7 +408,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		
 
 		self.availableNodes = [];
-
+		self.getQuery();
 		self.transfairToGraph(self.network);
 	}
 
@@ -430,7 +460,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 				self.selectedRelation = undefined;
 			};
 		}
-		
+		self.getQuery();
 		self.transfairToGraph(self.network);
 		$scope.$apply();
 	}
@@ -606,7 +636,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 				self.showInfoDialog($dataForDialog, infoClosePromis);
 	    		
 	    	}
-	    	
+	    	self.getQuery();
 			self.transfairToGraph($network);
 			 
 		});
@@ -641,7 +671,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 					self.showInfoDialog($dataForDialog, infoClosePromis);
 		    		
 		    	}
-		    	
+		    	self.getQuery();
 				self.transfairToGraph($network);
 			});
     }

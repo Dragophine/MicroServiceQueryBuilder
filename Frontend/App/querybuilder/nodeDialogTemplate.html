@@ -326,13 +326,14 @@
                       <div class="clearfix"></div>
                     </div>
                     <div class="panel-body" ng-if="ctrl.isOrderByAttributesChecked(key)"> 
-                       <div class="row">
+
+                        <div class="row">
                           <input  class="col-xs-2" 
                               style="margin-left: 8.8%" type="radio" 
                             name="{{'radio' + key}}"
                             value="asc"
                             ng-model="value"
-                            ng-click='ctrl.setOrderByAttributesValue(key, value)'
+                            ng-click="ctrl.setOrderByAttributesValue(key,'direction', value)"
                             ng-watch='ctrl.getOrderByAttributes(key)'
                             ng-watch-object-value="direction">
                           </input>
@@ -345,11 +346,22 @@
                             name="{{'radio' + key}}"
                             value="desc"
                             ng-model="value"
-                            ng-click='ctrl.setOrderByAttributesValue(key, value)'
+                            ng-click="ctrl.setOrderByAttributesValue(key, 'direction', value)"
                             ng-watch='ctrl.getOrderByAttributes(key)'
                             ng-watch-object-value="direction">
                             <div class="col-xs-3">DESC</div>
                           </input>
+                        </div>
+
+                        <div>
+                          <h3>ID</h3>
+                          <input type="number" step="1" class="form-control" id="query" 
+                              ng-change="ctrl.setOrderByAttributesValue(key, 'id', id)" 
+                              ng-watch='ctrl.getOrderByAttributes(key)'
+                              ng-watch-object-value="id"
+                              ng-model="id"
+                              
+                              min="1" max="99"/>
                         </div>
                       </div>
                     </div>

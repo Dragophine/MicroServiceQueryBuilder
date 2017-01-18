@@ -67,6 +67,28 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
+    //Execute Query with Querybuilder
+    this.getQueryFromQueryQueryBuilder = function($query, $callback) {
+        $http({
+            method : 'POST',
+            url : $serverRestLocation.getValue() + '/queryBuilder/queryString', 
+            headers: {  'Content-Type':'application/json'},
+            data:      $query
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    };
+
 
 
     this.register = function($user,  $callback) {  
