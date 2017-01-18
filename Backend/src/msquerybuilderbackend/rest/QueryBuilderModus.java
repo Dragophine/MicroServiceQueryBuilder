@@ -78,7 +78,7 @@ public class QueryBuilderModus {
 		String query = "";
 		
 		QueryBuilderStringObject queryBuilderStringObject = new QueryBuilderStringObject();
-		distinct = queryBuilder.isDistinct();
+		distinct = queryBuilder.getDistinct();
 		
 		Node node = queryBuilder.getNode();
 		

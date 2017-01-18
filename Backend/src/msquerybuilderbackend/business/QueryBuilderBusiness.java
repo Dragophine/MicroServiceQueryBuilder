@@ -420,7 +420,7 @@ public class QueryBuilderBusiness {
 		synonyms.clear();
 		synonym = 'a';
 		String query = "";
-		distinct = queryBuilder.isDistinct();
+		distinct = queryBuilder.getDistinct();
 		
 		Node node = queryBuilder.getNode();
 		
