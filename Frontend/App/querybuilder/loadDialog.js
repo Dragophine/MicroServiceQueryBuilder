@@ -8,16 +8,20 @@ angular.module('queryBuilder.querybuilderLoadDialog', ['ngRoute'])
     function($requests, $scope) {
         var self = this;
 
-        self.loadedQueries = [
-        ];    
+        self.category = undefined;
+        self.name = undefined;
+        self.description = undefined;
 
-        self.loadAllQueriesInBuilderCB = function($success, $data, $status){
+        self.loadedQueries = [ ];    
+        self.availableCategories = [];
+
+        self.loadQueriesInBuilderCB = function($success, $data, $status){
             if($success){
                 self.loadedQueries = $data;
             }
         }
 
-	    $requests.loadAllQueriesInBuilder(self.loadAllQueriesInBuilderCB);
+	    $requests.loadAllQueriesInBuilder( self.loadQueriesInBuilderCB);
 
         self.selectQuery = function($query){
              $scope.closeThisDialog($query);
@@ -25,7 +29,7 @@ angular.module('queryBuilder.querybuilderLoadDialog', ['ngRoute'])
 
         self.deleteQueryCallback = function($success, $data, $status) {
             if($success){
-                $requests.loadAllQueriesInBuilder(self.loadAllQueriesInBuilderCB);
+                $requests.loadAllQueriesInBuilder(self.loadQueriesInBuilderCB);
             }
             
         }
@@ -34,32 +38,33 @@ angular.module('queryBuilder.querybuilderLoadDialog', ['ngRoute'])
             $requests.deleteQueryInBuilder($id, self.deleteQueryCallback);
         }
 
-        	self.availableCategories = [];
+        /**
+        Apply filter
+        */
+        self.applyFilter = function() {
+            $requests.loadSomeQueriesInBuilder(self.loadQueriesInBuilderCB, self.name, self.category, self.description);
+         }	
 
 			/**
-	Method for categories
+	Load category
 	*/
-	self.getCategories = function($success, $data, $status){
-		self.hasError = !$success;
-		if($success){
 
-			self.availableCategories = $data;
-		}
-		else
-		{
-			self.error = $data;
-		}
-	}
-	self.category = "";
+    self.getCategoriesCallBack = function($success, $data, $status){
+        self.hasError = !$success;
+        if($success){
 
-	$requests.getAllCategories(self.getCategories);
+            self.availableCategories = $data;
+        }
+        else
+        {
+            self.error = $data;
+        }
+    }
 
-    	self.changeCategories = function() {
-		self.category = self.category;
-	}
-	self.checkCategory = function($category) {
+    $requests.getAllCategories(self.getCategoriesCallBack);
 
-		return $category == self.category || self.category == ""
 
-	};
+    
+
+	
 }]);

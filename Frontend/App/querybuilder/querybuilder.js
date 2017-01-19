@@ -174,13 +174,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	$requests.getQueryFromQueryQueryBuilder(self.query, self.getQueryCallback);
     }
 
-    $scope.$watchCollection("self.query.distinct", function (newVal, oldVal) { 
-    	self.getQuery();
-    }, true);
-
-    $scope.$watchCollection("self.query.limitCount", function (newVal, oldVal) { 
-    	self.getQuery();
-    }, true);
+   
 
 	self.executeQueryCallback = function($success, $data, $status) {
 		self.hasError = !$success;
