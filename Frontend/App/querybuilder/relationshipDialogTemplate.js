@@ -174,12 +174,18 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                 //lösche return Attribute
                 //lösche return Attribute
                 var index = self.relationship['filterAttributes'].indexOf(filterAttribute);
+
+                if(self.relationship['filterAttributes'].length - 1 === index && index !== 0){
+                    self.relationship['filterAttributes'][index - 1].logic = "";
+                }
+
                 self.relationship['filterAttributes'].splice(index, 1); 
             }
             else
             {
                 var newFilterAttribute = {
                         "attributeName":$key,
+                        "logic":"",
                         "filters": [
                             {
                                 "id":0,         //Fuer Frontend
@@ -197,8 +203,38 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                 self.relationship['filterAttributes'].push(
                     newFilterAttribute
                 );
+                 //sort alphabetically
+                self.relationship['filterAttributes'] = self.relationship['filterAttributes'].sort(function(x, y) {
+                    if (x['attributeName'] == y['attributeName']) return 0;
+                    else if (x['attributeName'] < y['attributeName']) return -1;
+                    else return 1;
+                });
+                //add logic to index +1 and index - 1 if not available
+                var index = self.relationship['filterAttributes'].indexOf(newFilterAttribute);
+
+                if(index > 0){
+                    if(self.relationship['filterAttributes'][index - 1].logic === "" ||
+                        self.relationship['filterAttributes'][index - 1].logic === undefined){
+                        self.relationship['filterAttributes'][index - 1].logic = "AND";
+                    };
+                }
+                if(self.relationship['filterAttributes'].length - 1 > index  ){
+                    self.relationship['filterAttributes'][index].logic = "AND";
+                }
+                console.log(self.relationship);
             }
-            console.log(self.relationship);
+        };
+
+        self.setFilterAttributesValue = function($key, $type, $value){
+            var filterAttributes = self.getFilterAttributes($key);
+
+            if(filterAttributes != undefined
+                && filterAttributes[$type] !== $value){
+                filterAttributes[$type] = $value;
+            }
+
+            console.log("Set key: " + $key + ", type: " + $type + 
+                            + ", id: " + $id + ", value: " + $value );
         };
 
         self.getFilterAttributesFilter = function($key, $id){
@@ -277,7 +313,7 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                     var filterAttributesFilter = self.getFilterAttributesFilter($key, $id);
                     if(filterAttributesFilter != undefined){
                         var index = filterAttributes.filters.indexOf(filterAttributesFilter);
-                        if(filterAttributes.filters.length - 1 === index){
+                        if(filterAttributes.filters.length - 1 === index  && index !== 0){
                             filterAttributes.filters[index - 1].logic = "";
                         }
                         

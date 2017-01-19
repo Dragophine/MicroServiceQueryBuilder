@@ -211,6 +211,36 @@
                         ADD
                     </button>
                   </div>
+                  <div ng-if='ctrl.getFilterAttributes(key).logic !== "" &&
+                              ctrl.getFilterAttributes(key).logic !== undefined'>
+                    <h3>Logic for next element</h3>
+                    <div class="row">
+                      <input  class="col-xs-2" 
+                              style="margin-left: 8.8%"
+                              type="radio" 
+                            name="{{'radio' + key  + 'andOR'}}"
+                            value="AND"
+                            ng-model="logic"
+                            ng-click="ctrl.setFilterAttributesValue(key, 'logic', logic)"
+                            ng-watch='ctrl.getFilterAttributes(key)'
+                            ng-watch-object-value="logic">
+                      </input>
+                      <div class="col-xs-3">AND</div>
+                    </div>
+                    <div class="row">
+                      <input  class="col-xs-2" 
+                              style="margin-left: 8.8%"
+                              type="radio" 
+                            name="{{'radio' + key + 'andOR'}}"
+                            value="OR"
+                            ng-model="logic"
+                            ng-click="ctrl.setFilterAttributesValue(key, 'logic', logic)"
+                            ng-watch='ctrl.getFilterAttributes(key)'
+                            ng-watch-object-value="logic">
+                      </input>
+                      <div class="col-xs-3">OR</div>
+                    </div>
+                  </div>
                 </div>
               </div>
               <div class="col-md-3">

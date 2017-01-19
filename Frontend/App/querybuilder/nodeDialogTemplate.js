@@ -227,7 +227,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 					newFilterAttribute
 				);
 				//sort alphabetically
-				self.node['filterAttributes'].sort(function(x, y) {
+				self.node['filterAttributes'] = self.node['filterAttributes'].sort(function(x, y) {
 			        if (x['attributeName'] == y['attributeName']) return 0;
 			        else if (x['attributeName'] < y['attributeName']) return -1;
 			        else return 1;
