@@ -2,6 +2,7 @@ package msquerybuilderbackend.business;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
@@ -642,12 +644,30 @@ public class QueryBuilderBusiness {
 //		System.out.println(categoryParam);
 //		System.out.println(nameParam);
 //		System.out.println(descParam);
-		if (category==null)category="";
-		if (name==null) name="";
-		if (description==null)description="";
+		if (category==null){
+			category=".*.*";
+		}else{
+			category=".*"+category.trim()+".*";
+		}
+		if (name==null){
+			name=".*.*";
+		}else{
+			name=".*"+name+".*";
+		}
+		if (description==null){
+			description=".*.*";
+			
+		}else{
+			description=".*"+description+".*";
+		}
+//		List<QueryBuilderJsonStringObject> categoryList=queryBuilderJsonStringObjectRepository.searchByCategory(category.trim());
+//		List<QueryBuilderJsonStringObject> nameList=queryBuilderJsonStringObjectRepository.searchByName(name);
+//		List<QueryBuilderJsonStringObject> descList=queryBuilderJsonStringObjectRepository.searchByDescription(description);
+//		
+//		Collection<QueryBuilderJsonStringObject> commonList = CollectionUtils.retainAll(categoryList, nameList);
+//		Collection<QueryBuilderJsonStringObject> commonList2= CollectionUtils.retainAll(commonList, descList);
 		
-		
-		List<QueryBuilderJsonStringObject> qbjso= queryBuilderJsonStringObjectRepository.searchByParameter(description, name, category );
+		List<QueryBuilderJsonStringObject> qbjso= queryBuilderJsonStringObjectRepository.searchByParameter(description, name, category);
 		Set<QueryBuilder> querybuilders = new HashSet<QueryBuilder>();
 		ObjectMapper mapper = new ObjectMapper();
 		for ( QueryBuilderJsonStringObject qb: qbjso ){

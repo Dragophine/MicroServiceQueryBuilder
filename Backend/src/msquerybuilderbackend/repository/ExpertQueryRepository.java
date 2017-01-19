@@ -23,6 +23,6 @@ public interface ExpertQueryRepository extends GraphRepository<ExpertQuery> {
 	@Query("MATCH (e:ExpertQuery) return e")
 	  List<ExpertQuery> getAllExpertQueries();
 	
-	@Query("MATCH(n:ExpertQuery)-[p]->(c:Category) where  n.description=~'.*{0}.*' and n.name=~'.*{1}.*' and c.name=~'.*{2}.*' return n")
+	@Query("MATCH(n:ExpertQuery)-[p]->(c:Category) where  n.description=~{0} and n.name=~{1} and c.name=~{2} return n")
 	Set<ExpertQuery> searchByParameter(String desc,String name, String category);
 }

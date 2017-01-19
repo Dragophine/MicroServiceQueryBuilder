@@ -24,7 +24,7 @@ public class SwaggerConfig {
 
 	private ApiInfo apiInfo() {
 		ApiInfo defaultinfo = ApiInfo.DEFAULT;
-		ApiInfo apiInfo = new ApiInfo("MicroServiceSystemDocumentation", "Service for Managing Microservice Architectures", defaultinfo.getVersion(), defaultinfo.getTermsOfServiceUrl(), new Contact("Benjamin Mayer", "https://www.se.jku.at/", "benjamin@mayerb.net"), defaultinfo.getLicense(), defaultinfo.getLicenseUrl());
+		ApiInfo apiInfo = new ApiInfo("MicroServiceQueryBuilderBackend", "Service for Querying Neo4j", defaultinfo.getVersion(), defaultinfo.getTermsOfServiceUrl(), new Contact("", "", ""), defaultinfo.getLicense(), defaultinfo.getLicenseUrl());
 		return apiInfo;
 	}
 

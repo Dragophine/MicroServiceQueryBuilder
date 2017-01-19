@@ -228,10 +228,22 @@ public class ExpertQueryBusiness {
 	
 	
 	public Set<ExpertQueryJsonObject> getExpertQueryBySearch(String category, String name, String description){
-
-		if (category==null)category="";
-		if (name==null) name="";
-		if (description==null)description="";
+		if (category==null){
+			category=".*.*";
+		}else{
+			category=".*"+category.trim()+".*";
+		}
+		if (name==null){
+			name=".*.*";
+		}else{
+			name=".*"+name+".*";
+		}
+		if (description==null){
+			description=".*.*";
+			
+		}else{
+			description=".*"+description+".*";
+		}
 		
 		
 		Set<ExpertQuery> expertqueries= expertQueryRepository.searchByParameter(description, name, category );
