@@ -6,7 +6,10 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.data.neo4j.repository.config.EnableNeo4jRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
-
+/**
+ * @author drago
+ * Main method to start the application via Spring Framework
+ */
 @SpringBootApplication
 @EnableScheduling
 @EnableAutoConfiguration

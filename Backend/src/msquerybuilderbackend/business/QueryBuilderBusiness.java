@@ -41,6 +41,11 @@ import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
 import msquerybuilderbackend.repository.QueryBuilderJsonStringRepository;
 
+/**
+ * Class for all activities with neo4j database regarding the entity QueryBuilder in the application and QueryBuilderJsonStringObject in the neo4j database
+ * @author drago
+ *
+ */
 @Component
 public class QueryBuilderBusiness {
 
@@ -56,10 +61,15 @@ public class QueryBuilderBusiness {
 	Neo4jOperations neo4jOperations;
 	Neo4jTemplate temp;
 	
-	//required global variables
 	
-
-	public Result executeQueryBuilderQuery(QueryBuilder queryBuilder) throws Exception{
+	
+/**
+ * method which builds the query of a given queryBuilder and executes this query in the neo4j database
+ * @param queryBuilder is the given queryBuilder the query is built of
+ * @return a Result of the executed query
+ * @throws Exception if a value and its given type of the queryBuilder object do not match (through the queryBuilderWriterBusiness)
+ */
+	public Result executeQueryBuilderQuery(QueryBuilder queryBuilder) throws Exception  {
 	//	Map<String,Object> paramsMap = new HashMap<String,Object>();
 		Map<String,Object> paramsMap = new HashMap<String,Object>();
 		Result result = null;
@@ -73,6 +83,14 @@ public class QueryBuilderBusiness {
 		return result;
 	}
 	
+	/**
+	 * method which checks if the name of the object already exists and returns 0L, 
+	 * otherwise it creates a QueryBuilderJsonStringObject with the given QueryBuilder Objects and also the ExpertQuery for this object, maps them, and saves it in the neo4j database
+	 * @param queryBuilder is the given object which has to be converted to a QueryBuilderJsonStringObject
+	 * @return the neo4j ID of the created object
+	 * @throws JsonProcessingException if the QueryBuilder Object cannot be parsed into a JSONString
+	 * @throws Exception if a value and its given type of the queryBuilder object do not match (through the queryBuilderWriterBusiness)
+	 */
 	public Long createQueryBuilder(QueryBuilder queryBuilder) throws JsonProcessingException, Exception{
 
 		QueryBuilderJsonStringObject alreadyUsedName= queryBuilderJsonStringObjectRepository.findByName(queryBuilder.getName());
@@ -122,12 +140,22 @@ public class QueryBuilderBusiness {
 	}
 
 	
+	/**
+	 * method which generates the queryString of a given QueryBuilder object
+	 * @param queryBuilder is the given object the queryString is built with
+	 * @return an ExpertQuery Object with the generated queryString and the parameters
+	 * @throws Exception if a value and its given type of the queryBuilder object do not match (through the queryBuilderWriterBusiness)
+	 */
 	public ExpertQuery generateQueryBuilderQueryString(QueryBuilder queryBuilder) throws Exception{
 		QueryBuilderWriterBusiness queryBuilderWriterBusiness = new QueryBuilderWriterBusiness();
 		return queryBuilderWriterBusiness.writeQueryBuilderString(queryBuilder);
 	}
 	
 	
+	/**
+	 * method which deletes a certain QueryBuilderJsonStringObject in the neo4j database and also the mapped ExpertQuery
+	 * @param queryId is the ID of the object to delete; can be the neo4j ID or the unique name
+	 */
 	public void deleteQueryBuilder(String queryId){
 		QueryBuilderJsonStringObject qbjso=null;
 		Long id = new Long(-1);
@@ -172,6 +200,15 @@ public class QueryBuilderBusiness {
 
 	}
 	
+	
+	/**
+	 * method which updates a certain QueryBuilderJsonStringObject in the neo4j database and also the mapped ExpertQuery object
+	 * @param queryId is the ID of the object to update; can be the neo4j ID or the unique name
+	 * @param updatedQuery is the QueryBuilder object with the new content
+	 * @return the updated QueryBuilderJsonStringObject
+	 * @throws JsonProcessingException if the QueryBuilder object updatedQuery cannot be parsed to a JSONString
+	 * @throws Exception if a value and its given type of the queryBuilder object do not match (through the queryBuilderWriterBusiness)
+	 */
 	public QueryBuilderJsonStringObject updateQueryBuilder(String queryId, QueryBuilder updatedQuery) throws JsonProcessingException, Exception{
 		QueryBuilderJsonStringObject qbjso=null;
 		Long id = new Long(-1);
@@ -256,6 +293,11 @@ public class QueryBuilderBusiness {
 
 	}
 	
+	
+	/**
+	 * method which queries all the QueryBuilderJsonStringObject objects in the neo4j database and converts them to QueryBuilder object for the frontend by parsing the saved JSONstrings as QueryBuilder
+	 * @return a Set of all queried QueryBuilderJsonStringObjects as QueryBuilder objects
+	 */
 	public Set<QueryBuilder> getAllQueryBuilder(){
 		Iterable<QueryBuilderJsonStringObject> qbjso= queryBuilderJsonStringObjectRepository.findAll();
 		Set<QueryBuilder> querybuilders = new HashSet<QueryBuilder>();
@@ -284,6 +326,12 @@ public class QueryBuilderBusiness {
 		return querybuilders;
 	}
 	
+	
+	/**
+	 * method which queries a certain QueryBuilderJsonStringObject object and converts it into a QueryBuilder object for the frontend
+	 * @param queryId is the ID of the certain QueryBuilderJsonStringObject object; can be the neo4j ID or the unique name
+	 * @return the queried object from the database already converted to a QueryBuilder object
+	 */
 	public QueryBuilder getQueryBuilder(String queryId){
 		QueryBuilderJsonStringObject qbjso=null;
 		Long id = new Long(-1);
@@ -330,7 +378,11 @@ public class QueryBuilderBusiness {
 			return queryBuilder;
 	}
 	
-	
+	/**
+	 * method which executed the queryString of a certain QueryBuilderJsonStringObject object from the neo4j databases
+	 * @param queryId is the ID of the object; can be the neo4j ID or the unique name
+	 * @return a Result of the executed query from the neo4j database
+	 */
 	public Result getQueryBuilderExecute(String queryId){
 		QueryBuilderJsonStringObject qbjso=null;
 		Long id = new Long(-1);
@@ -370,6 +422,11 @@ public class QueryBuilderBusiness {
 		return result;
 	}
 	
+	/**
+	 * method which queries the ExpertQuery (with the queryString and the parameters) from the neo4j database of a certain QueryBuilderJsonStringObject object 
+	 * @param queryId is the id of the object the ExpertQuery object is queried; can be the neo4j ID or the unique name
+	 * @return an ExpertQueryObject of the certain QuerybuilderJsonStringObject object from the neo4j database
+	 */
 	public ExpertQuery getQueryBuilderQueryString(String queryId){
 		QueryBuilderJsonStringObject qbjso=null;
 		Long id = new Long(-1);
@@ -396,6 +453,14 @@ public class QueryBuilderBusiness {
 		return qbjso.getExpertQuery();
 	}
 
+	/**
+	 * method which queries QueryBuilderJsonStringObject objects from the neo4j database with certain parameters and
+	 * converts the object to QueryBuilder objects for the frontend
+	 * @param category is the category the queried objects have to be in
+	 * @param name is the name or the pattern which the objects have to be named with or have to contain in the name
+	 * @param description is the pattern which the objects have to contain in the description
+	 * @return a Set of the found QueryBuilderJsonStringObject objects already converted to QueryBuilder objects
+	 */
 	public Set<QueryBuilder> getQueryBuilderBySearch(String category, String name, String description){
 //		String categoryParam="";
 //		if(category!=null) {

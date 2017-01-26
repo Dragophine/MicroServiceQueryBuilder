@@ -4,7 +4,19 @@ import msquerybuilderbackend.entity.Alert;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.exception.InvalidTypeException;
 
+
+/**
+ * Class which contains method to check types if their value is from the given type and throws an execution if nots
+ * @author drago
+ *
+ */
 public class AttributeTypes {
+	
+	/**
+	 * method which tests the types of a given alert if their value is from the given type
+	 * @param a is the given alert to check
+	 * @throws Exception when a given value is not from the given type
+	 */
 	 public static void testTypes(Alert a) throws Exception{
 	    	switch(a.getType()){
 		case "int":
@@ -102,7 +114,12 @@ public class AttributeTypes {
 		}
 	    }	
 	 
-	    public static void testTypes(Parameter p) throws Exception{
+	 /**
+	  * method which tests the types of a given parameter if their value is from the given type
+	  * @param p is the given parameter to check
+	  * @throws Exception when a gien value is not from the given type
+	  */
+	 public static void testTypes(Parameter p) throws Exception{
 	    	switch(p.getType()){
     		case "int":
     		case "integer":

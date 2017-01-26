@@ -27,6 +27,11 @@ import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.repository.AlertRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
+/**
+ * Class for all activities with neo4j database regarding the entity Alert
+ * @author Martin
+ *
+ */
 
 @Component
 public class AlertBusiness {
@@ -50,7 +55,13 @@ public class AlertBusiness {
 	@Autowired
 	ExpertQueryRepository expertQueryRepository;
 	
-	
+	/**
+	 * checks whether the name of the given alert already exits and returns 0L if true,
+	 * otherwise the types of the alerts are tested and the alert saved
+	 * @param alert is the alert to create in the neo4j database
+	 * @return the neo4j id of the new created alert
+	 * @throws Exception
+	 */
 	public Long createAlert(Alert alert) throws Exception{
 	Alert alreadyUsedName= alertRepository.findByName(alert.getName());
 		if (alreadyUsedName != null){
@@ -66,12 +77,23 @@ public class AlertBusiness {
 	}
 	
 	
+	/**
+	 * method which generates a List of all names of alerts
+	 * @return a list of all names of alerts as Strings
+	 */
 	public List<String> getNameList(){
 		 List<String> names = alertRepository.getNames();
 		 return names;
 	}
 	
-	public Alert updateAlert(String alertId, Alert al) throws Exception{
+	/**
+	 * method which updates a given alert in the neo4j database
+	 * @param alertId is the id of the alert to be updated; can be the unique name or the neo4j ID
+	 * @param al is the alert object with the new content
+	 * @return the updated alert
+	 * @throws Exception when the types given in the alert are not true (i.e. given type integer but the value is a string)
+	 */
+	public Alert updateAlert(String alertId, Alert al) throws Exception {
 		AttributeTypes.testTypes(al);
 		Alert alert=null;		
 		Long id = new Long(-1);
@@ -108,11 +130,21 @@ public class AlertBusiness {
 		return alert;
 	}
 	
+	
+	/**
+	 * method which queries all alerts from the neo4j database
+	 * @return a list with all alerts which are in the neo4j database
+	 */
 	public List<Alert> getAllAlerts(){
 		List<Alert> alerts= alertRepository.getAllAlerts();
 		return alerts;
 	}
 	
+	/**
+	 * method which queries a certain alert from the neo4j database
+	 * @param alertId is the id from the alert to look for; can be the neo4j ID or the unique name
+	 * @return an alert object with content of the in the neo4j database found alert
+	 */
 	public Alert getAlert(String alertId){
 		Alert alert=null;
 		if (Long.parseLong(alertId) >=0){
@@ -124,6 +156,11 @@ public class AlertBusiness {
 		return alert;
 	}
 	
+	/**
+	 * method which queries a certain alert and executes it in the neo4j database
+	 * @param alertId is the id of the alert to be executed; can be the unique name or the neo4j ID
+	 * @return a neo4j result of the alert's executed query
+	 */
 	public ResponseEntity<Result> executeAlert(String alertId){
 		Alert alert=null;
 		Long id = new Long(-1);
@@ -202,6 +239,10 @@ public class AlertBusiness {
 	}
 	
 	
+	/**
+	 * method which deletes a certain alert in the neo4j database
+	 * @param alertId is the id of the alert to be deleted; can be the neo4j ID or the unique name
+	 */
 	public void deleteAlert(String alertId){
 		Alert alert=null;
 		Long id = new Long(-1);
@@ -228,6 +269,9 @@ public class AlertBusiness {
 		alertRepository.delete(alert);		
 	}
 	
+	/**
+	 * method which executesAllAlerts; is needed for the periodic execution of alerts
+	 */
 	public void executeAllAlerts(){
 		List<Alert> F_alerts = getAllAlerts();
 		if(F_alerts != null)
@@ -390,8 +434,11 @@ public class AlertBusiness {
 		}
 	}
 	
+	
 	/**
-	 * Die Meldung wird nur zum Buffer hinzugefügt wenn die Alert-Bedinung erreicht wurde.
+	 * method which checks if an alert constraint was reached and therefore if the message should be added to the buffer
+	 * @return true or false 
+	 * 
 	 */
 	public boolean shouldAddToMessageBuffer(String Ps_actualValue, Alert P_alert)
 	{
@@ -437,6 +484,8 @@ public class AlertBusiness {
 		}
 		return Fb_addMessageToBuffer;
 	}
+	
+	
 	
 	public boolean checkCompareToValue(int Pi_compareToValue, String Ps_filterType)
 	{
