@@ -30,13 +30,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
 import msquerybuilderbackend.business.QueryBuilderBusiness;
+import msquerybuilderbackend.business.QueryBuilderWriterBusiness;
 import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Node;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.entity.QueryBuilder;
 import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
-import msquerybuilderbackend.entity.QueryBuilderStringObject;
 import msquerybuilderbackend.exception.InvalidTypeException;
 import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;

@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import msquerybuilderbackend.business.AttributeTypes;
+import msquerybuilderbackend.business.QueryBuilderWriterBusiness;
 import msquerybuilderbackend.entity.Filters;
 import msquerybuilderbackend.entity.FilterAttribute;
 import msquerybuilderbackend.entity.Node;
 import msquerybuilderbackend.entity.OrderByAttribute;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.entity.QueryBuilder;
-import msquerybuilderbackend.entity.QueryBuilderStringObject;
 import msquerybuilderbackend.entity.Relationship;
 import msquerybuilderbackend.entity.ReturnAttribute;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
@@ -77,7 +77,6 @@ public class QueryBuilderModus {
 		synonym = 'a';
 		String query = "";
 		
-		QueryBuilderStringObject queryBuilderStringObject = new QueryBuilderStringObject();
 		distinct = queryBuilder.getDistinct();
 		
 		Node node = queryBuilder.getNode();
@@ -278,7 +277,7 @@ public class QueryBuilderModus {
 	}
 	
 	
-	private QueryBuilderStringObject buildQueryRecursive(QueryBuilderStringObject qb){	
+	private QueryBuilderWriterBusiness buildQueryRecursive(QueryBuilderWriterBusiness qb){	
 		return qb;
 	}
 	
