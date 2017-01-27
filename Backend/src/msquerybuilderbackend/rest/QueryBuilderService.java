@@ -43,6 +43,10 @@ import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
 import msquerybuilderbackend.repository.QueryBuilderJsonStringRepository;
 
+/** Service class/controller for QueryBuilder (QueryBuilderJsonStringObject) REST services
+* @author drago
+*
+*/
 @RestController
 public class QueryBuilderService {
 
@@ -63,7 +67,11 @@ public class QueryBuilderService {
 		@Autowired
 		QueryBuilderBusiness queryBuilderBusiness;
 		
-	
+		/**
+		 * method which gets the POST-request and calls the QueryBuilderBusiness method
+		 * builds a query from the given QueryBuilder and executes it in the neo4j database
+		 * @return the result of execution
+		 */
 			@CrossOrigin 
 			//CrossOrigin request allow to call a different server from
 			//a certain frontend hosted on a certain address.
@@ -76,11 +84,22 @@ public class QueryBuilderService {
 				return new ResponseEntity<Result>(queryBuilderBusiness.executeQueryBuilderQuery(queryBuilder), HttpStatus.OK);
 		    }	
 			
+			/**
+			 * method which gets the POST-request and calls the QueryBuilderBusiness method
+			 * builds a query from the given QueryBuilder
+			 * @return the built ExpertQuery (queryString with parameters)
+			 */
 			 @RequestMapping(value="/queryBuilder/queryString",  method=RequestMethod.POST)
 			    public ResponseEntity<ExpertQuery> generateQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
 					return new ResponseEntity<ExpertQuery>(queryBuilderBusiness.generateQueryBuilderQueryString(queryBuilder), HttpStatus.OK);
 			    }
 			
+			 
+				/**
+				 * method which gets the POST-request and calls the QueryBuilderBusiness method
+				 * builds a query from the given QueryBuilder and creates QueryBuilder and ExpertQuery in the neo4j database
+				 * @return the neo4j ID if it was successfully, otherwise 0L 
+				 */
 			@Transactional
 			@CrossOrigin 
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.POST)	 
@@ -91,7 +110,11 @@ public class QueryBuilderService {
 		    }
 			
 			
-			
+			/**
+			 * method which gets the DELETE-request and calls the QueryBuilderBusiness method
+			 * deletes a specific QueryBuilder and the mapped ExpertQuery from the neo4j database
+			 * @return Statuscode 200
+			 */
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.DELETE)	 
@@ -101,6 +124,11 @@ public class QueryBuilderService {
 		    }
 			
 			
+			/**
+			 * method which gets the PUT-request and calls the QueryBuilderBusiness method
+			 * updates a specific QueryBuilder and mapped ExpertQuery in the neo4j database
+			 * @return Statuscode 200 if successfully, otherwise Statuscode 409
+			 */
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.PUT)	 
@@ -111,7 +139,11 @@ public class QueryBuilderService {
 		    }
 			
 			
-			
+			/**
+			 * method which gets the GET-request and calls the QueryBuilderBusiness method
+			 * queries all QueryBuilders from the neo4j database (with or without filter criteria)
+			 * @return a set of QueryBuilders (already converted in the Business method)
+			 */
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.GET)
@@ -120,6 +152,11 @@ public class QueryBuilderService {
 				return new ResponseEntity<Set<QueryBuilder>>(queryBuilderBusiness.getQueryBuilderBySearch(category,name,description),HttpStatus.OK);
 			}
 			
+			/**
+			 * method which gets the GET-request and calls the QueryBuilderBusiness method
+			 * queries a specific QueryBuilder from the neo4j database
+			 * @return the specific Querybuilder (already converted in the Business method)
+			 */
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.GET)	 
@@ -127,6 +164,11 @@ public class QueryBuilderService {
 				return new ResponseEntity<QueryBuilder>(queryBuilderBusiness.getQueryBuilder(queryId),HttpStatus.OK);
 		    }
 			
+			/**
+			 * method which gets the GET-request and calls the QueryBuilderBusiness method
+			 * executes the query of a specific QueryBuilder
+			 * @return the result of execution
+			 */
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}/execute",  method=RequestMethod.GET)	 
@@ -134,6 +176,12 @@ public class QueryBuilderService {
 				return new ResponseEntity<Result>(queryBuilderBusiness.getQueryBuilderExecute(queryId),HttpStatus.OK);
 		    }
 			
+			
+			/**
+			 * method which gets the GET-request and calls the QueryBuilderBusiness method
+			 * queries the ExpertQuery of a specific QueryBuilder (are mapped)
+			 * @return the ExpertQuery mapped to the specific QueryBuilder
+			 */
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}/queryString",  method=RequestMethod.GET)	 

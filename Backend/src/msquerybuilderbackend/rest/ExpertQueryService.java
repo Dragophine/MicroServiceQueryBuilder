@@ -34,6 +34,11 @@ import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
 
+
+/** Service class/controller for ExpertQuery REST services
+* @author drago
+*
+*/
 @RestController
 public class ExpertQueryService {
 
@@ -51,6 +56,12 @@ public class ExpertQueryService {
 		ExpertQueryBusiness expertQueryBusiness;
 		
 	
+		
+		/**
+		 * method which gets the POST-request and calls the ExpertQueryBusiness method
+		 * executes a given ExpertQuery with parameters in the neo4j database
+		 * @return the result of execution
+		 */
 			@CrossOrigin 
 			//CrossOrigin request allow to call a different server from
 			//a certain frontend hosted on a certain address.
@@ -63,6 +74,12 @@ public class ExpertQueryService {
 				return new ResponseEntity<Result>(expertQueryBusiness.executeExpertQuery(expertQuery), HttpStatus.OK);
 		    }	
 			
+			
+			/**
+			 * method which gets the POST-request and calls the ExpertQueryBusiness method
+			 * creates a new ExpertQuery with parameters in the neo4j database
+			 * @return the neo4j ID of the new ExpertQuery or 0L when name already exists
+			 */
 			@Transactional
 			@CrossOrigin 
 		    @RequestMapping(value="/expertqueries",  method=RequestMethod.POST)	 
@@ -73,7 +90,11 @@ public class ExpertQueryService {
 		    }
 			
 			
-			
+			/**
+			 * method which gets the DELETE-request and calls the ExpertQueryBusiness method
+			 * deletes a specific ExpertQuery with parameters in the neo4j database
+			 * @return Statuscode 200
+			 */
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.DELETE)	 
@@ -83,6 +104,11 @@ public class ExpertQueryService {
 		    }
 			
 			
+			/**
+			 * method which gets the PUT-request and calls the ExpertQueryBusiness method
+			 * updates a specific ExpertQuery with parameters in the neo4j database
+			 * @return Statuscode 200 if it was successfully, otherwise Statuscode 409
+			 */
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.PUT)	 
@@ -115,6 +141,12 @@ public class ExpertQueryService {
 			return new ResponseEntity<Result>(resultQuery, HttpStatus.OK);
 		    }
 			
+			
+			/**
+			 * method which gets the GET-request and calls the ExpertQueryBusiness method
+			 * queries all ExpertQueries in the neo4j database (without or with filter criteria)
+			 * @return a set of ExperTQueryJsonObjects (already converted in the business method)
+			 */
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries",  method=RequestMethod.GET)
@@ -123,6 +155,12 @@ public class ExpertQueryService {
 				return new ResponseEntity<Set<ExpertQueryJsonObject>>(expertQueryBusiness.getExpertQueryBySearch(category,name,description),HttpStatus.OK);
 			}
 			
+			
+			/**
+			 * method which gets the GET-request and calls the ExpertQueryBusiness method
+			 * queries a specific ExpertQuery in the neo4j database
+			 * @return the specific ExpertQueryJsonObject (already converted in the business method)
+			 */
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.GET)	 

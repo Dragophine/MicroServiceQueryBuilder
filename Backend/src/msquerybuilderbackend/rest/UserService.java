@@ -19,6 +19,10 @@ import org.springframework.web.bind.annotation.RestController;
 
 import springfox.documentation.spring.web.json.Json;
 
+/** Service class/controller for User REST services
+* @author drago
+*
+*/
 @RestController
 @CrossOrigin
 public class UserService {
@@ -26,12 +30,22 @@ public class UserService {
 	@Autowired
 	UserBusiness userBusiness;
 	
+	/**
+	 * method which gets the GET-request and calls the UserBusiness method
+	 * catches the principal and returns it
+	 * @return the principal
+	 */
 	@CrossOrigin
 	@RequestMapping(value="/authentications/user",  method=RequestMethod.GET)
 	public Principal user(Principal principal) {
 		return principal;
 	}
 	
+	/**
+	 * method which gets the POST-request and calls the UserBusiness method
+	 * creates a User and its authority in the neo4j database
+	 * @return Statuscode 200
+	 */
 	@RequestMapping(value="/user",  method=RequestMethod.POST)
 	public ResponseEntity<Long> postUser(@RequestBody User user)  {
 		

@@ -4,7 +4,13 @@ import java.util.HashSet;
 import java.util.Set;
 
 
-
+/**
+ * entity class for the ExpertQueryJsonObject objects with getter and setter
+ * ExpertQueryJsonObject objects are like ExpertQuery objects but are only used for the frontend because of the handling with categories
+ * The frontend keeps just the unique name of the category while in the neo4j database (ExpertQuery objects) the category is a relationship
+ * @author drago
+ *
+ */
 public class ExpertQueryJsonObject {
 	private Long id;
 	private String name;

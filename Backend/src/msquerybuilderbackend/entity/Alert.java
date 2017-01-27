@@ -7,6 +7,13 @@ import java.util.List;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
+
+/**
+ * entity class for Alerts with getter and setter
+ * Alerts can be created to check specific values in the neo4j database and to alert the user when reaching the defined limits
+ * @author drago
+ *
+ */
 @NodeEntity
 public class Alert {
 

@@ -9,7 +9,13 @@ import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
-
+/**
+ * entity class for ExpertQuery objects with getter and setter
+ * these objects are also saved in the neo4j database (instead of ExpertQueryJsonObject)
+ * An ExpertQuery consists of the querystring and the parameters for the queryString and is created in the expert mode of the application
+ * @author drago
+ *
+ */
 @NodeEntity
 public class ExpertQuery{
 

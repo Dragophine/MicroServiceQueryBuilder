@@ -3,6 +3,16 @@ package msquerybuilderbackend.entity;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
+
+/**
+ * entity class of Parameter with getter and setter
+ * Parameter is an entity used in the entity ExpertQuery (also saved in neo4j database) and the QueryBuilder object
+ * the entity is relevant for saving the parameters to a queryString in the neo4j database 
+ * but also to parse the QueryBuilder object and to interpret it 
+ * 
+ * @author drago
+ *
+ */
 @NodeEntity
 public class Parameter {
 	

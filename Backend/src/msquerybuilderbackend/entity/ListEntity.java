@@ -3,6 +3,7 @@ package msquerybuilderbackend.entity;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
+@Deprecated
 @NodeEntity
 public class ListEntity {
 	

@@ -15,6 +15,13 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonProperty.Access;
 
+
+/**
+ * entity class of User with getter and setter
+ * User is an entity with userspecific data saved in the neo4j database
+ * the entity is relevant for user and authority management
+ *
+ */
 @NodeEntity
 public class User implements UserDetails {
 	

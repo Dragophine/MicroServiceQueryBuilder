@@ -22,6 +22,12 @@ import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
 import msquerybuilderbackend.repository.CategoryRepository;
 
+
+/**
+ * Service class/controller for Category REST services
+ * @author drago
+ *
+ */
 @RestController
 public class CategoryService {
 
@@ -34,6 +40,11 @@ public class CategoryService {
 	CategoryBusiness categoryBusiness;
 	
 	
+	/**
+	 * method which gets the GET-request and calls the categoryBusiness method
+	 * queries all categories in the neo4j database
+	 * @return a list of all categories
+	 */
 	@CrossOrigin 
 	//CrossOrigin request allow to call a different server from
 	//a certain frontend hosted on a certain address.
@@ -48,7 +59,11 @@ public class CategoryService {
 	
 	
 	
-
+	/**
+	 * method which gets the POST-request and calls the categoryBusiness method
+	 * creates a new category in the neo4j database
+	 * @return the neo4j ID of the new category or 0L if name already exists
+	 */
 	@CrossOrigin 
 	@Transactional
 	@RequestMapping(value="/categories",  method=RequestMethod.POST)
@@ -59,6 +74,11 @@ public class CategoryService {
 		
 	}
 	
+	/**
+	 * method which gets the GET-request and calls the categoryBusiness method
+	 * queries all names of categories in the neo4j database
+	 * @return a list of all names of categories as strings
+	 */
 	@CrossOrigin 
 	@RequestMapping(value="/categories/name-list",  method=RequestMethod.GET)
 	public ResponseEntity<List<String>> getCategoriesNames(){
@@ -66,7 +86,11 @@ public class CategoryService {
     }
 	
 	
-	
+	/**
+	 * method which gets the PUT-request and calls the categoryBusiness method
+	 * updates a specific category in the neo4j database
+	 * @return Statuscode 200 if it was successfully, otherwise Statuscode 409
+	 */
 	@CrossOrigin 
 	@RequestMapping(value="/categories/{categoryId}",  method=RequestMethod.PUT)
 	@Transactional
@@ -76,6 +100,12 @@ public class CategoryService {
 		return new ResponseEntity<Category>(category, HttpStatus.OK);
     }
 	
+	
+	/**
+	 * method which gets the DELETE-request and calls the categoryBusiness method
+	 * deletes a specific category in the neo4j database
+	 * @return Statuscode 200
+	 */
 	@CrossOrigin 
 	@RequestMapping(value="/categories/{categoryId}",  method=RequestMethod.DELETE)
 	@Transactional

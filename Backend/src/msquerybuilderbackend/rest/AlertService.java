@@ -32,7 +32,11 @@ import msquerybuilderbackend.exception.InvalidTypeException;
 import msquerybuilderbackend.repository.AlertRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 
-
+/**
+ * Service class/controller for Alert REST services
+ * @author Martin
+ *
+ */
 @RestController
 @Component
 public class AlertService {
@@ -47,6 +51,12 @@ public class AlertService {
 	@Autowired
 	ExpertQueryRepository expertQueryRepository;
 	
+	
+	/**
+	 * method which gets the GET-request and calls the alertBusiness method
+	 * queries all alerts in the neo4j database
+	 * @return a list of all alerts
+	 */
 	@CrossOrigin 
 	//CrossOrigin request allow to call a different server from
 	//a certain frontend hosted on a certain address.
@@ -58,13 +68,23 @@ public class AlertService {
 		return new ResponseEntity<List<Alert>>(alertBusiness.getAllAlerts(), HttpStatus.OK);
     }
 	
-
+	/**
+	 * method which gets the GET-request and calls the alertBusiness method
+	 * queries a specific alert in the neo4j database
+	 * @return the specific alert
+	 */
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}",  method=RequestMethod.GET)
 	public ResponseEntity<Alert> getAlert( @PathVariable String alertId){
 		return new ResponseEntity<Alert>(alertBusiness.getAlert(alertId), HttpStatus.OK);
     }
 	
+	
+	/**
+	 * method which gets the GET-request and calls the alertBusiness method
+	 * executes a specific alert
+	 * @return the result of the execution 
+	 */
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}/execute",  method=RequestMethod.GET)
 	public ResponseEntity<Result> executeAlert( @PathVariable String alertId){
@@ -107,7 +127,11 @@ public class AlertService {
 //    }
 	
 	
-	
+	/**
+	 * method which gets the POST-request and calls the alertBusiness method
+	 * creates an alert in the neo4j database
+	 * @return the neo4j ID of the new object or 0L if the name already exists
+	 */
 	@CrossOrigin 
 	@Transactional
 	@RequestMapping(value="/alerts",  method=RequestMethod.POST)
@@ -117,12 +141,23 @@ public class AlertService {
 		return new ResponseEntity<Long>(newID, HttpStatus.CREATED);
 	}
 	
+	/**
+	 * method which gets the GET-request and calls the alertBusiness method
+	 * queries all names of alerts in the neo4j database
+	 * @return a list of all names of alerts as Strings
+	 */
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/name-list",  method=RequestMethod.GET)
 	public ResponseEntity<List<String>> getAlertNames(){		
 		return new ResponseEntity<List<String>>(alertBusiness.getNameList(), HttpStatus.OK);
     }
 	
+	
+	/**
+	 * method which gets the PUT-request and calls the alertBusiness method
+	 * updates a specific alert
+	 * @return the updated alert
+	 */
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}",  method=RequestMethod.PUT)
 	@Transactional
@@ -131,7 +166,11 @@ public class AlertService {
     }
 	
 
-	
+	/**
+	 * method which gets the DELETE-request and calls the alertBusiness method
+	 * deletes a specific alert
+	 * @return Statuscode 200
+	 */
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}",  method=RequestMethod.DELETE)
 	@Transactional
@@ -140,6 +179,10 @@ public class AlertService {
 		return new ResponseEntity<Result>(HttpStatus.OK);
     }
 	
+	
+	/**
+	 * method which executes all alerts periodically
+	 */
 	// Alle 24 Stunden werden die Alerts überprüft
 //	@Scheduled(fixedRate = 5000)
 	@Scheduled(fixedRate = 86400000)
