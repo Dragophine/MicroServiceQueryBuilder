@@ -1,6 +1,7 @@
 package msquerybuilderbackend;
 
 import org.neo4j.ogm.session.SessionFactory;
+import org.springframework.boot.autoconfigure.aop.AopAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.neo4j.config.Neo4jConfiguration;
@@ -18,7 +19,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 // @EnableAutoConfiguration
 @EnableTransactionManagement
 // @ComponentScan("at.jku.se.dedoc")
-public class Neo4JConfig extends Neo4jConfiguration {
+public class Neo4JConfig extends  Neo4jConfiguration {
 
 	/**
 	 * Neo4JConfiguration via Spring which connects to the Neo4J database with the given logindata

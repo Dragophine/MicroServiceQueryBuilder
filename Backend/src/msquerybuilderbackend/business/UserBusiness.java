@@ -1,10 +1,12 @@
 package msquerybuilderbackend.business;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.UserDetailsManager;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
@@ -13,6 +15,7 @@ import msquerybuilderbackend.entity.User;
 import msquerybuilderbackend.repository.UserRepository;
 import msquerybuilderbackend.repository.UserAuthorityRepository;
 
+@Component
 @Service
 @Transactional
 public class UserBusiness implements UserDetailsManager {
