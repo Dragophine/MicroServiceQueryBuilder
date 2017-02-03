@@ -23,8 +23,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import msquerybuilderbackend.business.AlertBusiness;
 import msquerybuilderbackend.entity.Alert;
+import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
@@ -39,6 +43,7 @@ import msquerybuilderbackend.repository.ExpertQueryRepository;
  */
 @RestController
 @Component
+@Api(tags = {"AlertService"}, value = "Service for viewing and creating Alerts")
 public class AlertService {
 
 	@Autowired
@@ -64,6 +69,8 @@ public class AlertService {
 	//the adress of client must not be the same.
 	//Pleas add @CrossOrigin to every request.
 	@RequestMapping(value="/alerts",  method=RequestMethod.GET)
+	@ApiOperation(value = "Returns all alerts",
+	notes = "place for notes", response = Alert.class, responseContainer="List")
 	public ResponseEntity<List<Alert>> getAlerts() {
 		return new ResponseEntity<List<Alert>>(alertBusiness.getAllAlerts(), HttpStatus.OK);
     }
@@ -75,6 +82,8 @@ public class AlertService {
 	 */
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}",  method=RequestMethod.GET)
+	@ApiOperation(value = "Returns a certain alert with a specific id",
+	notes = "place for notes", response = Alert.class, responseContainer="ResponseEntity")
 	public ResponseEntity<Alert> getAlert( @PathVariable String alertId){
 		return new ResponseEntity<Alert>(alertBusiness.getAlert(alertId), HttpStatus.OK);
     }
@@ -87,6 +96,8 @@ public class AlertService {
 	 */
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}/execute",  method=RequestMethod.GET)
+	@ApiOperation(value = "Executes a certain alert with a specific ID",
+	notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
 	public ResponseEntity<Result> executeAlert( @PathVariable String alertId){
 		return alertBusiness.executeAlert(alertId);
     }
@@ -135,7 +146,12 @@ public class AlertService {
 	@CrossOrigin 
 	@Transactional
 	@RequestMapping(value="/alerts",  method=RequestMethod.POST)
-	public ResponseEntity<Long> postAlert(@RequestBody Alert alert) throws Exception {
+	@ApiOperation(value = "Creates a new alert",
+	notes = "place for notes", response = Long.class, responseContainer="ResponseEntity")
+	public ResponseEntity<Long> postAlert(@RequestBody 
+			@ApiParam(name = "new Alert to create",
+			value = "Representation of the new Alert which will be created", required = true)
+			Alert alert) throws Exception {
 		Long newID=alertBusiness.createAlert(alert);
 		if (newID==0L) return new ResponseEntity<Long>(0L, HttpStatus.CONFLICT);
 		return new ResponseEntity<Long>(newID, HttpStatus.CREATED);
@@ -148,6 +164,8 @@ public class AlertService {
 	 */
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/name-list",  method=RequestMethod.GET)
+	@ApiOperation(value = "Returns all names of all alerts",
+	notes = "place for notes", response = String.class, responseContainer="List")
 	public ResponseEntity<List<String>> getAlertNames(){		
 		return new ResponseEntity<List<String>>(alertBusiness.getNameList(), HttpStatus.OK);
     }
@@ -160,8 +178,13 @@ public class AlertService {
 	 */
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}",  method=RequestMethod.PUT)
+	@ApiOperation(value = "Updates a certain alert with specific ID",
+	notes = "place for notes", response = Alert.class, responseContainer="ResponseEntity")
 	@Transactional
-	public ResponseEntity<Alert> updateAlert( @PathVariable String alertId, @RequestBody Alert al) throws Exception{			
+	public ResponseEntity<Alert> updateAlert( @PathVariable String alertId, @RequestBody
+			@ApiParam(name = "Alert with new content do be updated",
+			value = "Representation of the updated Alert with new content which will be updated", required = true) 
+			Alert al) throws Exception{			
 		return new ResponseEntity<Alert>(alertBusiness.updateAlert(alertId, al), HttpStatus.OK);
     }
 	
@@ -173,6 +196,8 @@ public class AlertService {
 	 */
 	@CrossOrigin 
 	@RequestMapping(value="/alerts/{alertId}",  method=RequestMethod.DELETE)
+	@ApiOperation(value = "Deletes a certain alert with specific ID",
+	notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
 	@Transactional
 	public ResponseEntity<Result> deleteAlert( @PathVariable String alertId){
 		alertBusiness.deleteAlert(alertId);		

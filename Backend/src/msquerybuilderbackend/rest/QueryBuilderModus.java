@@ -33,6 +33,7 @@ import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
 
 @RestController
+@Deprecated
 public class QueryBuilderModus {
 	@Autowired
 	Neo4jOperations neo4jOperations;

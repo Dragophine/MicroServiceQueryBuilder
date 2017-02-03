@@ -29,6 +29,9 @@ import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import msquerybuilderbackend.business.QueryBuilderBusiness;
 import msquerybuilderbackend.business.QueryBuilderWriterBusiness;
 import msquerybuilderbackend.entity.Category;
@@ -48,6 +51,7 @@ import msquerybuilderbackend.repository.QueryBuilderJsonStringRepository;
 *
 */
 @RestController
+@Api(tags = {"QueryBuilderService"}, value = "Service for viewing and creating QueryBuilder objects")
 public class QueryBuilderService {
 
 	
@@ -80,7 +84,12 @@ public class QueryBuilderService {
 			//Pleas add @CrossOrigin to every request.
 			
 		    @RequestMapping(value="/queryBuilder/execute",  method=RequestMethod.POST)
-		    public ResponseEntity<Result> preExecuteQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
+			@ApiOperation(value = "Executes a given QueryBuilder object and returns the result of the database",
+			notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
+		    public ResponseEntity<Result> preExecuteQuery(@RequestBody 
+		    		@ApiParam(name = "QueryBuilder to execute",
+					value = "the QueryBuilder object which should be executed in the database", required = true)
+		    		QueryBuilder queryBuilder) throws Exception {
 				return new ResponseEntity<Result>(queryBuilderBusiness.executeQueryBuilderQuery(queryBuilder), HttpStatus.OK);
 		    }	
 			
@@ -90,7 +99,12 @@ public class QueryBuilderService {
 			 * @return the built ExpertQuery (queryString with parameters)
 			 */
 			 @RequestMapping(value="/queryBuilder/queryString",  method=RequestMethod.POST)
-			    public ResponseEntity<ExpertQuery> generateQuery(@RequestBody QueryBuilder queryBuilder) throws Exception {
+			 @ApiOperation(value = "Genereates/Build a queryString as an ExpertQuery from a given QueryBuilder object and returns it",
+				notes = "place for notes", response = ExpertQuery.class, responseContainer="ResponseEntity")
+			    public ResponseEntity<ExpertQuery> generateQuery(@RequestBody 
+			    		@ApiParam(name = "QueryBuilder used to build the queryString",
+						value = "the QueryBuilder object which is the input for generating the queryString as an ExpertQuery", required = true)
+			    		QueryBuilder queryBuilder) throws Exception {
 					return new ResponseEntity<ExpertQuery>(queryBuilderBusiness.generateQueryBuilderQueryString(queryBuilder), HttpStatus.OK);
 			    }
 			
@@ -102,8 +116,13 @@ public class QueryBuilderService {
 				 */
 			@Transactional
 			@CrossOrigin 
-		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.POST)	 
-		    public ResponseEntity<Long> saveQuery(@RequestBody QueryBuilder queryBuilder) throws Exception{
+		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.POST)
+			@ApiOperation(value = "Creates a new QueryBuilder object",
+			notes = "place for notes", response = Long.class, responseContainer="ResponseEntity")
+		    public ResponseEntity<Long> saveQuery(@RequestBody 
+		    		@ApiParam(name = "The new QueryBuilder object to create",
+					value = "Representation of the new QueryBuilder object which has to be created", required = true)
+		    		QueryBuilder queryBuilder) throws Exception{
 				Long newId=queryBuilderBusiness.createQueryBuilder(queryBuilder);
 				if (newId==0L) return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);
 				return new ResponseEntity<Long>(newId,HttpStatus.CREATED);		
@@ -117,7 +136,9 @@ public class QueryBuilderService {
 			 */
 			@CrossOrigin 
 			@Transactional
-		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.DELETE)	 
+		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.DELETE)	
+			@ApiOperation(value = "Deletes a certain QueryBuilder object with a specific ID",
+			notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
 		    public ResponseEntity<Result> deleteQuery(@PathVariable String queryId) throws Exception	{
 				queryBuilderBusiness.deleteQueryBuilder(queryId);
 				return new ResponseEntity<Result>(HttpStatus.OK);
@@ -131,8 +152,13 @@ public class QueryBuilderService {
 			 */
 			@CrossOrigin 
 			@Transactional
-		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.PUT)	 
-		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody QueryBuilder updatedQuery) throws Exception	{
+		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.PUT)	
+			@ApiOperation(value = "Updates a certain QueryBuilder object with specific ID with new content",
+			notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
+		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody 
+		    		@ApiParam(name = "QueryBuilder object to be updated",
+					value = "the QueryBuilder object with new content which should updated in the database", required = true)
+		    		QueryBuilder updatedQuery) throws Exception	{
 				QueryBuilderJsonStringObject updatedObject= queryBuilderBusiness.updateQueryBuilder(queryId, updatedQuery);
 				if (updatedObject==null) return new ResponseEntity<Result>(HttpStatus.CONFLICT);
 				return new ResponseEntity<Result>(HttpStatus.OK);
@@ -147,6 +173,8 @@ public class QueryBuilderService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.GET)
+			@ApiOperation(value = "Returns all QueryBuilder objects (with or without filter criteria)",
+			notes = "place for notes", response = QueryBuilder.class, responseContainer="Set")
 		    public ResponseEntity<Set<QueryBuilder>> getQueries(@RequestParam(value="name",required=false) String name, @RequestParam(value="category",required=false) String category, @RequestParam(value="description",required=false) String description) throws Exception	{
 				if((category==null)&&(name==null)&&(description==null)) 				return new ResponseEntity<Set<QueryBuilder>>(queryBuilderBusiness.getAllQueryBuilder(), HttpStatus.OK);
 				return new ResponseEntity<Set<QueryBuilder>>(queryBuilderBusiness.getQueryBuilderBySearch(category,name,description),HttpStatus.OK);
@@ -160,6 +188,8 @@ public class QueryBuilderService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}",  method=RequestMethod.GET)	 
+			@ApiOperation(value = "Returns a certain QueryBuilder object with a specific ID",
+			notes = "place for notes", response = QueryBuilder.class, responseContainer="ResponseEntity")
 		    public ResponseEntity<QueryBuilder> getQuery(@PathVariable String queryId) throws Exception	{
 				return new ResponseEntity<QueryBuilder>(queryBuilderBusiness.getQueryBuilder(queryId),HttpStatus.OK);
 		    }
@@ -172,6 +202,8 @@ public class QueryBuilderService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}/execute",  method=RequestMethod.GET)	 
+			@ApiOperation(value = "Executes a certain Query of a specifig QueryBuilder object in the database",
+			notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
 		    public ResponseEntity<Result> getQueryExecute(@PathVariable String queryId) throws Exception	{
 				return new ResponseEntity<Result>(queryBuilderBusiness.getQueryBuilderExecute(queryId),HttpStatus.OK);
 		    }
@@ -185,6 +217,8 @@ public class QueryBuilderService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/queryBuilder/{queryId}/queryString",  method=RequestMethod.GET)	 
+			@ApiOperation(value = "Returns the queryString as an ExpertQuery object of a specifig QueryBuilder object",
+			notes = "place for notes", response = ExpertQuery.class, responseContainer="ResponseEntity")
 		    public ResponseEntity<ExpertQuery> getQueryString(@PathVariable String queryId) throws Exception	{
 				return new ResponseEntity<ExpertQuery>(queryBuilderBusiness.getQueryBuilderQueryString(queryId),HttpStatus.OK);
 		    }

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import msquerybuilderbackend.business.RelationshipTypeBusiness;
 
 /** Service class/controller for RelationshipType REST services
@@ -21,6 +23,7 @@ import msquerybuilderbackend.business.RelationshipTypeBusiness;
 *
 */
 @RestController
+@Api(tags = {"RelationshipTypeService"}, value = "Service for viewing Relationship types from the database")
 public class RelationshipTypeService {
 	
 	@Autowired
@@ -37,6 +40,8 @@ public class RelationshipTypeService {
 	 */
 	@CrossOrigin
 	@RequestMapping(value="/relationshiptypes", method=RequestMethod.GET)
+	@ApiOperation(value = "Returns all Relationship types from the database",
+	notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
 	public ResponseEntity<Result> getRelationshipTypes() throws Exception {
 		return new ResponseEntity<Result>(relationshipTypeBusiness.getAllRelationshipTypes(), HttpStatus.OK);
 	}
@@ -48,6 +53,8 @@ public class RelationshipTypeService {
 	 */
 	@CrossOrigin
 	@RequestMapping(value="/relationshiptypes/{relationId}/keys", method=RequestMethod.GET)
+	@ApiOperation(value = "Results all keys/attributes of a speicific Relationship type from the database",
+	notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
 	public ResponseEntity<Result> getKeys(@PathVariable String relationId) throws Exception {	
 		return new ResponseEntity<Result>(relationshipTypeBusiness.getKeysOfCertainRelationshipType(relationId), HttpStatus.OK);
 	}

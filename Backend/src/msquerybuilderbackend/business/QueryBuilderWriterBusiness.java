@@ -19,6 +19,11 @@ import msquerybuilderbackend.entity.QueryBuilder;
 import msquerybuilderbackend.entity.Relationship;
 import msquerybuilderbackend.entity.ReturnAttribute;
 
+/**
+ * Class for building the neo4j queryString of the QueryBuilder Object
+ * @author Christian
+ *
+ */
 public class QueryBuilderWriterBusiness {
 	private QueryBuilder queryBuilder;
 	private String queryString;

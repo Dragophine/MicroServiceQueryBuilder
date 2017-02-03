@@ -15,6 +15,11 @@ import msquerybuilderbackend.entity.User;
 import msquerybuilderbackend.repository.UserRepository;
 import msquerybuilderbackend.repository.UserAuthorityRepository;
 
+/**
+ * Class for all activities with neo4j database regarding the entity User and its authorities
+ * @author 
+ *
+ */
 @Component
 @Service
 @Transactional
@@ -35,7 +40,11 @@ public class UserBusiness implements UserDetailsManager {
 		
 	}
 
-	
+	/**
+	 * method which creates a new user in the neo4j database and adds the authorities as relationships
+	 * 
+	 * @param user is the new user to create
+	 */
 	public void createUser(UserDetails user) {
 		Iterable<Long> existingUsers = userRepository.checkForExistingUser(user.getUsername());
 		Assert.isTrue(!existingUsers.iterator().hasNext());
@@ -71,13 +80,21 @@ public class UserBusiness implements UserDetailsManager {
 		
 	}
 
-	
+	/**
+	 * method which returns whether a user with given username exists or not
+	 * @param username is the username to look for
+	 * @return true/false if the user exists or not
+	 */
 	@Transactional(readOnly = true)
 	public boolean userExists(String username) {
 		return getUserByEmail(username) != null;
 	}
 
-	
+	/**
+	 * method which returns UserDetails of a certain user specified by username
+	 * @param username is the specific name of the user to return
+	 * @return UserDetails of this specific user
+	 */
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 		
@@ -91,17 +108,28 @@ public class UserBusiness implements UserDetailsManager {
 		return user;
 	}
 
-	
+	/**
+	 * method which returns the user by given email
+	 * @param email is the specific email of the certain user
+	 * @return the User object
+	 */
 	public User getUserByEmail(String email) {
 		return userRepository.findByEmail(email);
 	}
 
-	
+	/**
+	 * method which returns all users from the neo4j database
+	 * @return all found users
+	 */
 	public Iterable<User> getAllUser() {
 		return userRepository.findAll();
 	}
 
-	
+	/**
+	 * method which returns a certain user with specific neo4j Id
+	 * @param userid is the neo4j ID of the user to look for
+	 * @return the User object
+	 */
 	public User getUserByid(Long userid) {
 		return userRepository.findOne(userid);
 	}

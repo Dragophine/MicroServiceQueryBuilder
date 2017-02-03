@@ -21,6 +21,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiParam;
 import msquerybuilderbackend.business.ExpertQueryBusiness;
 import msquerybuilderbackend.entity.Alert;
 import msquerybuilderbackend.entity.Category;
@@ -40,6 +43,7 @@ import msquerybuilderbackend.repository.ParameterRepository;
 *
 */
 @RestController
+@Api(tags = {"ExpertQueryService"}, value = "Service for viewing and creating ExpertQueries")
 public class ExpertQueryService {
 
 	
@@ -70,7 +74,12 @@ public class ExpertQueryService {
 			//Pleas add @CrossOrigin to every request.
 			
 		    @RequestMapping(value="/expertqueries/execute",  method=RequestMethod.POST)
-		    public ResponseEntity<Result> preExecuteQuery(@RequestBody ExpertQueryJsonObject expertQuery) throws Exception {			
+			@ApiOperation(value = "Executes a given expertQuery and returns the result of the database",
+			notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
+		    public ResponseEntity<Result> preExecuteQuery(@RequestBody 
+		    		@ApiParam(name = "ExpertQuery to execute",
+					value = "the expertQuery which should be executed in the database", required = true)
+		    		ExpertQueryJsonObject expertQuery) throws Exception {			
 				return new ResponseEntity<Result>(expertQueryBusiness.executeExpertQuery(expertQuery), HttpStatus.OK);
 		    }	
 			
@@ -82,8 +91,13 @@ public class ExpertQueryService {
 			 */
 			@Transactional
 			@CrossOrigin 
-		    @RequestMapping(value="/expertqueries",  method=RequestMethod.POST)	 
-		    public ResponseEntity<Long> saveQuery(@RequestBody ExpertQueryJsonObject expertQueryJsonObject) throws Exception{	    
+		    @RequestMapping(value="/expertqueries",  method=RequestMethod.POST)
+			@ApiOperation(value = "Creates a new expertQuery with given content",
+			notes = "place for notes", response = Long.class, responseContainer="ResponseEntity")
+		    public ResponseEntity<Long> saveQuery(@RequestBody 
+		    		@ApiParam(name = "New ExpertQuery to create",
+					value = "The Representation of the new expertQuery which should be created", required = true)
+		    		ExpertQueryJsonObject expertQueryJsonObject) throws Exception{	    
 			   Long newID= expertQueryBusiness.createExpertQuery(expertQueryJsonObject);
 			   if (newID==0L)return new ResponseEntity<Long>(0L,HttpStatus.CONFLICT);			
 			   return new ResponseEntity<Long>(newID,HttpStatus.CREATED);			
@@ -98,6 +112,8 @@ public class ExpertQueryService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.DELETE)	 
+			@ApiOperation(value = "deletes a certain expertQuery with a specific ID",
+			notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
 		    public ResponseEntity<Result> deleteQuery(@PathVariable String queryId) throws Exception	{
 				expertQueryBusiness.deleteExpertQuery(queryId);
 				return new ResponseEntity<Result>(HttpStatus.OK);
@@ -111,8 +127,13 @@ public class ExpertQueryService {
 			 */
 			@CrossOrigin 
 			@Transactional
-		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.PUT)	 
-		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody ExpertQueryJsonObject updatedQuery) throws Exception	{
+		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.PUT)	
+			@ApiOperation(value = "Updates a certain expertQuery with a specific ID",
+			notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
+		    public ResponseEntity<Result> updateQuery(@PathVariable String queryId, @RequestBody
+		    		@ApiParam(name = "ExpertQuery to be updated",
+					value = "expertQuery with new content do be updated", required = true)
+		    		ExpertQueryJsonObject updatedQuery) throws Exception	{
 				ExpertQuery updatedObject = expertQueryBusiness.updateExpertQuery(queryId, updatedQuery);	
 				if(updatedObject==null) return new ResponseEntity<Result>(HttpStatus.CONFLICT);
 				return new ResponseEntity<Result>(HttpStatus.OK);
@@ -150,7 +171,17 @@ public class ExpertQueryService {
 			@CrossOrigin 
 			@Transactional
 		    @RequestMapping(value="/expertqueries",  method=RequestMethod.GET)
-		    public ResponseEntity<Set<ExpertQueryJsonObject>> getQueries(@RequestParam(value="name",required=false) String name, @RequestParam(value="category",required=false) String category, @RequestParam(value="description",required=false) String description) throws Exception	{
+			@ApiOperation(value = "Returns the all expertQueries (without or with filter criteria)",
+			notes = "place for notes", response = ExpertQueryJsonObject.class, responseContainer="Set")
+		    public ResponseEntity<Set<ExpertQueryJsonObject>> getQueries(@RequestParam(value="name",required=false)
+		    @ApiParam(name = "Name to filter by",
+			value = "the whole name or pattern in the name to filter", required = false)String name, 
+		    @RequestParam(value="category",required=false)
+		    @ApiParam(name = "Category to filter by",
+			value = "the category of the expertqueries to filter", required = false)String category, 
+		    @RequestParam(value="description",required=false)
+		    @ApiParam(name = "description to filter",
+			value = "the pattern in the desciption to filter", required = false) String description) throws Exception	{
 				if((category==null)&&(name==null)&&(description==null)) return new ResponseEntity<Set<ExpertQueryJsonObject>>(expertQueryBusiness.getAllExpertQueries(), HttpStatus.OK);
 				return new ResponseEntity<Set<ExpertQueryJsonObject>>(expertQueryBusiness.getExpertQueryBySearch(category,name,description),HttpStatus.OK);
 			}
@@ -163,7 +194,9 @@ public class ExpertQueryService {
 			 */
 			@CrossOrigin 
 			@Transactional
-		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.GET)	 
+		    @RequestMapping(value="/expertqueries/{queryId}",  method=RequestMethod.GET)
+			@ApiOperation(value = "Returns a certain expertQuery with a specific ID",
+			notes = "place for notes", response = ExpertQueryJsonObject.class, responseContainer="ResponseEntity")
 		    public ResponseEntity<ExpertQueryJsonObject> getQuery(@PathVariable String queryId) throws Exception	{
 				return new ResponseEntity<ExpertQueryJsonObject>(expertQueryBusiness.getExpertQuery(queryId),HttpStatus.OK);
 		    }
