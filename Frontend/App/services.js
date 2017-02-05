@@ -594,5 +594,44 @@ angular.module('queryBuilder.services', ['ngCookies'])
            $callback(false, data, status);
             }
         });
-    }; 
+    };
+    
+    
+    this.loadSomeQueriesInExpertMode = function($callback, $name, $category, $description) {
+        var filter = "?";
+        if($name !== null && $name !== undefined && $name !== ""){
+            filter = filter + "name=" + $name;
+        }
+        if($category !== null && $category !== undefined && $category !== ""){
+            if(filter !== "?"){
+                 filter = filter + "&";
+            }
+            filter = filter + "category=" + $category;
+        }
+        if($description !== null && $description !== undefined && $description !== ""){
+            if(filter !== "?"){
+                 filter = filter + "&";
+            }
+            filter = filter + "description=" + $description;
+        }
+        if(filter != "?"){
+            $http({
+                method : 'GET',
+                url : $serverRestLocation.getValue() + '/expertqueries/' + filter, 
+                headers: { 
+                        'Content-Type':'application/json'
+                }
+            })
+            .success(function(data, status) {
+                $callback(true, data, status); 
+            })
+            .error(function(data, status) {
+                $callback(false, data, status);
+            });
+        }
+        else{
+            this.loadAllQueries($callback);
+        }
+       
+    };
 }]);

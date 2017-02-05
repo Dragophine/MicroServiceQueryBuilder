@@ -45,7 +45,9 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 	          format: 'd/M/yy'
 	        },
 	        vAxis: {
-	          title: 'Alerts'
+	          title: 'Alerts',
+	          format: '#,###',
+	          minValue: 0
 	        }
 	      };
 

@@ -1,0 +1,69 @@
+<!-- WIRD BISHER NICHT VERWENDET, WEIL ES BEIM LADEN UND LÖSCHEN NOCH PROLEME GIBT, WIRD NUR AKTIVIERT WENN GENÜGEND ZEIT ÜBRIG BLEIBT -->
+
+<!DOCTYPE html>
+<div>
+  <h1>Query </h1>
+  <div class="left-buffer right-buffer panel panel-default"> 
+    <div class="panel-body">
+      <h1>Filter</h1>
+      <div class=" left-buffer right-buffer top-buffer-small row">
+          <span>Name </span>
+          <input type="textarea" class="form-control" id="name" 
+                ng-model="ctrl.name" ng-change="ctrl.applyFilter()">
+          </input>
+      </div>
+      <div class=" left-buffer right-buffer top-buffer-small row">
+          <span>Description</span>
+          <input type="textarea" class="form-control" id="description" 
+                 ng-model="ctrl.description" ng-change="ctrl.applyFilter()">
+          </input>
+      </div>
+      <div class=" left-buffer right-buffer top-buffer-small row">
+        <span>Category</span>
+        <select  ng-model="ctrl.category" ng-change="ctrl.applyFilter()"
+            style="width: 100%; display:block; margin-bottom: 5px">
+            <option value="">All</option>
+            <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
+        </select> 
+      </div>
+    </div>
+  </div>
+  <div class="row top-buffer ">
+    <div class="col-sm-1">
+      <h1>ID</h1>
+    </div>
+    <div class="col-sm-2">
+       <h1>Name</h1>
+    </div>
+    <div class="col-sm-3">
+       <h1>Description</h1>
+    </div>
+    <div class="col-sm-3">
+      <h1>Category</h1>
+    </div>
+  </div>
+  <div class="row top-buffer panel panel-default" ng-repeat="query in ctrl.loadedQueries">
+    <div class="col-sm-1">
+      {{query.id}}
+    </div>
+    <div class="col-sm-2">
+      {{query.name}}
+    </div>
+    <div class="col-sm-3">
+      {{query.description}}
+    </div>
+    <div class="col-sm-3">
+      {{query.category}}
+    </div>
+
+    <div class="col-sm-2">
+      <button ng-click="ctrl.selectQuery(query)" class="top-buffer-verysmall">
+        Load
+      </button>
+      <button ng-click="ctrl.deleteSelectedQuery(query)" class="top-buffer-verysmall">
+        Delete
+      </button>
+    </div>
+  </div>
+   
+</div>

@@ -19,7 +19,7 @@ var app = angular.module('queryBuilder', [
   'queryBuilder.alerting',
   'queryBuilder.alertingStatistics',
   'queryBuilder.category',
-
+  'expertMode.loadDialogExpertMode'
 ])
 .config(['$routeProvider', function($routeProvider) {
   $routeProvider.when('/', {
