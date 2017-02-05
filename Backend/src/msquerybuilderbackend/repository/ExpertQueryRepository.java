@@ -2,10 +2,8 @@ package msquerybuilderbackend.repository;
 
 import java.util.List;
 import java.util.Set;
-
 import org.springframework.data.neo4j.annotation.Query;
 import org.springframework.data.neo4j.repository.GraphRepository;
-
 import msquerybuilderbackend.entity.ExpertQuery;
 
 /**
@@ -14,8 +12,7 @@ import msquerybuilderbackend.entity.ExpertQuery;
  *
  */
 public interface ExpertQueryRepository extends GraphRepository<ExpertQuery> {
-	
-	
+		
 	/**
 	 * method which queries a certain ExpertQuery object by name
 	 * @param name is the given name

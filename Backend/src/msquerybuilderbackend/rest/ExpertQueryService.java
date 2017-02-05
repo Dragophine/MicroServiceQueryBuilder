@@ -1,11 +1,7 @@
 package msquerybuilderbackend.rest;
 
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
@@ -20,23 +16,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import msquerybuilderbackend.business.ExpertQueryBusiness;
-import msquerybuilderbackend.entity.Alert;
-import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.ExpertQueryJsonObject;
-import msquerybuilderbackend.entity.Parameter;
-import msquerybuilderbackend.entity.QueryBuilder;
-import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
-import msquerybuilderbackend.exception.InvalidTypeException;
 import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
-
 
 /** Service class/controller for ExpertQuery REST services
 * @author drago
@@ -59,7 +47,6 @@ public class ExpertQueryService {
 		@Autowired
 		ExpertQueryBusiness expertQueryBusiness;
 		
-	
 		
 		/**
 		 * method which gets the POST-request and calls the ExpertQueryBusiness method
@@ -69,10 +56,9 @@ public class ExpertQueryService {
 			@CrossOrigin 
 			//CrossOrigin request allow to call a different server from
 			//a certain frontend hosted on a certain address.
-			//This means that the adress of the server and 
-			//the adress of client must not be the same.
-			//Pleas add @CrossOrigin to every request.
-			
+			//This means that the address of the server and 
+			//the address of client must not be the same.
+			//Please add @CrossOrigin to every request.			
 		    @RequestMapping(value="/expertqueries/execute",  method=RequestMethod.POST)
 			@ApiOperation(value = "Executes a given expertQuery and returns the result of the database",
 			notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
@@ -139,28 +125,28 @@ public class ExpertQueryService {
 				return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
 			
-			@Deprecated
-			@CrossOrigin 
-			@Transactional
-		    @RequestMapping(value="/expertqueriesold",  method=RequestMethod.GET)
-		    public ResponseEntity<Result> getQueriesOld() throws Exception	{
-//		    public ResponseEntity<List<ExpertQuery>> getQueries() throws Exception	{
-//				List<ExpertQuery> expertQueries=expertQueryRepository.getAllExpertQueries();
-//		
-//			return new ResponseEntity<List<ExpertQuery>>(expertQueries,HttpStatus.OK);
-				
-				/**
-				 * Workaround: Wenn auch die Parameter aufgelöst und returniert werden in der Query,
-				 * dann sind die dazugehörigen Parameter aller Queries die returniert werden auch sichtbar.
-				 */
-				String queryNodesQuery = "MATCH (n:ExpertQuery) OPTIONAL MATCH (m:ExpertQuery)-[e:HAS_PARAMETER]-(x) RETURN n,m,e,x";			
-				Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
-	
-	//			String queryNodesQuery = "MATCH (n:ExpertQuery) RETURN n";			
-	//			Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
-	
-			return new ResponseEntity<Result>(resultQuery, HttpStatus.OK);
-		    }
+//			@Deprecated
+//			@CrossOrigin 
+//			@Transactional
+//		    @RequestMapping(value="/expertqueriesold",  method=RequestMethod.GET)
+//		    public ResponseEntity<Result> getQueriesOld() throws Exception	{
+////		    public ResponseEntity<List<ExpertQuery>> getQueries() throws Exception	{
+////				List<ExpertQuery> expertQueries=expertQueryRepository.getAllExpertQueries();
+////		
+////			return new ResponseEntity<List<ExpertQuery>>(expertQueries,HttpStatus.OK);
+//				
+//				/**
+//				 * Workaround: Wenn auch die Parameter aufgelöst und returniert werden in der Query,
+//				 * dann sind die dazugehörigen Parameter aller Queries die returniert werden auch sichtbar.
+//				 */
+//				String queryNodesQuery = "MATCH (n:ExpertQuery) OPTIONAL MATCH (m:ExpertQuery)-[e:HAS_PARAMETER]-(x) RETURN n,m,e,x";			
+//				Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
+//	
+//	//			String queryNodesQuery = "MATCH (n:ExpertQuery) RETURN n";			
+//	//			Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
+//	
+//			return new ResponseEntity<Result>(resultQuery, HttpStatus.OK);
+//		    }
 			
 			
 			/**

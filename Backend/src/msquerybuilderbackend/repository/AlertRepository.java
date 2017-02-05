@@ -10,7 +10,6 @@ import msquerybuilderbackend.entity.Alert;
 /**
  * Repository for the alert objects in the neo4j database
  * @author Martin
- *
  */
 public interface AlertRepository  extends GraphRepository<Alert>{
 

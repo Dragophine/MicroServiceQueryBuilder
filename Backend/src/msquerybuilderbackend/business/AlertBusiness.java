@@ -8,12 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.mail.*;
-import javax.activation.*;
 import javax.mail.internet.*;
-import javax.mail.util.*;
-
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
@@ -21,18 +17,18 @@ import org.springframework.data.neo4j.template.Neo4jTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
 import msquerybuilderbackend.entity.Alert;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.repository.AlertRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
+
 /**
- * Class for all activities with neo4j database regarding the entity Alert
+ * Class for all activities with neo4j database regarding the entity Alert.
+ * 
  * @author Martin
  *
  */
-
 @Component
 public class AlertBusiness {
 	
@@ -105,9 +101,8 @@ public class AlertBusiness {
 		catch(NumberFormatException P_ex)
 		{
 			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
+			 * If the given value can not be converted to Long, the inherent value is obviously not a number, 
+			 * so it must be the unique name.
 			 */
 		}
 		
@@ -118,8 +113,6 @@ public class AlertBusiness {
 		}
 		
 		alert.setName(al.getName());
-//		alert.setNodeName(al.getNodeName());
-//		alert.setAttributeName(al.getAttributeName());
 		alert.setQuery(al.getQuery());
 		alert.setType(al.getType());
 		alert.setFilterType(al.getFilterType());
@@ -172,15 +165,17 @@ public class AlertBusiness {
 		catch(NumberFormatException P_ex)
 		{
 			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
+			 * If the given value can not be converted to Long, the inherent value is obviously not a number, 
+			 * so it must be the unique name.
 			 */
 		}
 		
-		if (id >=0){
+		if (id >=0)
+		{
 			 alert= alertRepository.findOne(id);
-		} else{
+		}
+		else
+		{
 			 alert= alertRepository.findByName(alertId);
 		}
 		
@@ -220,20 +215,6 @@ public class AlertBusiness {
 					e.printStackTrace();
 				}
 			}			
-			
-//			String[] queryParts = queryString.split("return");
-//			if (alert.getType().equalsIgnoreCase("String"))
-//			{
-//				 queryString = "MATCH (n:"+alert.getNodeName()+") where n."+alert.getAttributeName()+alert.getFilterType()+
-//						 "'"+(String)alert.getValue()+"' return n as "+alert.getNodeName();
-////				 queryString = "MATCH (n:"+alert.getNodeName()+") where n."+alert.getAttributeName()+alert.getFilterType()+
-////						 "'"+(String)alert.getValue()+"' return n as "+alert.getNodeName();
-//			}
-//			else
-//			{
-//				 queryString = "MATCH (n:"+alert.getNodeName()+") where n."+alert.getAttributeName()+alert.getFilterType()+
-//						 alert.getValue()+" return n as "+alert.getNodeName();
-//			}
 		}
 		return null;
 	}
@@ -254,13 +235,11 @@ public class AlertBusiness {
 		catch(NumberFormatException P_ex)
 		{
 			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
+			 * If the given value can not be converted to Long, the inherent value is obviously not a number, 
+			 * so it must be the unique name.
 			 */
 		}
-		
-		
+				
 		if (id >=0){
 			 alert= alertRepository.findOne(id);
 		} else{
@@ -287,7 +266,7 @@ public class AlertBusiness {
 					while(F_res.hasNext())
 					{
 						Map<String, Object> F_map = F_res.next();
-						// Die Variable stellt sicher, dass der COUNT nur einmal per Alert geprüft wird.
+						// The variable ensures that the COUNT is checked only once per alert.
 						boolean Fb_countWasCheckedForAlert = false; 
 						for(Object F_obj : F_map.values())
 						{
@@ -389,23 +368,21 @@ public class AlertBusiness {
 								catch(NumberFormatException P_ex)
 								{
 									/**
-									 * Ein Vergleich kann nur gemacht werden, wenn der hinterlegte 
-									 * Wert beim Alert in einen Integerwert umgewandelt werden kann.
-									 * Wenn das nicht gegeben ist wird die Überprüfung übersprungen.
+									 * If the given value can not be converted to Long, the inherent value is obviously not a number, 
+									 * so it must be the unique name.
 									 */
 								}
 							}
 							else
 							{
-								// noop - Unbekannter Filtertyp
+								// noop - unknown filter type --> skip check
 							}
 						}
 					}
 					
 					/**
-					 * Wenn der Wert nicht existiert wird ein leeres Array returniert,
-					 * darum muss hier die Prüfung gemacht werden, weil hasNext() in
-					 * der while-Schleife false liefert.
+					 * If the value does not exist, an empty array is returned, so the check must be done 
+					 * here because hasNext () returns false in the while loop.
 					 */
 					if(F_alert.getFilterType().equalsIgnoreCase(NOT_EXISTS))	
 					{
@@ -422,7 +399,7 @@ public class AlertBusiness {
 				}
 				
 				/**
-				 * Prüfen ob ein Mail gesendet werden muss
+				 * Check if it is necessary to send a mail
 				 */
 				if(F_mailMessageBuffer.length() > 0)
 				{
@@ -476,17 +453,22 @@ public class AlertBusiness {
 		catch(NumberFormatException P_ex)
 		{
 			/**
-			 * Ein Vergleich kann nur gemacht werden, wenn der aktuelle
-			 * Wert und der hinterlegte Wert beim Alert in den angegebenen Wert
-			 * beim Alert umgewandelt werden können. Wenn das nicht gegeben ist
-			 * wird die Überprüfung übersprungen.
+			 * A comparison can only be made if the current value and the stored value from alert can be
+			 * converted to the specified value at the alert during the alert. If this is not the case,
+			 * the check is skipped.
 			 */
 		}
 		return Fb_addMessageToBuffer;
 	}
 	
 	
-	
+	/**
+	 * Compares the compareTo return value with the filterType from alert. This method 
+	 * checks whether the alert threshold has been reached. 
+	 * @param Pi_compareToValue is the compareTo return value
+	 * @param Ps_filterType is the filterType from alert
+	 * @return if the alert threshold has been reached
+	 */
 	public boolean checkCompareToValue(int Pi_compareToValue, String Ps_filterType)
 	{
 		boolean Fb_addToMessageBuffer = false;
@@ -509,6 +491,13 @@ public class AlertBusiness {
 		return Fb_addToMessageBuffer;
 	}
 	
+	/**
+	 * Send a mail with a specific text to a specific recipient. This method realizes the email notification
+	 * for the alerts.
+	 * @param Ps_text is a part of the mail text. Should show which values trigger the alert.
+	 * @param Ps_empfaenger is the email address of the alert 
+	 * @param Ps_alertName is the name of triggered alert
+	 */
 	public void sendEmail(String Ps_text, String Ps_empfaenger, String Ps_alertName)
 	{
 		String Fs_gmailUser = "QuerybuilderSE";

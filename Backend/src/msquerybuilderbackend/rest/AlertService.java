@@ -1,13 +1,7 @@
 package msquerybuilderbackend.rest;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
-
 import org.neo4j.ogm.model.Result;
-import org.neo4j.ogm.transaction.Transaction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.data.neo4j.template.Neo4jTemplate;
@@ -22,17 +16,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import msquerybuilderbackend.business.AlertBusiness;
 import msquerybuilderbackend.entity.Alert;
-import msquerybuilderbackend.entity.Category;
-import msquerybuilderbackend.entity.ExpertQuery;
-import msquerybuilderbackend.entity.Parameter;
-import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
-import msquerybuilderbackend.exception.InvalidTypeException;
 import msquerybuilderbackend.repository.AlertRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 
@@ -65,9 +53,9 @@ public class AlertService {
 	@CrossOrigin 
 	//CrossOrigin request allow to call a different server from
 	//a certain frontend hosted on a certain address.
-	//This means that the adress of the server and 
-	//the adress of client must not be the same.
-	//Pleas add @CrossOrigin to every request.
+	//This means that the address of the server and 
+	//the address of client must not be the same.
+	//Please add @CrossOrigin to every request.
 	@RequestMapping(value="/alerts",  method=RequestMethod.GET)
 	@ApiOperation(value = "Returns all alerts",
 	notes = "place for notes", response = Alert.class, responseContainer="List")
@@ -87,8 +75,7 @@ public class AlertService {
 	public ResponseEntity<Alert> getAlert( @PathVariable String alertId){
 		return new ResponseEntity<Alert>(alertBusiness.getAlert(alertId), HttpStatus.OK);
     }
-	
-	
+		
 	/**
 	 * method which gets the GET-request and calls the alertBusiness method
 	 * executes a specific alert
@@ -100,43 +87,7 @@ public class AlertService {
 	notes = "place for notes", response = Result.class, responseContainer="ResponseEntity")
 	public ResponseEntity<Result> executeAlert( @PathVariable String alertId){
 		return alertBusiness.executeAlert(alertId);
-    }
-	
-//	@CrossOrigin 
-//	@RequestMapping(value="/alerts/{alertId}/execute",  method=RequestMethod.GET)
-//	public ResponseEntity<Result> executeAlert( @PathVariable String alertId){
-//		Alert alert=null;
-//		Long id = new Long(-1);
-//		
-//		try
-//		{
-//			id = Long.parseLong(alertId);
-//		}
-//		catch(NumberFormatException P_ex)
-//		{
-//			/**
-//			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-//			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-//			 * eindeutige Name sein. 
-//			 */
-//		}
-//		
-//		if (id >=0){
-//			 alert= alertRepository.findOne(id);
-//		} else{
-//			 alert= alertRepository.findByName(alertId);
-//		}
-//		
-//		String queryString="";
-//		if (alert.getType().equals("String") || alert.getType().equals("string")){
-//			 queryString = "MATCH (n:"+alert.getNodeName()+") where n."+alert.getAttributeName()+alert.getFilterType()+"'"+(String)alert.getValue()+"' return n as "+alert.getNodeName();
-//		}else{
-//			 queryString = "MATCH (n:"+alert.getNodeName()+") where n."+alert.getAttributeName()+alert.getFilterType()+alert.getValue()+" return n as "+alert.getNodeName();
-//		}
-//		Result result= neo4jOperations.query(queryString, new HashMap<String, String>());
-//		return new ResponseEntity<Result>(result, HttpStatus.OK);
-//    }
-	
+    }	
 	
 	/**
 	 * method which gets the POST-request and calls the alertBusiness method
@@ -169,8 +120,7 @@ public class AlertService {
 	public ResponseEntity<List<String>> getAlertNames(){		
 		return new ResponseEntity<List<String>>(alertBusiness.getNameList(), HttpStatus.OK);
     }
-	
-	
+		
 	/**
 	 * method which gets the PUT-request and calls the alertBusiness method
 	 * updates a specific alert
@@ -188,7 +138,6 @@ public class AlertService {
 		return new ResponseEntity<Alert>(alertBusiness.updateAlert(alertId, al), HttpStatus.OK);
     }
 	
-
 	/**
 	 * method which gets the DELETE-request and calls the alertBusiness method
 	 * deletes a specific alert
@@ -203,8 +152,7 @@ public class AlertService {
 		alertBusiness.deleteAlert(alertId);		
 		return new ResponseEntity<Result>(HttpStatus.OK);
     }
-	
-	
+		
 	/**
 	 * method which executes all alerts periodically
 	 */

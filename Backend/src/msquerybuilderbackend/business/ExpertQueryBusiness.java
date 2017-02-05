@@ -1,30 +1,18 @@
 package msquerybuilderbackend.business;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
 import org.springframework.data.neo4j.template.Neo4jTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.ExpertQueryJsonObject;
 import msquerybuilderbackend.entity.Parameter;
-import msquerybuilderbackend.entity.QueryBuilder;
-import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
 import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
@@ -117,9 +105,8 @@ public class ExpertQueryBusiness {
 		catch(NumberFormatException P_ex)
 		{
 			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
+			 * If the given value can not be converted to Long, the inherent value is 
+			 * obviously not a number, so it must be the unique name.
 			 */
 		}
 		
@@ -155,9 +142,8 @@ public class ExpertQueryBusiness {
 		catch(NumberFormatException P_ex)
 		{
 			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
+			 * If the given value can not be converted to Long, the inherent value is 
+			 * obviously not a number, so it must be the unique name.
 			 */
 		}
 		
@@ -180,8 +166,6 @@ public class ExpertQueryBusiness {
 		    	AttributeTypes.testTypes(p);
 	    	}
 	    	
-    	
-    	
 	    	expertQuery.setDescription(updatedQuery.getDescription());
 	    	expertQuery.setName(updatedQuery.getName());
 	    	expertQuery.setQuery(updatedQuery.getQuery());
@@ -238,9 +222,8 @@ public class ExpertQueryBusiness {
 		catch(NumberFormatException P_ex)
 		{
 			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
+			 * If the given value can not be converted to Long, the inherent value is 
+			 * obviously not a number, so it must be the unique name.
 			 */
 		}
 		
@@ -289,8 +272,7 @@ public class ExpertQueryBusiness {
 		}else{
 			description=".*"+description+".*";
 		}
-		
-		
+				
 		Set<ExpertQuery> expertqueries= expertQueryRepository.searchByParameter(description, name, category );
 		Set<ExpertQueryJsonObject> expertqueriesjson = new HashSet<ExpertQueryJsonObject>();
 		for (ExpertQuery eq:expertqueries){

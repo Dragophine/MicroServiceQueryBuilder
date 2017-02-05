@@ -5,78 +5,76 @@
 	<tbody >
 		<tr> 
 			<td>
-			<h1>Create/Save Alert</h1>
+			<h1>Create/Save Alert</h1>			
+			  <form class="loginform">
+			    <div class="row">
+			      <h1>Name</h1>
+			      <input type="textarea" class="form-control" ng-model="ctrl.name" placeholder="Name">
+			      <span class="highlight"></span><span class="bar"></span>
+			    </div>
 			
-  <form class="loginform">
-    <div class="row">
-      <h1>Name</h1>
-      <input type="textarea" class="form-control" ng-model="ctrl.name" placeholder="Name">
-      <span class="highlight"></span><span class="bar"></span>
-    </div>
-
-	<div class="row" >
-      <h1>Query</h1>
-      <select  ng-model="ctrl.selectedQuery"
-      style="width: 100%; display:block; margin-bottom: 5px">
-          <option ng-repeat="node in ctrl.queries">{{node.name}}</option>
-      </select>
-    </div>
-        
-    <div class="row" >
-   	<h1>Filter type</h1>
-      <select  ng-model="ctrl.filterType"
-      style="width: 100%; display:block; margin-bottom: 5px">
-		<option>EQUALS</option> 
-		<option>GREATER</option>
-		<option>SMALLER</option>
-		<option>GREATER EQUAL</option>
-		<option>SMALLER EQUAL</option>
-		<option>EXISTS</option>
-		<option>NOT EXISTS</option>	
-		<option>COUNT</option>		
-      </select>
-    </div>
-    <div class="row">
-      <h1>Value</h1>
-      <input type="textarea" class="form-control" ng-model="ctrl.value" placeholder="Value">
-      <span class="highlight"></span><span class="bar"></span>
-    </div>
-    <div class="row">
-       <h1>Data type</h1>
-       <select ng-model="ctrl.type">
-         <option value="string">STRING</option> 
-         <option value="integer">INT</option>
-         <option value="double">DOUBLE</option>
-         <option value="date">DATE</option>
-      </select>
-    </div>	
-    <div class="row">
-      <h1>Email address</h1>
-      <input type="email" class="form-control" ng-model="ctrl.email" placeholder="Email">
-      <span class="highlight"></span><span class="bar"></span>
-    </div>
-    <br>
-    <button type="button" class="btn btn-default" ng-click="ctrl.addAlert($event)"> Create Alert</button>    
-    <div class="row" ng-if="ctrl.selectedAlertName">
-    <br>    
-    <button type="button" class="btn btn-default" ng-click="ctrl.saveAlert($event)"> Save existing Alert </button>
-    <br>
-   	<button type="button" class="btn btn-default" ng-click="ctrl.resetValues($event)"> Reset Values </button>
-	</div>
-	
-	<!-- The Modal -->
-	<div id="myModalMissingData" class="modal">	
-	  <!-- Modal content - Save Query -->
-		<div class="modal-content">
-	    <h2>Please edit following values:</h2>
-   	      <div ng-repeat="errorText in ctrl.text" style="display: inline;">
-          	<label for="name"> {{errorText}} </label>
-		  </div>
-		<button id="missingDataOk"> Okay </button>
-	  </div>
-	</div>
-  </form>
-
+				<div class="row" >
+			      <h1>Query</h1>
+			      <select  ng-model="ctrl.selectedQuery"
+			      style="width: 100%; display:block; margin-bottom: 5px">
+			          <option ng-repeat="node in ctrl.queries">{{node.name}}</option>
+			      </select>
+			    </div>
+			        
+			    <div class="row" >
+			   	<h1>Filter type</h1>
+			      <select  ng-model="ctrl.filterType"
+			      style="width: 100%; display:block; margin-bottom: 5px">
+					<option>EQUALS</option> 
+					<option>GREATER</option>
+					<option>SMALLER</option>
+					<option>GREATER EQUAL</option>
+					<option>SMALLER EQUAL</option>
+					<option>EXISTS</option>
+					<option>NOT EXISTS</option>	
+					<option>COUNT</option>		
+			      </select>
+			    </div>
+			    <div class="row">
+			      <h1>Value</h1>
+			      <input type="textarea" class="form-control" ng-model="ctrl.value" placeholder="Value">
+			      <span class="highlight"></span><span class="bar"></span>
+			    </div>
+			    <div class="row">
+			       <h1>Data type</h1>
+			       <select ng-model="ctrl.type">
+			         <option value="string">STRING</option> 
+			         <option value="integer">INT</option>
+			         <option value="double">DOUBLE</option>
+			         <option value="date">DATE</option>
+			      </select>
+			    </div>	
+			    <div class="row">
+			      <h1>Email address</h1>
+			      <input type="email" class="form-control" ng-model="ctrl.email" placeholder="Email">
+			      <span class="highlight"></span><span class="bar"></span>
+			    </div>
+			    <br>
+			    <button type="button" class="btn btn-default" ng-click="ctrl.addAlert()"> Create Alert</button>    
+			    <div class="row" ng-if="ctrl.selectedAlertName">
+			    <br>    
+			    <button type="button" class="btn btn-default" ng-click="ctrl.saveAlert()"> Save existing Alert </button>
+			    <br>
+			   	<button type="button" class="btn btn-default" ng-click="ctrl.resetValues()"> Reset Values </button>
+				</div>
+				
+				<!-- The Modal -->
+				<div id="myModalMissingData" class="modal">	
+				  <!-- Modal content - Save Query -->
+					<div class="modal-content">
+				    <h2>Please edit following values:</h2>
+			   	      <div ng-repeat="errorText in ctrl.text" style="display: inline;">
+			          	<label for="name"> {{errorText}} </label>
+					  </div>
+					<button id="missingDataOk"> Okay </button>
+				  </div>
+				</div>
+			  </form>
 			</td>
 			<td>
 			
