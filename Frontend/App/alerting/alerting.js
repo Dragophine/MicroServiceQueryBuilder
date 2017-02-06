@@ -7,6 +7,12 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
     templateUrl: 'alerting/alerting.html'
   });
 }])
+/**
+   * This controller handles the main operation in the user interface.
+   * It configures and handle all actions in the alert view.
+   * 
+   * @version 1.0.0
+   */
 .controller('alertingCtrl', ['$requests',
 	function($requests) {
 	var self = this;
@@ -16,8 +22,6 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	self.filterType = "";				// "in","like","=",">"
 	self.email = "";
 	self.value = "";
-	self.availableNodes = [];
-	self.availableAttributeNames = [];
 	self.text = [];
 	self.selectedAlertName = "";
 	self.executeAlertResult = "";
@@ -31,19 +35,27 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 		missingDataModal.style.display = "none";
 	}
 	
-	/**
-	 * Refers to the json response when an error occured.
-	 */
+	 /**
+     * Holds the error string which is displayed to the user.
+     * The table is only shown when the hasError property is set to TRUE.
+     * @type {string}
+     */
 	self.error = "";
 	
-	/**
-	 * Boolean which concludes if the query has errors.
-	 */
+	 /**
+     * If there was an error during the execution of the query this is set to 
+     * true and the error will be displayed. Otherwise the table will be displayed.
+     * @type {boolean}
+     */
 	self.hasError = false;
 	
 	/**
 	 * Callback from delete/save alert call. If query was successful refresh alert names.
 	 * Otherwise print error.
+	 *
+	 * @param {boolean} $success - true when there are no errors.
+	 * @param {Object} $data - the requested data.
+     * @param {number} $status - the actual server status.
 	 */
 	self.callback = function($success, $data, $status) {
 		self.hasError = !$success;
@@ -57,41 +69,13 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 		}
 	}
 	
-//	/**
-//	 * Callback from delete/save alert call. If query was successful refresh alert names.
-//	 * Otherwise print error.
-//	 */
-//	self.executeAlertCB = function($success, $data, $status) {
-//		self.hasError = !$success;
-//		if($success){
-//			self.executeAlertResult = $data;
-//		}
-//		else
-//		{
-//			self.error = $data;
-//		}
-//	}
-	
-	/**
-	 * Callback from get all nodes call. If query was successful save data in variable self.availableNodes.
-	 * Otherwise print error.
-	 */
-	self.getNodesCB = function($success, $data, $status){
-		self.hasError = !$success;
-		if($success){
-			self.availableNodes = $data;
-		}
-		else
-		{
-			self.error = $data;
-		}
-	}
-	// M15: Nötig ???
-	$requests.getNodes(self.getNodesCB);
-	
 	/**
 	 * Callback from get all nodes call. If query was successful save data in variable self.queries.
 	 * Otherwise print error.
+	 * 
+	 * @param {boolean} $success - true when there are no errors.
+	 * @param {Object} $data - the requested data (In this case the queries).
+     * @param {number} $status - the actual server status.
 	 */
 	self.queriesCB = function($success, $data, $status){
 		self.hasError = !$success;
@@ -109,6 +93,10 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	/**
 	 * Callback from get query by name call. If query was successful save data in variable self.selectedQuery.
 	 * Otherwise print error.
+	 * 
+	 * @param {boolean} $success - true when there are no errors.
+	 * @param {Object} $data - the requested data (In this case the query).
+     * @param {number} $status - the actual server status.
 	 */
 	self.getQueryByNameCB = function($success, $data, $status){
 		self.hasError = !$success;
@@ -124,6 +112,10 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	/**
 	 * Callback from get all alert names call. If query was successful save data in variable self.existingAlerts.
 	 * Otherwise print error.
+	 * 
+	 * @param {boolean} $success - true when there are no errors.
+	 * @param {Object} $data - the requested data (In this case the alert names).
+     * @param {number} $status - the actual server status.
 	 */
 	self.getAlertsCB = function($success, $data, $status) {
 		self.hasError = !$success;
@@ -171,6 +163,7 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	
 	/**
 	 * Check if email address is correct.
+	 * 
 	 * @param {string} email - email address from alert form.
 	 */
 	function validateEmail(email) {
@@ -196,6 +189,7 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	
 	/**
 	 * Check if all fields in alert form are correctly filled.
+	 * 
 	 * @param {boolean} $checkIfNameExists - Is it necessary to check the name.
 	 */
 	function checkAllFieldsValidate($checkIfNameExists) {
@@ -227,6 +221,7 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	
 	/**
 	 * Load selected alert.
+	 * 
 	 * @param {Object} $query - Load this query.
 	 */
 	self.selectLoad = function($query) {
@@ -241,6 +236,7 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	
 	/**
 	 * Delete selected alert.
+	 * 
 	 * @param {Object} $query - Delete this query.
 	 */
 	self.selectDelete = function($query) {		
