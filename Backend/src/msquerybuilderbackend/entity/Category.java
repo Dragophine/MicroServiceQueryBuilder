@@ -2,7 +2,12 @@ package msquerybuilderbackend.entity;
 
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
-
+/**
+ * entity class of categories with getter and setter
+ * categories are made for ExpertQuery and QueryBuilderJsonStringObjects to  group them
+ * @author drago
+ *
+ */
 @NodeEntity
 public class Category {
 @GraphId private Long id;

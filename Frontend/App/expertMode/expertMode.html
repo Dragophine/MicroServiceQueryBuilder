@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <meta charset="utf-8"/>
-<link rel="stylesheet" href="http://www.w3schools.com/lib/w3.css"> 
 <style>
 .CodeMirror {
     border-top: 1px solid black;
@@ -10,61 +9,51 @@
 
 </style>
 
-
-
-
-
-
-
 <div class="container" ng-controller="expertModeCtrl as ctrl">
- <!-- <div class="container" ng-controller="Controller"> -->
 
   <div class="row">
     <div class="col-md-11">
-      <!-- <input type="textarea" rows="1" msd-elastic class="form-control" id="query"/> -->
       <textarea id="query"> </textarea>
     </div>
-    <div class="col-md-1">
-      <button type="submit" ng-click="ctrl.submitQuery() ">Submit</button>
-    </div>	
- 
+    
+    <button id="submit" class="btn btn-default" ng-click="ctrl.submitQuery()">Submit</button>
 	<!-- Trigger/Open The Modal - Save Query -->
-	<button id="saveQuery">Save Query</button>
+	<button id="saveQuery" class="btn btn-default">Save Query</button>
 	<!-- The Modal -->
 	<div id="myModalSave" class="modal">
 	
 	  <!-- Modal content - Save Query -->
 		<div class="modal-content">
-	    <h2>Query speichern</h2>
+	    <h1>Save Query</h1>
 	    	<div class="row" ng-if="ctrl.invalidSaveText">
 	    		<div ng-repeat="text in ctrl.invalidSaveText" style="display: inline;">
 	    			<p><font color="red">{{text}}</font></p>
 	    		</div>
     		</div>
-			<label for="name">Bitte geben Sie einen Namen für die Query an: </label>
-			<input id="name" name="name" type="text" ng-model="ctrl.name"/>
-			<label for="description">Bitte geben Sie einen Beschreibung für die Query an: </label>
-			<input id="description" name="description" type="text" ng-model="ctrl.description"/>
-			<label for="category">Bitte geben Sie eine Kategorie für die Query an: </label>
+			<label for="name">Please add a query name: </label>
+			<input id="name" name="name" type="textarea" class="form-control" ng-model="ctrl.name" placeholder="Query Name"/>
+			<label for="description">Please add a query description: </label>
+			<input id="description" name="description" type="textarea" class="form-control" ng-model="ctrl.description" placeholder="Query Description"/>
+			<label for="category">Please select a category: </label>
       <div class="group" >
         <select   ng-model="ctrl.categoryName" ng-change="ctrl.categoryName"
           style="width: 100%; display:block; margin-bottom: 5px">
           <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
         </select>
       </div>
-		<button type="saveQuery" ng-click="ctrl.saveQuery()">Save Query</button>
-		<button id="saveAbbruch">Cancel</button>
+		<button class="btn btn-default" type="saveQuery" ng-click="ctrl.saveQuery()">Save Query</button>
+		<button class="btn btn-default" id="saveAbbruch">Cancel</button>
 	  </div>
 	</div>
 	
 	<!-- Trigger/Open The Modal - Load Query -->
-	<button id="loadQuery">Load Query</button>
+	<button class="btn btn-default" id="loadQuery">Load Query</button>
 	<!-- The Modal -->
 	<div id="myModalLoad" class="modal">
 	
 	  <!-- Modal content - Load Query -->
 	  <div class="modal-content">
-		<h2>Query laden</h2>
+		<h1>Load Query</h1>
     <div class="group" >
         <select ng-model="ctrl.categoryName" ng-change="ctrl.changeCategories()"
           style="width: 100%; display:block; margin-bottom: 5px">
@@ -78,25 +67,25 @@
 
            				<td ng-if = "ctrl.checkCategory(cell.category)">
            				<label>Name: </label>
-             				<button ng:click="ctrl.select(cell)" >{{cell.name}}</button>
+             				<button class="btn btn-default" ng-click="ctrl.select(cell)" >{{cell.name}}</button>
              				<label>Beschreibung: {{cell.description}}</label>
-           				<label>Kategorie: {{cell.category}}</label>
+           				<label>Category: {{cell.category}}</label>
         					</td>
         				</tr>
     				</tbody>
     			</table>
-		<button id="loadAbbruch">Cancel</button>
+		<button class="btn btn-default" id="loadAbbruch">Cancel</button>
 	  </div>
 	</div>
 	
 	<!-- Trigger/Open The Modal - Delete Query -->
-	<button id="deleteQuery">Delete Query</button>
+	<button class="btn btn-default" id="deleteQuery">Delete Query</button>
 	<!-- The Modal -->
 	<div id="myModalDelete" class="modal">
 	
 	  <!-- Modal content - Load Query -->
 	  <div class="modal-content">
-		<h2>Query löschen</h2>
+		<h1>Delete Query</h1>
      <div class="group" >
         <select ng-model="ctrl.categoryName" ng-change="ctrl.changeCategories()"
           style="width: 100%; display:block; margin-bottom: 5px">
@@ -109,137 +98,40 @@
       				<tr ng-repeat = "cell in ctrl.queries"> 
            				<td ng-if = "ctrl.checkCategory(cell.category)">
            				<label>Name: </label>
-             				<button ng:click="ctrl.deleteSelectedQuery(cell)" >{{cell.name}}</button>
-             				<label>Beschreibung: {{cell.description}}</label>
-           				<label>Kategorie: {{cell.category}}</label>
+             				<button class="btn btn-default" ng-click="ctrl.deleteSelectedQuery(cell)" >{{cell.name}}</button>
+             				<label>Description: {{cell.description}}</label>
+           				<label>Category: {{cell.category}}</label>
            				<!--   <label>Query: {{cell.query}}</label> -->
         					</td>
         				</tr>
     				</tbody>
     			</table>
-		<button id="deleteAbbruch">Cancel</button>
+		<button class="btn btn-default" id="deleteAbbruch">Cancel</button>
 	  </div>
 	</div>
 	
-<!--  <li>
-	Category:
-	<input class="form-control" type="text" ng-model="ctrl.category" id="category">
-  </li>
-  <li>
-	Parameter:
-	<input class="form-control" type="text" ng-model="ctrl.parameter" id="parameter">
-  </li>
-  -->
-
   </div>
   <form novalidate class="simple-form">
   <div>
     <div ng-repeat="param in ctrl.params">
         <p ng-repeat="(key, val) in param">
           <select ng-if="key == 'type'" ng-model="param.type" ng-options="o as o for o in ctrl.paramoptions">
-          <!--  <option>Integer</option>
-            <option>String</option> -->
           </select>
-          <input ng-if="key == 'key'" type="text" name="key_value" ng-model="param.key" />
+          <input ng-if="key == 'key'" class="form-control" type="textarea" name="key_value" ng-model="param.key" />
           
-          <input ng-if="key == 'value'" ng-model ="param.value" name="value_value"  type="text" />
+          <input ng-if="key == 'value'" class="form-control" ng-model ="param.value" name="value_value"  type="textarea" />
         </p>
     </div>
 
-    <button ng-click="ctrl.ButtonClick()">
+<!--   <button class="btn btn-default" ng-click="ctrl.ButtonClick()">
       Add parameter
-    </button>
-    <!--
-    <div ng-repat= "param in ctrl.params"> 
-          <p ng-repat= "(key, val) in param">
-            {{key}}: {{val}}
-            <select  ng-model = "val"  ></select>
-            <input ng-if="key == 'value'" ng-model ="val" type="text" />
-          </p>
-    </div>-->
+    </button> --> 
   </div>  
   </form>
   
-<!--   <h1>TEST: {{ctrl.table}}</h1> -->
-  
-   <!-- <div class="row top-buffer">
-    <table class="table"  ng-if="!ctrl.hasError">
-       <thead>
-        <tr>
-          <th>ID</th>
-          <th>Label</th>
-          <th>Key</th>
-          <th>Value</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr ng-repeat="row in ctrl.table">
-		  <td>
-            <p  ng-repeat="node in row.n.propertyList">
-              <a href="node">{{row.n.id}}</a>
-            </p>
-          </td>
-		  <td>
-            <p  ng-repeat="node in row.n.propertyList">
-              <a href="node">{{row.n.labels[0]}}</a>
-            </p>
-          </td>
-          <td>
-            <p  ng-repeat="node in row.n.propertyList">
-              <a href="node">{{node.key}}</a>
-            </p>
-          </td>
-          <td>
-            <p  ng-repeat="node in row.n.propertyList">
-              <a href="node">{{node.value}}</a>
-            </p>
-          </td>
-        </tr>
-      </tbody>
-    </table> -->
-
-    <!-- <span ng-repeat= "(property, value) in ctrl.table">
-      {{property}} : {{value}}
-      </span> -->
-
-    <!--  <script type="text/ng-template" id="categoryTree">
-      <!--<div ng-if="ctrl.isObject(row)"> -->
-       <!-- <table class="table">
-        <tbody>
-         <tr > 
-           <td ng-repeat = "cell in table" ng-if="!ctrl.isObject(cell)">
-                {{cell}} 
-                </td>
-        <td ng-repeat = "cell in table"  ng-if="ctrl.isObject(cell)" ng-include="'categoryTree'" ng-init="table=cell" >
-         </td> 
-        </tr>
-        </tbody>
-          </table>
-       <!-- </div> -->
-     <!--  </script>
-
-<!-- ng-include="'categoryTree'" ng-init="row=cell" ng-if="angular.isObject(cell)" -->
-
-  <!--  <table class="table"  ng-if="!ctrl.hasError">
-       <tbody >
-         <tr ng-repeat = "row in ctrl.table"> 
-              <td ng-repeat = "cell in row" ng-if="!ctrl.isObject(cell)">
-                {{cell}} 
-                </td>
-                <td ng-repeat = "cell in row" ng-if="ctrl.isObject(cell)"> 
-               <table class="table"  ng-if="ctrl.isObject(cell)" ng-include="'categoryTree'" ng-init="table=row">
-                 </table>
-                   </td> 
-          </tr>
-      </tbody>
-      </table> -->
-
-
-
  <div class="container" ng-controller="Controller">
  <div outputtable table="ctrl.table"></div> 
  </div>
-
 
     <div ng-if="ctrl.hasError">
         <div class="row">
@@ -257,5 +149,4 @@
     </div>
 
   </div>
-<!--</div> -->
 </div>

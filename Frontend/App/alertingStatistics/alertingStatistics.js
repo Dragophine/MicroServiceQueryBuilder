@@ -13,7 +13,6 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 	
 	self.selectedAlert = "";
 	self.dates = [];
-//	self.addRows = [];
 	self.alertDateAndCount = [];
 	
 	
@@ -27,12 +26,6 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 	      var data = new google.visualization.DataTable();
 	      data.addColumn('date', 'Date');
 	      data.addColumn('number', 'Alerts');
-
-//	      data.addRows([
-//	        [0, 0],   [1, 10],  [2, 23],  [3, 17],  [4, 18],  [5, 9],
-//	        [6, 11],  [7, 27],  [8, 33],  [9, 40],  [10, 32], [11, 35],
-//	        [12, 30], [13, 40], [14, 42]
-//	      ]);
 	      
 	      var i;
 	      for (i=0; i<self.alertDateAndCount.length; i++) {
@@ -45,7 +38,9 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 	          format: 'd/M/yy'
 	        },
 	        vAxis: {
-	          title: 'Alerts'
+	          title: 'Alerts',
+	          format: '#,###',
+	          minValue: 0
 	        }
 	      };
 
@@ -62,8 +57,6 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 			{
 				// default selection -> first alert in array
 				self.selectedAlert = self.existingAlerts[0].name;
-				
-//				var i;
 				var firstQuery = self.existingAlerts[0];				
 				getDataFromAlert(firstQuery);
 			}			
@@ -96,7 +89,7 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 		if($firstQuery != null)
 		{
 			var zwischenergebnis = [];
-			var results = {}, rarr = [], i, date;
+			var results = {}, i, date;
 
 			var minDate;
 			var maxDate;
@@ -126,7 +119,6 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 			var maximumDate = new Date(maxDate);
 
 			while (currentDate <= maximumDate) {
-//			    d = new Date(currentDate);
 			    var dateFormat = currentDate.getFullYear() + '-' + (currentDate.getMonth() + 1) + '-' + currentDate.getDate();
 			    
 			    if(results[dateFormat] == null || results[dateFormat] == 0)

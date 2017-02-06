@@ -2,6 +2,7 @@ package msquerybuilderbackend.business;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -11,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
@@ -39,6 +41,11 @@ import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
 import msquerybuilderbackend.repository.QueryBuilderJsonStringRepository;
 
+/**
+ * Class for all activities with neo4j database regarding the entity QueryBuilder in the application and QueryBuilderJsonStringObject in the neo4j database
+ * @author drago
+ *
+ */
 @Component
 public class QueryBuilderBusiness {
 
@@ -54,25 +61,21 @@ public class QueryBuilderBusiness {
 	Neo4jOperations neo4jOperations;
 	Neo4jTemplate temp;
 	
-	//required global variables
-	Map<String,String> synonyms = new HashMap<String,String>();
-//	Map<String,Object> paramsMap = new HashMap<String,Object>();
-	char synonym='a';
-	char end='z';
-//	Set<Parameter> parameter = new HashSet<Parameter>(0);
-	String query = "";
-	boolean distinct = false;
-	LinkedList<String> filterStatements = new LinkedList<String>();
-	LinkedList<String> actualFilterStatements = new LinkedList<String>();
-	LinkedList<String> orderStatements = new LinkedList<String>();
-	LinkedList<String> returnStatements = new LinkedList<String>();
-	LinkedList<String> cypherquery = new LinkedList<String>();
-
-	public Result executeQueryBuilderQuery(QueryBuilder queryBuilder) throws Exception{
+	
+	
+/**
+ * method which builds the query of a given queryBuilder and executes this query in the neo4j database
+ * @param queryBuilder is the given queryBuilder the query is built of
+ * @return a Result of the executed query
+ * @throws Exception if a value and its given type of the queryBuilder object do not match (through the queryBuilderWriterBusiness)
+ */
+	public Result executeQueryBuilderQuery(QueryBuilder queryBuilder) throws Exception  {
 	//	Map<String,Object> paramsMap = new HashMap<String,Object>();
 		Map<String,Object> paramsMap = new HashMap<String,Object>();
 		Result result = null;
-		ExpertQuery expertQuery = buildQueryString(queryBuilder);
+		
+		QueryBuilderWriterBusiness queryBuilderWriterBusiness= new QueryBuilderWriterBusiness();
+		ExpertQuery expertQuery = queryBuilderWriterBusiness.writeQueryBuilderString(queryBuilder);
 		for (Parameter p:expertQuery.getParameter()){
 			paramsMap.put(p.getKey(), p.getValue());
 		}
@@ -80,6 +83,14 @@ public class QueryBuilderBusiness {
 		return result;
 	}
 	
+	/**
+	 * method which checks if the name of the object already exists and returns 0L, 
+	 * otherwise it creates a QueryBuilderJsonStringObject with the given QueryBuilder Objects and also the ExpertQuery for this object, maps them, and saves it in the neo4j database
+	 * @param queryBuilder is the given object which has to be converted to a QueryBuilderJsonStringObject
+	 * @return the neo4j ID of the created object
+	 * @throws JsonProcessingException if the QueryBuilder Object cannot be parsed into a JSONString
+	 * @throws Exception if a value and its given type of the queryBuilder object do not match (through the queryBuilderWriterBusiness)
+	 */
 	public Long createQueryBuilder(QueryBuilder queryBuilder) throws JsonProcessingException, Exception{
 
 		QueryBuilderJsonStringObject alreadyUsedName= queryBuilderJsonStringObjectRepository.findByName(queryBuilder.getName());
@@ -96,8 +107,8 @@ public class QueryBuilderBusiness {
 			//ExpertQuery erstellen, QueryString und Parameter übergeben,
 			//an QueryBuilderJsonStringObject anhängen und das ganze speichern
 			//???
-			
-			ExpertQuery expertQuery = buildQueryString(queryBuilder);
+			QueryBuilderWriterBusiness queryBuilderWriterBusiness= new QueryBuilderWriterBusiness();
+			ExpertQuery expertQuery = queryBuilderWriterBusiness.writeQueryBuilderString(queryBuilder);
 			
 
 			expertQuery.setName(queryBuilder.getName());
@@ -129,11 +140,22 @@ public class QueryBuilderBusiness {
 	}
 
 	
+	/**
+	 * method which generates the queryString of a given QueryBuilder object
+	 * @param queryBuilder is the given object the queryString is built with
+	 * @return an ExpertQuery Object with the generated queryString and the parameters
+	 * @throws Exception if a value and its given type of the queryBuilder object do not match (through the queryBuilderWriterBusiness)
+	 */
 	public ExpertQuery generateQueryBuilderQueryString(QueryBuilder queryBuilder) throws Exception{
-		return buildQueryString(queryBuilder);
+		QueryBuilderWriterBusiness queryBuilderWriterBusiness = new QueryBuilderWriterBusiness();
+		return queryBuilderWriterBusiness.writeQueryBuilderString(queryBuilder);
 	}
 	
 	
+	/**
+	 * method which deletes a certain QueryBuilderJsonStringObject in the neo4j database and also the mapped ExpertQuery
+	 * @param queryId is the ID of the object to delete; can be the neo4j ID or the unique name
+	 */
 	public void deleteQueryBuilder(String queryId){
 		QueryBuilderJsonStringObject qbjso=null;
 		Long id = new Long(-1);
@@ -178,6 +200,15 @@ public class QueryBuilderBusiness {
 
 	}
 	
+	
+	/**
+	 * method which updates a certain QueryBuilderJsonStringObject in the neo4j database and also the mapped ExpertQuery object
+	 * @param queryId is the ID of the object to update; can be the neo4j ID or the unique name
+	 * @param updatedQuery is the QueryBuilder object with the new content
+	 * @return the updated QueryBuilderJsonStringObject
+	 * @throws JsonProcessingException if the QueryBuilder object updatedQuery cannot be parsed to a JSONString
+	 * @throws Exception if a value and its given type of the queryBuilder object do not match (through the queryBuilderWriterBusiness)
+	 */
 	public QueryBuilderJsonStringObject updateQueryBuilder(String queryId, QueryBuilder updatedQuery) throws JsonProcessingException, Exception{
 		QueryBuilderJsonStringObject qbjso=null;
 		Long id = new Long(-1);
@@ -241,8 +272,8 @@ public class QueryBuilderBusiness {
 	//    	newExpertQuery.setDescription(updatedQuery.getDescription());
 	//    	newExpertQuery.setCategory(category);
 	//    	qbjso.setExpertQuery(newExpertQuery);
-	
-			ExpertQuery expertQuery = buildQueryString(updatedQuery);
+			QueryBuilderWriterBusiness queryBuilderWriterBusiness = new QueryBuilderWriterBusiness();
+			ExpertQuery expertQuery = queryBuilderWriterBusiness.writeQueryBuilderString(updatedQuery);
 			
 			
 			expertQuery.setName(updatedQuery.getName());
@@ -262,6 +293,11 @@ public class QueryBuilderBusiness {
 
 	}
 	
+	
+	/**
+	 * method which queries all the QueryBuilderJsonStringObject objects in the neo4j database and converts them to QueryBuilder object for the frontend by parsing the saved JSONstrings as QueryBuilder
+	 * @return a Set of all queried QueryBuilderJsonStringObjects as QueryBuilder objects
+	 */
 	public Set<QueryBuilder> getAllQueryBuilder(){
 		Iterable<QueryBuilderJsonStringObject> qbjso= queryBuilderJsonStringObjectRepository.findAll();
 		Set<QueryBuilder> querybuilders = new HashSet<QueryBuilder>();
@@ -290,6 +326,12 @@ public class QueryBuilderBusiness {
 		return querybuilders;
 	}
 	
+	
+	/**
+	 * method which queries a certain QueryBuilderJsonStringObject object and converts it into a QueryBuilder object for the frontend
+	 * @param queryId is the ID of the certain QueryBuilderJsonStringObject object; can be the neo4j ID or the unique name
+	 * @return the queried object from the database already converted to a QueryBuilder object
+	 */
 	public QueryBuilder getQueryBuilder(String queryId){
 		QueryBuilderJsonStringObject qbjso=null;
 		Long id = new Long(-1);
@@ -336,7 +378,11 @@ public class QueryBuilderBusiness {
 			return queryBuilder;
 	}
 	
-	
+	/**
+	 * method which executed the queryString of a certain QueryBuilderJsonStringObject object from the neo4j databases
+	 * @param queryId is the ID of the object; can be the neo4j ID or the unique name
+	 * @return a Result of the executed query from the neo4j database
+	 */
 	public Result getQueryBuilderExecute(String queryId){
 		QueryBuilderJsonStringObject qbjso=null;
 		Long id = new Long(-1);
@@ -376,6 +422,11 @@ public class QueryBuilderBusiness {
 		return result;
 	}
 	
+	/**
+	 * method which queries the ExpertQuery (with the queryString and the parameters) from the neo4j database of a certain QueryBuilderJsonStringObject object 
+	 * @param queryId is the id of the object the ExpertQuery object is queried; can be the neo4j ID or the unique name
+	 * @return an ExpertQueryObject of the certain QuerybuilderJsonStringObject object from the neo4j database
+	 */
 	public ExpertQuery getQueryBuilderQueryString(String queryId){
 		QueryBuilderJsonStringObject qbjso=null;
 		Long id = new Long(-1);
@@ -402,227 +453,14 @@ public class QueryBuilderBusiness {
 		return qbjso.getExpertQuery();
 	}
 
-
-
-
-//######################### logic for executing query ##################
-
-	private ExpertQuery buildQueryString(QueryBuilder queryBuilder) throws Exception{
-		ExpertQuery expertQuery = new ExpertQuery();
-		//initialise maps
-//		paramsMap.clear();
-//		parameter.clear();
-		filterStatements.clear();
-		actualFilterStatements.clear();
-		orderStatements.clear();
-		returnStatements.clear();
-		cypherquery.clear();
-		synonyms.clear();
-		synonym = 'a';
-		String query = "";
-		distinct = queryBuilder.getDistinct();
-		
-		Node node = queryBuilder.getNode();
-		
-		//TODO erste relation auf optional prüfen!!
-		//build the query
-		buildNode(node, "", expertQuery);
-		
-		Iterator<String> it = cypherquery.iterator();
-		while (it.hasNext()){
-			query += "MATCH " + it.next();
-			if (it.hasNext()) query += " ";
-		}
-		
-		//Return-Clause muss vorhanden sein!!
-		query += " RETURN";
-		if (distinct) query += " DISTINCT ";
-		
-		it = returnStatements.iterator();
-		while (it.hasNext()){
-			query += it.next();
-			if (it.hasNext()) query += ",";
-		}
-		
-		if (!orderStatements.isEmpty()) query += " ORDER BY ";
-		
-		it = orderStatements.iterator();
-		while (it.hasNext()){
-			query += it.next();
-			if (it.hasNext()) query += ", ";
-		}
-		
-		if (queryBuilder.getLimitCount() != "") {
-			query += " LIMIT " + queryBuilder.getLimitCount();
-		}
-		
-		//erstellen des results
-//		Result result = null;
-//		result = neo4jOperations.query(query, paramsMap, true);
-		expertQuery.setQuery(query);
-		return expertQuery;
-	}
-	
-	private void buildNode(Node node, String s, ExpertQuery expertQuery) throws Exception{
-		
-		String doublePoint = "";
-		if (node.getType() != "") doublePoint = ":";
-		
-		String nodeString = s + "(" + synonym + doublePoint + node.getType() + ")";
-		
-		synonyms.put(node.getType(),String.valueOf(synonym));		
-		synonym++;
-		
-		//filter zusammenstellen
-		if (!node.getFilterAttributes().isEmpty()){
-			solveFilter(node.getFilterAttributes(), node.getType(), expertQuery);
-		}
-		
-		//order zusammenstellen
-		if (!node.getOrderByAttributes().isEmpty()){
-			solveOrder(node.getOrderByAttributes(), node.getType());
-		}
-		
-		//return zusammenstellen
-		if (!node.getReturnAttributes().isEmpty()){
-			solveReturn(node.getReturnAttributes(), node.getType());
-		}
-		
-		if (node.getRelationship().isEmpty()){
-			
-			if (!filterStatements.isEmpty()) nodeString += " WHERE ";
-			Iterator<String> it = filterStatements.iterator();
-			while (it.hasNext()){
-				nodeString += it.next();
-			}
-			cypherquery.add(nodeString);
-			filterStatements.clear();
-			filterStatements.addAll(actualFilterStatements);
-			actualFilterStatements.clear();
-			return;
-		} else {
-			Iterator<Relationship> it = node.getRelationship().iterator();
-			while (it.hasNext()){
-				
-				actualFilterStatements.addAll(filterStatements);
-				
-				buildRelation(it.next(), nodeString, expertQuery);
-			}
-			return;
-		}	
-	}
-	
-	
-	private void buildRelation(Relationship relation, String s, ExpertQuery expertQuery) throws Exception{
-		String relationship = "";
-		
-		if (relation.getDirection().equalsIgnoreCase("outgoing")){
-			relationship = "-[" + synonym + ":" + relation.getRelationshipType() + "]->";
-		} else {
-			relationship = "<-[" + synonym + ":" + relation.getRelationshipType()+ "]-";
-		}
-		synonyms.put(relation.getRelationshipType(),String.valueOf(synonym));		
-		synonym++;
-		
-		//filter zusammenstellen
-		if (!relation.getFilterAttributes().isEmpty()){
-			solveFilter(relation.getFilterAttributes(), relation.getRelationshipType(), expertQuery);
-		}
-		
-		//order zusammenstellen
-		if (!relation.getOrderByAttributes().isEmpty()){
-			solveOrder(relation.getOrderByAttributes(), relation.getRelationshipType());
-		}
-		
-		//return zusammenstellen
-		if (!relation.getReturnAttributes().isEmpty()){
-			solveReturn(relation.getReturnAttributes(), relation.getRelationshipType());
-		}
-		
-		if (relation.getNode() == null){
-			cypherquery.add(s + relationship);
-			//dieser Zweig wird nie betreten
-			return;
-		} else {
-			
-			buildNode(relation.getNode(), s + relationship, expertQuery);
-			return;
-		}	
-	}
-	
-	private void solveFilter(Set<FilterAttribute> filterSet, String type, ExpertQuery expertQuery) throws Exception{
-		int i = 1;
-		
-		for (FilterAttribute f : filterSet){
-			
-			Set<Filters> set = f.getFilters();
-			List<Filters> list = new ArrayList<Filters>(set);
-			Collections.sort(list);
-			
-			for (Filters fil: list){	
-			
-			//hier könnte es eventuell zu einem Problem mit der Parameterbezeichnung kommen!!
-			String paramName = type + f.getAttributeName() + i;
-			i++;
-			
-			Parameter newParam = new Parameter();
-			newParam.setChangeable(fil.getChangeable());
-			newParam.setKey(paramName);
-			newParam.setValue(fil.getValue());
-			newParam.setType(fil.getType());
-//			parameter.add(newParam);
-			expertQuery.addParameter(newParam);
-			AttributeTypes.testTypes(newParam);
-//			paramsMap.put(paramName, newParam.getValue());
-			
-			String statement = "";
-			if (fil.getIsBracketOpen()) statement += "(";
-			statement += (synonyms.get(type) + "." + f.getAttributeName() + fil.getFilterType() + "{" + paramName + "}");
-			if (fil.getIsBracketClosed()) statement += ")";
-			if (!fil.getLogic().isEmpty()) statement += " " + fil.getLogic() + " ";
-			filterStatements.add(statement);	
-			}	
-		}
-	}
-	
-	private void solveOrder(Set<OrderByAttribute> obSet, String type){
-		for (OrderByAttribute o : obSet){
-			String dir = "";
-			if (o.getDirection() != ""){
-				dir = " " + o.getDirection();
-			}
-			//TODO evtl noch eine AGGREGATION bei orderby einfügen!!
-			orderStatements.add(synonyms.get(type) + "." + o.getAttributeName() + dir);
-		}
-	}
-	
-	private void solveReturn (Set<ReturnAttribute> retSet, String type){
-		int i = 1;
-		//TODO Liste filtern ReturnAttribute
-		for (ReturnAttribute r : retSet){
-			
-			String returnStatement = " ";
-//			if (distinct) returnStatement += ("DISTINCT ");
-			if (!r.getAggregation().isEmpty()){
-				if (r.getAggregation().equalsIgnoreCase("none") == false){
-					returnStatement += (r.getAggregation() + "(");
-				}
-			}
-			returnStatement += (synonyms.get(type) + "." + r.getAttributeName());
-			if (!r.getAggregation().isEmpty()){
-				if (r.getAggregation().equalsIgnoreCase("none") == false){
-					returnStatement += ")";
-				}
-			}
-			//TODO eventuell eigenes Attribut für die ALIAS
-			
-			returnStatement += (" AS " + type + r.getAttributeName() + i);
-			i++;
-			returnStatements.add(returnStatement);
-		}
-	}
-	
-	
+	/**
+	 * method which queries QueryBuilderJsonStringObject objects from the neo4j database with certain parameters and
+	 * converts the object to QueryBuilder objects for the frontend
+	 * @param category is the category the queried objects have to be in
+	 * @param name is the name or the pattern which the objects have to be named with or have to contain in the name
+	 * @param description is the pattern which the objects have to contain in the description
+	 * @return a Set of the found QueryBuilderJsonStringObject objects already converted to QueryBuilder objects
+	 */
 	public Set<QueryBuilder> getQueryBuilderBySearch(String category, String name, String description){
 //		String categoryParam="";
 //		if(category!=null) {
@@ -642,12 +480,30 @@ public class QueryBuilderBusiness {
 //		System.out.println(categoryParam);
 //		System.out.println(nameParam);
 //		System.out.println(descParam);
-		if (category==null)category="";
-		if (name==null) name="";
-		if (description==null)description="";
+		if (category==null){
+			category=".*.*";
+		}else{
+			category=".*"+category.trim()+".*";
+		}
+		if (name==null){
+			name=".*.*";
+		}else{
+			name=".*"+name+".*";
+		}
+		if (description==null){
+			description=".*.*";
+			
+		}else{
+			description=".*"+description+".*";
+		}
+//		List<QueryBuilderJsonStringObject> categoryList=queryBuilderJsonStringObjectRepository.searchByCategory(category.trim());
+//		List<QueryBuilderJsonStringObject> nameList=queryBuilderJsonStringObjectRepository.searchByName(name);
+//		List<QueryBuilderJsonStringObject> descList=queryBuilderJsonStringObjectRepository.searchByDescription(description);
+//		
+//		Collection<QueryBuilderJsonStringObject> commonList = CollectionUtils.retainAll(categoryList, nameList);
+//		Collection<QueryBuilderJsonStringObject> commonList2= CollectionUtils.retainAll(commonList, descList);
 		
-		
-		List<QueryBuilderJsonStringObject> qbjso= queryBuilderJsonStringObjectRepository.searchByParameter(description, name, category );
+		List<QueryBuilderJsonStringObject> qbjso= queryBuilderJsonStringObjectRepository.searchByParameter(description, name, category);
 		Set<QueryBuilder> querybuilders = new HashSet<QueryBuilder>();
 		ObjectMapper mapper = new ObjectMapper();
 		for ( QueryBuilderJsonStringObject qb: qbjso ){
@@ -671,4 +527,12 @@ public class QueryBuilderBusiness {
 		}
 		return querybuilders;
 	}
+
+
+
+
+	
+
+	
+
 }

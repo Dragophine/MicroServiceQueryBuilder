@@ -1,6 +1,12 @@
 package msquerybuilderbackend.entity;
 
-
+/**
+ * entity class of OrderByAttribute with getter and setter
+ * OrderByAttribute is an entity used in the entity node in the QueryBuilder object
+ * the entity is relevant for parsing the QueryBuilderObject and interpreting it
+ * @author drago
+ *
+ */
 public class OrderByAttribute {
 
 	private String attributeName="";

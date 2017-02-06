@@ -1,5 +1,13 @@
 package msquerybuilderbackend.entity;
 
+
+/**
+ * entity class of Filters with getter and setter
+ * Filters is an entity used in the entity FilterAttribute in the QueryBuilder object
+ * the entity is relevant for parsing the QueryBuilderObject and interpreting it
+ * @author drago
+ *
+ */
 public class Filters implements Comparable<Filters>{
 	private long id;
 	

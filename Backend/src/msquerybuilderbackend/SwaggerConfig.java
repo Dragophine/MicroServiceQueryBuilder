@@ -10,9 +10,19 @@ import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
+
+/**
+ * @author drago
+ *
+ */
 @Configuration
 @EnableSwagger2
 public class SwaggerConfig {
+	
+	/**
+	 * creates Docket for swagger documentation
+	 * @return
+	 */
 	@Bean
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2).select()
@@ -22,9 +32,13 @@ public class SwaggerConfig {
 				.apiInfo(apiInfo());
 	}
 
+	/**
+	 * creates ApiInfo
+	 * @return the ApiInfo
+	 */
 	private ApiInfo apiInfo() {
 		ApiInfo defaultinfo = ApiInfo.DEFAULT;
-		ApiInfo apiInfo = new ApiInfo("MicroServiceSystemDocumentation", "Service for Managing Microservice Architectures", defaultinfo.getVersion(), defaultinfo.getTermsOfServiceUrl(), new Contact("Benjamin Mayer", "https://www.se.jku.at/", "benjamin@mayerb.net"), defaultinfo.getLicense(), defaultinfo.getLicenseUrl());
+		ApiInfo apiInfo = new ApiInfo("MicroServiceQueryBuilderBackend", "Service for Querying Neo4j", defaultinfo.getVersion(), defaultinfo.getTermsOfServiceUrl(), new Contact("", "", ""), defaultinfo.getLicense(), defaultinfo.getLicenseUrl());
 		return apiInfo;
 	}
 

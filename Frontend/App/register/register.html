@@ -1,48 +1,47 @@
 <!DOCTYPE html>
 <div  ng-controller="RegisterController as vm">
   <form class="loginform">
-    <div class="group">
-      <input type="text" ng-model="vm.user.firstName">
+    <div class="row">
+      <h1>First name</h1>
+      <input type="textarea" class="form-control" ng-model="vm.user.firstName" placeholder="First name">
       <span class="highlight"></span><span class="bar"></span>
-      <label>Vorname</label>
     </div>
-    <div class="group">
-      <input type="text" ng-model="vm.user.lastName">
+    <div class="row">
+      <h1>Surname</h1>
+      <input type="textarea" class="form-control" ng-model="vm.user.lastName" placeholder="Surname">
       <span class="highlight"></span><span class="bar"></span>
-      <label>Nachname</label>
     </div>
-    <div class="group">
-      <input type="email" ng-model="vm.user.email">
+    <div class="row">
+      <h1>E-Mail*</h1>
+      <input type="email" class="form-control" ng-model="vm.user.email" placeholder="Email">
       <span class="highlight"></span><span class="bar"></span>
-      <label>E-Mail*</label>
     </div>
-    <div class="group">
-      <input type="password" ng-model="vm.user.password">
+    <div class="row">
+      <h1>Password*</h1>
+      <input type="password" class="form-control" ng-model="vm.user.password" placeholder="Password">
       <span class="highlight"></span><span class="bar"></span>
-      <label>Passwort*</label>
     </div>
-    <div class="group">
-      <input type="password" ng-model="vm.user.passwordRepeat">
+    <div class="row">
+      <h1>Repeat Password*</h1>
+      <input type="password" class="form-control" ng-model="vm.user.passwordRepeat" placeholder="Repeat password">
       <span class="highlight"></span><span class="bar"></span>
-      <label>Passwort wiederholen*</label>
     </div>
-    <button type="button" class="button buttonBlue" ng-click="vm.register($event)">Register
-     
-    </button>
+    <br>
+    <button class="btn btn-default" ng-click="vm.register($event)">Register</button>
 
    
 <div class="modal fade" id="registerErrorModal" role="dialog">
     <div class="modal-dialog modal-sm">
         <div class="modal-content">
             <div class="modal-header">
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
+                <button class="btn btn-default" data-dismiss="modal">&times;</button>
                 <h4 class="modal-title">Register error</h4>
             </div>
             <div class="modal-body">
-                <label>Folgende Probleme sind aufgetreten : {{vm.text}}</label>
+                <label>The following problems occurs : {{vm.text}}</label>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                <button class="btn btn-default" data-dismiss="modal">Close</button>
             </div>
         </div>
     </div>

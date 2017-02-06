@@ -8,12 +8,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.mail.*;
-import javax.activation.*;
 import javax.mail.internet.*;
-import javax.mail.util.*;
-
 import org.neo4j.ogm.model.Result;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.neo4j.template.Neo4jOperations;
@@ -21,13 +17,18 @@ import org.springframework.data.neo4j.template.Neo4jTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
-
 import msquerybuilderbackend.entity.Alert;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.Parameter;
 import msquerybuilderbackend.repository.AlertRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 
+/**
+ * Class for all activities with neo4j database regarding the entity Alert.
+ * 
+ * @author Martin
+ *
+ */
 @Component
 public class AlertBusiness {
 	
@@ -50,7 +51,13 @@ public class AlertBusiness {
 	@Autowired
 	ExpertQueryRepository expertQueryRepository;
 	
-	
+	/**
+	 * checks whether the name of the given alert already exits and returns 0L if true,
+	 * otherwise the types of the alerts are tested and the alert saved
+	 * @param alert is the alert to create in the neo4j database
+	 * @return the neo4j id of the new created alert
+	 * @throws Exception
+	 */
 	public Long createAlert(Alert alert) throws Exception{
 	Alert alreadyUsedName= alertRepository.findByName(alert.getName());
 		if (alreadyUsedName != null){
@@ -66,12 +73,23 @@ public class AlertBusiness {
 	}
 	
 	
+	/**
+	 * method which generates a List of all names of alerts
+	 * @return a list of all names of alerts as Strings
+	 */
 	public List<String> getNameList(){
 		 List<String> names = alertRepository.getNames();
 		 return names;
 	}
 	
-	public Alert updateAlert(String alertId, Alert al) throws Exception{
+	/**
+	 * method which updates a given alert in the neo4j database
+	 * @param alertId is the id of the alert to be updated; can be the unique name or the neo4j ID
+	 * @param al is the alert object with the new content
+	 * @return the updated alert
+	 * @throws Exception when the types given in the alert are not true (i.e. given type integer but the value is a string)
+	 */
+	public Alert updateAlert(String alertId, Alert al) throws Exception {
 		AttributeTypes.testTypes(al);
 		Alert alert=null;		
 		Long id = new Long(-1);
@@ -83,9 +101,8 @@ public class AlertBusiness {
 		catch(NumberFormatException P_ex)
 		{
 			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
+			 * If the given value can not be converted to Long, the inherent value is obviously not a number, 
+			 * so it must be the unique name.
 			 */
 		}
 		
@@ -96,8 +113,6 @@ public class AlertBusiness {
 		}
 		
 		alert.setName(al.getName());
-//		alert.setNodeName(al.getNodeName());
-//		alert.setAttributeName(al.getAttributeName());
 		alert.setQuery(al.getQuery());
 		alert.setType(al.getType());
 		alert.setFilterType(al.getFilterType());
@@ -108,11 +123,21 @@ public class AlertBusiness {
 		return alert;
 	}
 	
+	
+	/**
+	 * method which queries all alerts from the neo4j database
+	 * @return a list with all alerts which are in the neo4j database
+	 */
 	public List<Alert> getAllAlerts(){
 		List<Alert> alerts= alertRepository.getAllAlerts();
 		return alerts;
 	}
 	
+	/**
+	 * method which queries a certain alert from the neo4j database
+	 * @param alertId is the id from the alert to look for; can be the neo4j ID or the unique name
+	 * @return an alert object with content of the in the neo4j database found alert
+	 */
 	public Alert getAlert(String alertId){
 		Alert alert=null;
 		if (Long.parseLong(alertId) >=0){
@@ -124,6 +149,11 @@ public class AlertBusiness {
 		return alert;
 	}
 	
+	/**
+	 * method which queries a certain alert and executes it in the neo4j database
+	 * @param alertId is the id of the alert to be executed; can be the unique name or the neo4j ID
+	 * @return a neo4j result of the alert's executed query
+	 */
 	public ResponseEntity<Result> executeAlert(String alertId){
 		Alert alert=null;
 		Long id = new Long(-1);
@@ -135,15 +165,17 @@ public class AlertBusiness {
 		catch(NumberFormatException P_ex)
 		{
 			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
+			 * If the given value can not be converted to Long, the inherent value is obviously not a number, 
+			 * so it must be the unique name.
 			 */
 		}
 		
-		if (id >=0){
+		if (id >=0)
+		{
 			 alert= alertRepository.findOne(id);
-		} else{
+		}
+		else
+		{
 			 alert= alertRepository.findByName(alertId);
 		}
 		
@@ -183,25 +215,15 @@ public class AlertBusiness {
 					e.printStackTrace();
 				}
 			}			
-			
-//			String[] queryParts = queryString.split("return");
-//			if (alert.getType().equalsIgnoreCase("String"))
-//			{
-//				 queryString = "MATCH (n:"+alert.getNodeName()+") where n."+alert.getAttributeName()+alert.getFilterType()+
-//						 "'"+(String)alert.getValue()+"' return n as "+alert.getNodeName();
-////				 queryString = "MATCH (n:"+alert.getNodeName()+") where n."+alert.getAttributeName()+alert.getFilterType()+
-////						 "'"+(String)alert.getValue()+"' return n as "+alert.getNodeName();
-//			}
-//			else
-//			{
-//				 queryString = "MATCH (n:"+alert.getNodeName()+") where n."+alert.getAttributeName()+alert.getFilterType()+
-//						 alert.getValue()+" return n as "+alert.getNodeName();
-//			}
 		}
 		return null;
 	}
 	
 	
+	/**
+	 * method which deletes a certain alert in the neo4j database
+	 * @param alertId is the id of the alert to be deleted; can be the neo4j ID or the unique name
+	 */
 	public void deleteAlert(String alertId){
 		Alert alert=null;
 		Long id = new Long(-1);
@@ -213,13 +235,11 @@ public class AlertBusiness {
 		catch(NumberFormatException P_ex)
 		{
 			/**
-			 * Wenn der mitübergebene Wert nicht auf Long umgewandelt werden kann,
-			 * ist der mitübergene Wert offensichtlich keine Zahl, muss also der
-			 * eindeutige Name sein. 
+			 * If the given value can not be converted to Long, the inherent value is obviously not a number, 
+			 * so it must be the unique name.
 			 */
 		}
-		
-		
+				
 		if (id >=0){
 			 alert= alertRepository.findOne(id);
 		} else{
@@ -228,6 +248,9 @@ public class AlertBusiness {
 		alertRepository.delete(alert);		
 	}
 	
+	/**
+	 * method which executesAllAlerts; is needed for the periodic execution of alerts
+	 */
 	public void executeAllAlerts(){
 		List<Alert> F_alerts = getAllAlerts();
 		if(F_alerts != null)
@@ -243,7 +266,7 @@ public class AlertBusiness {
 					while(F_res.hasNext())
 					{
 						Map<String, Object> F_map = F_res.next();
-						// Die Variable stellt sicher, dass der COUNT nur einmal per Alert geprüft wird.
+						// The variable ensures that the COUNT is checked only once per alert.
 						boolean Fb_countWasCheckedForAlert = false; 
 						for(Object F_obj : F_map.values())
 						{
@@ -345,23 +368,21 @@ public class AlertBusiness {
 								catch(NumberFormatException P_ex)
 								{
 									/**
-									 * Ein Vergleich kann nur gemacht werden, wenn der hinterlegte 
-									 * Wert beim Alert in einen Integerwert umgewandelt werden kann.
-									 * Wenn das nicht gegeben ist wird die Überprüfung übersprungen.
+									 * If the given value can not be converted to Long, the inherent value is obviously not a number, 
+									 * so it must be the unique name.
 									 */
 								}
 							}
 							else
 							{
-								// noop - Unbekannter Filtertyp
+								// noop - unknown filter type --> skip check
 							}
 						}
 					}
 					
 					/**
-					 * Wenn der Wert nicht existiert wird ein leeres Array returniert,
-					 * darum muss hier die Prüfung gemacht werden, weil hasNext() in
-					 * der while-Schleife false liefert.
+					 * If the value does not exist, an empty array is returned, so the check must be done 
+					 * here because hasNext () returns false in the while loop.
 					 */
 					if(F_alert.getFilterType().equalsIgnoreCase(NOT_EXISTS))	
 					{
@@ -378,7 +399,7 @@ public class AlertBusiness {
 				}
 				
 				/**
-				 * Prüfen ob ein Mail gesendet werden muss
+				 * Check if it is necessary to send a mail
 				 */
 				if(F_mailMessageBuffer.length() > 0)
 				{
@@ -390,8 +411,11 @@ public class AlertBusiness {
 		}
 	}
 	
+	
 	/**
-	 * Die Meldung wird nur zum Buffer hinzugefügt wenn die Alert-Bedinung erreicht wurde.
+	 * method which checks if an alert constraint was reached and therefore if the message should be added to the buffer
+	 * @return true or false 
+	 * 
 	 */
 	public boolean shouldAddToMessageBuffer(String Ps_actualValue, Alert P_alert)
 	{
@@ -429,15 +453,22 @@ public class AlertBusiness {
 		catch(NumberFormatException P_ex)
 		{
 			/**
-			 * Ein Vergleich kann nur gemacht werden, wenn der aktuelle
-			 * Wert und der hinterlegte Wert beim Alert in den angegebenen Wert
-			 * beim Alert umgewandelt werden können. Wenn das nicht gegeben ist
-			 * wird die Überprüfung übersprungen.
+			 * A comparison can only be made if the current value and the stored value from alert can be
+			 * converted to the specified value at the alert during the alert. If this is not the case,
+			 * the check is skipped.
 			 */
 		}
 		return Fb_addMessageToBuffer;
 	}
 	
+	
+	/**
+	 * Compares the compareTo return value with the filterType from alert. This method 
+	 * checks whether the alert threshold has been reached. 
+	 * @param Pi_compareToValue is the compareTo return value
+	 * @param Ps_filterType is the filterType from alert
+	 * @return if the alert threshold has been reached
+	 */
 	public boolean checkCompareToValue(int Pi_compareToValue, String Ps_filterType)
 	{
 		boolean Fb_addToMessageBuffer = false;
@@ -460,6 +491,13 @@ public class AlertBusiness {
 		return Fb_addToMessageBuffer;
 	}
 	
+	/**
+	 * Send a mail with a specific text to a specific recipient. This method realizes the email notification
+	 * for the alerts.
+	 * @param Ps_text is a part of the mail text. Should show which values trigger the alert.
+	 * @param Ps_empfaenger is the email address of the alert 
+	 * @param Ps_alertName is the name of triggered alert
+	 */
 	public void sendEmail(String Ps_text, String Ps_empfaenger, String Ps_alertName)
 	{
 		String Fs_gmailUser = "QuerybuilderSE";

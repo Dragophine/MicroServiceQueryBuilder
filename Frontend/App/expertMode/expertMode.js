@@ -7,8 +7,10 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
     templateUrl: 'expertMode/expertMode.html'
   });
 }])
-.controller('expertModeCtrl', ['$requests','$rootScope',
-	function($requests, $rootScope) {
+
+.controller('expertModeCtrl', ['$requests','$rootScope',/*, 'ngDialog'*/,
+	function($requests, $rootScope/*, ngDialog*/) {
+
     var self = this;
     
     // textArea mit syntax highlighting
@@ -132,6 +134,13 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	}	
 	btnLoad.onclick = function() {
 		$requests.loadAllQueries(self.queriesCB);
+		
+//		var dialog = ngDialog.open({ template: 'expertMode/loadDialogExpertMode.html',
+//			className: 'ngdialog-theme-default custom-width',
+//			controller: 'loadDialogExpertModeCtrl',
+//			controllerAs: 'ctrl'});
+		
+		
 		modalLoad.style.display = "block";
 	}
 	btnDelete.onclick = function() {
@@ -182,31 +191,6 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		if($success)
 		{
 			self.queries = $data;
-			
-//			/**
-//			 * Da die Query auch Parameter, etc. returniert
-//			 * müssen die Queries rausgesucht werden.
-//			 */
-//			self.queries = [];
-//			
-//			var i;
-//			// queries mit Parameter
-//			for(i = 0; i < $data.length; i++)
-//			{
-//				if($data[i].n != null && !contains(self.queries, $data[i].n))
-//				{
-//					self.queries.push($data[i].n);
-//				}
-//			}
-//			
-//			// queries ohne Parameter
-//			for(i = 0; i < $data.length; i++)
-//			{
-//				if($data[i].m != null && !contains(self.queries, $data[i].m))
-//				{
-//					self.queries.push($data[i].m);
-//				}
-//			}
 		}
 		else
 		{
@@ -269,11 +253,6 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		// Schließe Delete-Dialog
 		modalDelete.style.display = "none";
 	}
-	
-//	self.loadQuery = function() {
-//		self.queries = $requests.loadQuery(self.queriesCB);
-//		dialogLoadQuery.showModal();
-//	}
 	
 	/**
 	 * Hier wird festgelegt was passieren soll, wenn der User ein Load-Dialog einen Eintrag

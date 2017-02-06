@@ -5,33 +5,32 @@
 	<tbody >
 		<tr> 
 			<td>
-			<h2>Kategorie erstellen/speichern</h2>
+			<h1>Create/Save Category</h1>
 			
   <form class="loginform">
-    <div class="group">
-      <input type="text" ng-model="ctrl.name">
+    <div class="row">
+      <h1>Name</h1>
+      <input type="textarea" class="form-control" ng-model="ctrl.name" placeholder="Name">
       <span class="highlight"></span><span class="bar"></span>
-      <label>Name</label>
     </div>
     
-<div class="group">
-      <input type="text" ng-model="ctrl.description">
+	<div class="row">
+      <h1>Description</h1>
+      <input type="textarea" class="form-control" ng-model="ctrl.description" placeholder="Description">
       <span class="highlight"></span><span class="bar"></span>
-      <label>Beschreibung</label>
     </div>
- 
-    
-
-    <button type="button" class="button buttonBlue" ng-click="ctrl.addCategory($event)"> Neuen Kategorie erstellen </button>    
-    <div class="row" ng-if="ctrl.selectedAlertName">    
-    <button type="button" class="button buttonBlue" ng-click="ctrl.updateCategory($event)"> Bestehende Kategorie ändern </button>
+	<br>
+    <button type="button" class="btn btn-default" ng-click="ctrl.addCategory($event)"> Create Category</button>    
+    <div class="row" ng-if="ctrl.selectedAlertName">
+    <br>    
+    <button type="button" class="btn btn-default" ng-click="ctrl.updateCategory($event)"> Save existing Category</button>
 	</div>
 	
 	<!-- The Modal -->
 	<div id="myModalMissingData" class="modal">	
 	  <!-- Modal content - Save Query -->
 		<div class="modal-content">
-	    <h2>Bitte passen Sie die folgenden Werte an:</h2>
+	    <h2>Please edit following values:</h2>
    	      <div ng-repeat="errorText in ctrl.text" style="display: inline;">
           	<label for="name"> {{errorText}} </label>
 		  </div>
@@ -43,7 +42,7 @@
 			</td>
 			<td>
 			
-			<h2>Existing Categories</h2>
+			<h1>Existing Categories</h1>
 			
 			 <table class="table">
 				<tbody >

@@ -3,7 +3,13 @@ package msquerybuilderbackend.entity;
 import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 
-
+/**
+ * entity class of ReturnAttribute with getter and setter
+ * ReturnAttribute is an entity used in the entity node in the QueryBuilder object
+ * the entity is relevant for parsing the QueryBuilderObject and interpreting it
+ * @author drago
+ *
+ */
 public class ReturnAttribute {
 
 	private String attributeName ="";

@@ -8,7 +8,13 @@ import org.neo4j.ogm.annotation.GraphId;
 import ch.qos.logback.core.filter.Filter;
 
 
-
+/**
+ * entity class of Node with getter and setter
+ * Node is used in the QueryBuilder object and contains the type, the ReturnAttributes, the FilterAttributes, the OrderByAttributes and the Relationships
+ * the entity is relevant for parsing the QueryBuilderObject and interpreting it
+ * @author drago
+ *
+ */
 public class Node {
 	
 	private String type;

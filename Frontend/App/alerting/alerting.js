@@ -12,10 +12,8 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	var self = this;
 	
 	self.name = "";
-//	self.nodeName = "";					// Knotenname. Beispiel: Serivce, ServiceHost, Port, etc.
-//	self.attributeName = "";			// Attributename. Beispiel: host, creationDate, etc.
-	self.type = "";						//int, string...
-	self.filterType = "";				//sowas wie "in","like","=",">"
+	self.type = "";						// int, string...
+	self.filterType = "";				// "in","like","=",">"
 	self.email = "";
 	self.value = "";
 	self.availableNodes = [];
@@ -34,18 +32,23 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	}
 	
 	/**
-		Refres to the json response when an error occured
-	*/
+	 * Refers to the json response when an error occured.
+	 */
 	self.error = "";
+	
 	/**
-		Bolean which concludes if the query has errors
-	*/
+	 * Boolean which concludes if the query has errors.
+	 */
 	self.hasError = false;
 	
+	/**
+	 * Callback from delete/save alert call. If query was successful refresh alert names.
+	 * Otherwise print error.
+	 */
 	self.callback = function($success, $data, $status) {
 		self.hasError = !$success;
-		if($success){
-			// self.existingAlerts = $data;
+		if($success)
+		{
 			$requests.getAllAlertNames(self.getAlertsCB);
 		}
 		else
@@ -54,20 +57,25 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 		}
 	}
 	
-	self.executeAlertCB = function($success, $data, $status) {
-		self.hasError = !$success;
-		if($success){
-			self.executeAlertResult = $data;
-		}
-		else
-		{
-			self.error = $data;
-		}
-	}
+//	/**
+//	 * Callback from delete/save alert call. If query was successful refresh alert names.
+//	 * Otherwise print error.
+//	 */
+//	self.executeAlertCB = function($success, $data, $status) {
+//		self.hasError = !$success;
+//		if($success){
+//			self.executeAlertResult = $data;
+//		}
+//		else
+//		{
+//			self.error = $data;
+//		}
+//	}
 	
 	/**
-	Methods on node
-	*/
+	 * Callback from get all nodes call. If query was successful save data in variable self.availableNodes.
+	 * Otherwise print error.
+	 */
 	self.getNodesCB = function($success, $data, $status){
 		self.hasError = !$success;
 		if($success){
@@ -78,38 +86,18 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 			self.error = $data;
 		}
 	}
+	// M15: Nötig ???
 	$requests.getNodes(self.getNodesCB);
 	
+	/**
+	 * Callback from get all nodes call. If query was successful save data in variable self.queries.
+	 * Otherwise print error.
+	 */
 	self.queriesCB = function($success, $data, $status){
 		self.hasError = !$success;
 		if($success)
 		{
 			self.queries = $data;
-			
-//			/**
-//			 * Da die Query auch Parameter, etc. returniert
-//			 * müssen die Queries rausgesucht werden.
-//			 */
-//			self.queries = [];
-//			
-//			var i;
-//			// queries mit Parameter
-//			for(i = 0; i < $data.length; i++)
-//			{
-//				if($data[i].n != null && !contains(self.queries, $data[i].n))
-//				{
-//					self.queries.push($data[i].n);
-//				}
-//			}
-//			
-//			// queries ohne Parameter
-//			for(i = 0; i < $data.length; i++)
-//			{
-//				if($data[i].m != null && !contains(self.queries, $data[i].m))
-//				{
-//					self.queries.push($data[i].m);
-//				}
-//			}
 		}
 		else
 		{
@@ -119,8 +107,9 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	$requests.loadAllQueries(self.queriesCB);
 	
 	/**
-	Methods on attribute
-	*/
+	 * Callback from get query by name call. If query was successful save data in variable self.selectedQuery.
+	 * Otherwise print error.
+	 */
 	self.getQueryByNameCB = function($success, $data, $status){
 		self.hasError = !$success;
 		if($success){
@@ -132,17 +121,10 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 		}
 	}
 	
-//	self.getAlertsCB = function($success, $data, $status) {
-//		self.hasError = !$success;
-//		if($success){
-//			self.existingAlerts = $data;
-//		}
-//		else
-//		{
-//			self.error = $data;
-//		}
-//	}	
-	
+	/**
+	 * Callback from get all alert names call. If query was successful save data in variable self.existingAlerts.
+	 * Otherwise print error.
+	 */
 	self.getAlertsCB = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
@@ -155,7 +137,10 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	}	
 	$requests.getAllAlertNames(self.getAlertsCB);
 	
-    self.addAlert = function (ev) {
+	/**
+	 * Create new alert, if all fields are filled correctly.
+	 */
+    self.addAlert = function () {
     	checkAllFieldsValidate(true);
         if(self.text != ""){
             missingDataModal.style.display = "block";
@@ -169,7 +154,10 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
         }
     };
     
-    self.saveAlert = function (ev) {
+	/**
+	 * Save already existing alert, if all fields are filled correctly.
+	 */
+    self.saveAlert = function () {
     	checkAllFieldsValidate(false);
         if(self.text != ""){
             missingDataModal.style.display = "block";
@@ -181,11 +169,18 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
         }
     };
 	
+	/**
+	 * Check if email address is correct.
+	 * @param {string} email - email address from alert form.
+	 */
 	function validateEmail(email) {
 		var re =  /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
 		return re.test(email);
 	}
 	
+	/**
+	 * Check if the name from alert form already exists.
+	 */
 	function existsNameAlready() {
 		$requests.getAllAlertNames(self.getAlertsCB);
 		
@@ -196,10 +191,13 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	            return true;
 	        }
 	    }
-	    return false;
-		
+	    return false;		
 	}
 	
+	/**
+	 * Check if all fields in alert form are correctly filled.
+	 * @param {boolean} $checkIfNameExists - Is it necessary to check the name.
+	 */
 	function checkAllFieldsValidate($checkIfNameExists) {
     	self.text = [];
 		if($checkIfNameExists && (self.name === null || self.name === ""))
@@ -213,12 +211,6 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
         if(self.selectedQuery === null || self.selectedQuery === ""){
             self.text.push("Bitte wählen Sie eine gültige Query aus.");
         }
-//        if(self.nodeName === null || self.nodeName === ""){
-//            self.text.push("Bitte geben Sie einen Knotenname ein.");
-//        }
-//        if(self.attributeName === null || self.attributeName === ""){
-//            self.text.push("Bitte geben Sie einen Attributename ein.");
-//        }
         if(!validateEmail(self.email)){
             self.text.push("Bitte geben Sie eine korrekte Email Adresse ein.");
         }
@@ -233,81 +225,38 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
         }
 	}
 	
+	/**
+	 * Load selected alert.
+	 * @param {Object} $query - Load this query.
+	 */
 	self.selectLoad = function($query) {
 		$requests.getQueryByName($query.query, self.getQueryByNameCB);
 		self.name = $query.name;
-//		self.nodeName = $query.nodeName;
-		/**
-		 * Wenn ein Alert mit einem neuen Node geladen wird, müssen die Attribute
-		 * zum Node ermittelt werden.
-		 */
-//		$requests.getKeys(self.nodeName, self.getAttributesCB);
-//		self.attributeName = $query.attributeName;
-
 		self.type = $query.type;
 		self.filterType = $query.filterType;
 		self.email = $query.email;
-		self.value = $query.value;
-		
+		self.value = $query.value;		
 		self.selectedAlertName = self.name;
 	}
 	
+	/**
+	 * Delete selected alert.
+	 * @param {Object} $query - Delete this query.
+	 */
 	self.selectDelete = function($query) {		
 		$requests.deleteAlert($query.name, self.callback);
 	}
-	
-//	self.setNode = function() {		
-//		$requests.getKeys(self.nodeName, self.getAttributesCB);
-//	}
-	
-	self.resetValues = function($query) {		
+
+	/**
+	 * Reset all values in alert form.
+	 */
+	self.resetValues = function() {		
 		self.name = "";
-//		self.nodeName = "";
-//		self.attributeName = "";
 		self.type = "";
 		self.filterType = "";
 		self.email = "";
 		self.value = "";
-		self.selectedQuery = "";
-		
+		self.selectedQuery = "";		
 		self.selectedAlertName = "";
 	}
-	
-//	setInterval(function ()
-//	{
-//		if(self.existingAlerts == null || self.existingAlerts.length <= 0)
-//		{
-//			/**
-//			 * Wenn es noch keine definierten Alerts gibt soll
-//			 * periodisch geprüft werden ob welche existieren.
-//			 */
-//			$requests.getAllAlertNames(self.getAlertsCB);
-//		}
-//		else
-//		{
-//			for (var i = 0; i < self.existingAlerts.length; i++)
-//		    {
-//				$requests.executeAlert(self.existingAlerts[i].name, self.executeAlertCB);
-//				if(self.executeAlertResult != null && self.executeAlertResult.length > 0)
-//				{
-//					sendMail(self.existingAlerts[i].email, self.existingAlerts[i].name,
-//							self.existingAlerts[i].selectedQuery, self.existingAlerts[i].filterType, 
-//							self.existingAlerts[i].value);
-//				}
-//				
-//		    }
-//		}
-//	}, 10000);
-//	
-//	function sendMail($email, $name, $selectedQuery, $filterType, $value) {
-//	    var link = "mailto:" + $email +
-//	             //+ "?cc=myCCaddress@example.com"
-//	             + "&subject=" + escape("Alert " + $name + " hat kritischen Wert passiert")
-//	             + "&body=" + escape("Der Alert " + $name + " hat den kritischen Wert von " +
-//	            		 $nodeName + "." + $attributeName + " " + $filterType + " " + $value +
-//	            		 " passiert. Bitte kontrollieren Sie ehestmöglich das System.")
-//	    ;
-//
-//	    window.location.href = link;
-//	}
 }]);

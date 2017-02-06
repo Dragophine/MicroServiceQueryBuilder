@@ -7,6 +7,16 @@ import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.NodeEntity;
 import org.neo4j.ogm.annotation.Relationship;
 
+
+/**
+ * entity class of QueryBuilderJsonStringObject (for the backend and neo4j database) with getter and setter
+ * QueryBuilderJsonStringObject is an entity used only in the backend and neo4j database 
+ * the entity is relevant for saving the QueryBuilder object as JSONString to keep all details and hierarchies
+ * because saving it as a QueryBuilder object in the neo4j database would mean that not all dependencies would be saved 
+ * when there are many levels in the hierarchy
+ * @author drago
+ *
+ */
 @NodeEntity
 public class QueryBuilderJsonStringObject {
 	

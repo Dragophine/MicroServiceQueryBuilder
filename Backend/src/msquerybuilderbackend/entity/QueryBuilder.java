@@ -7,7 +7,13 @@ import org.neo4j.ogm.annotation.GraphId;
 import org.neo4j.ogm.annotation.Relationship;
  
 
-
+/**
+ * entity class of QueryBuilder (for the frontend) with getter and setter
+ * QueryBuilder is an entity used only in the frontend and consists of metadata (id, name, description..) and a Node
+ * the entity is relevant for parsing the QueryBuilder object and interpreting it 
+ * @author drago
+ *
+ */
 public class QueryBuilder {
 
 
