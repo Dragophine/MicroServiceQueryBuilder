@@ -7,6 +7,13 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     templateUrl: 'querybuilder/querybuilder.html'
   });
 }])
+/**
+   * This controller handles the main operation in the user interface.
+   * It configures vis.js, opens a dialog when a node or a relationship was clicked, 
+   * draws the graph, executes the query and saves or updates the query.  
+   * 
+   * @version 1.0.0
+   */
 .controller('queryBuilderCtrl', ['$requests', '$rootScope', '$scope','ngDialog',
 	function($requests, $rootScope, $scope, ngDialog) {
     var self = this;
@@ -173,7 +180,13 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	
     };
 
-  
+  	 /**
+    * This method opens an info dialog. It displays a certain data (head and content)
+    * given in the $data. Furthermore, a callback can be specified, when the dialg is closed.
+    *
+    * @param {!Object} $data - the head an the content for the info dialog.
+    * @param {?function} infoClosePromis - The function which should be called when the dialog is closed.
+    */
     self.showInfoDialog = function($data, infoClosePromis){
     	var dialog = ngDialog.open({ template: 'querybuilder/infoDialog.html',
         				className: 'ngdialog-theme-default custom-width',
@@ -186,6 +199,44 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	}
     }
 	
+     /**
+    * This method checks whether a query is valid before updating and saving.
+    * Only valid queries should be sent to the server.
+    * 
+    * @return {Object} The error message or undefined.
+    */
+	self.checkInputData = function(){
+		var $data = undefined;
+		if(self.query.name === "" || self.query.name === undefined
+			|| self.query.name === null){
+			$data = {
+				"head":"No name",
+				"content":"Please enter a name before you save/update the query."
+			};
+		}
+		else if(self.query.description === ""|| self.query.description === undefined
+			|| self.query.description === null){
+			$data = {
+				"head":"No description",
+				"content":"Please enter a description before you save/update the query."
+			};
+		}
+		else if(self.query.category === ""|| self.query.category === undefined
+			|| self.query.category === null){
+			$data = {
+				"head":"No category",
+				"content":"Please enter a category before you save/update the query."
+			};
+		}
+		else if(self.query.node === ""|| self.query.node === undefined
+			|| self.query.node === null){
+			$data = {
+				"head":"No node",
+				"content":"Please enter a node before you save/update the query."
+			};
+		}
+    	return $data;
+	}
 
 	  /**
         * The callback when the requested query was loaded.
@@ -207,6 +258,12 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		}
     }
 
+    /**
+     * This method should be (will be) called every time the query changes.
+     * It saves a copy of the actual query to the root scope. This is 
+     * necessary if the user switches tabs he wants to have the same 
+     * query when he comes back. Furthermore, the cypher query will be created.
+     */
     self.onQueryChanged = function(){
     	$rootScope.queryBuilderOldQuery = self.query;
     	$requests.getQueryFromQueryQueryBuilder(self.query, self.getQueryCallback);
@@ -233,6 +290,10 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		}
 	}
 
+	 /**
+     * This method executes a query and displays the result in a table 
+     * or displays the error message.
+     */
 	self.executeQuery = function() {
 		self.onQueryChanged();
 		$requests.getResultFromQueryQueryBuilder(self.query, self.executeQueryCallback);
@@ -270,6 +331,11 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		
 	}
 
+	 /**
+     * This method saves a query and displays if the process was successful or not.
+     * Only new queries can be saved. If an existing should be saved an
+     * update needs to be done.
+     */
 	self.saveQuery = function(){
 		var $data =self.checkInputData();
 
@@ -312,6 +378,11 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		 self.showInfoDialog($data);	
 	}
 
+	/**
+	 * This method updates a certain query.
+	 * This method displays a success or an error message to the user.
+     * Before one can do an update, the query must be saved first.
+	 */
 	self.updateQuery = function(){
 		var $data =self.checkInputData();
 		if($data === undefined){
@@ -324,39 +395,14 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		self.onQueryChanged();
 	}
 
-	self.checkInputData = function(){
-		var $data = undefined;
-		if(self.query.name === "" || self.query.name === undefined
-			|| self.query.name === null){
-			$data = {
-				"head":"No name",
-				"content":"Please enter a name before you save/update the query."
-			};
-		}
-		else if(self.query.description === ""|| self.query.description === undefined
-			|| self.query.description === null){
-			$data = {
-				"head":"No description",
-				"content":"Please enter a description before you save/update the query."
-			};
-		}
-		else if(self.query.category === ""|| self.query.category === undefined
-			|| self.query.category === null){
-			$data = {
-				"head":"No category",
-				"content":"Please enter a category before you save/update the query."
-			};
-		}
-		else if(self.query.node === ""|| self.query.node === undefined
-			|| self.query.node === null){
-			$data = {
-				"head":"No node",
-				"content":"Please enter a node before you save/update the query."
-			};
-		}
-    	return $data;
-	}
 
+	/**
+	 * This method contains the logic for loading a query.
+	 * It sets all the paramerters according to the data of the query.
+	 * (Initializes vis.js, load initial nodes if they are required, shows cypher query, e.g.)
+	 * 
+	 * @param {Object} $query - the query which should be loaded.
+	 */
 	self.loadQueryLogic = function($query){
 		if( $query !== undefined &&
     		$query.name !== undefined &&
@@ -386,6 +432,11 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	}
 	}
 
+
+	/**
+	 * This method opens the load query dialog.
+	 * If the user selects a certain query it loads it.
+	 */
 	self.loadQuery = function(){
 		var dialog = ngDialog.open({ template: 'querybuilder/loadDialog.html',
 	        				className: 'ngdialog-theme-default custom-width',
@@ -432,14 +483,20 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		 self.showInfoDialog($data);
 	}
 
+	/**
+	 * This method deletes a certain query.
+	 * It takes the id from the actual query.
+	 */
 	self.deleteQuery = function(){
 		$requests.deleteQueryInBuilder(self.query.id, self.deleteQueryCallback);
 		
 	}
 
-
+	/**
+	 * This method creates a new query by overwriting the actutal one.
+	 */
 	self.newQuery = function(){
-		self.query = {
+		var query = {
 			"id":"",
 	    	"name":"",
 	    	"description":"",
@@ -447,14 +504,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	    	"limitCount": "",
 	    	 "node":""
 	    }
-	    self.selectedNode = undefined;
-		self.selectedRelation = undefined;
-		self.table = "";
-		self.onQueryChanged();
-		self.hasError = false;
-
-	    $requests.getNodes(self.getNodesCB);
-		self.transfersToGraph(self.network);
+	    self.loadQueryLogic(query);
 	}
 
 
@@ -470,6 +520,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 			self.availableCategories = $data;
 		}
 	}
+	/**
+	 * This command loads all categories.
+	 */
 	$requests.getAllCategories(self.getCategoriesCallback);
 
 	 /**
@@ -491,14 +544,18 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		}
 	}
 
-	
-
-	self.addNode = function($node){
+	 /**
+   	 * This method adds the first node to a query.
+   	 * The next nodes will be added with the nodeDialog.
+     *
+     * @param {string} $type - the type of the node.
+     */
+	self.addNode = function($type){
 		/**
 		Add initial node
 		*/
 		self.query['node'] = {
-			"type": $node,
+			"type": $type,
 			"returnAttributes": [],
 			"filterAttributes": [],
 			"orderByAttributes": [],
@@ -511,7 +568,12 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		self.transfersToGraph(self.network);
 	}
 
-
+	 /**
+   	 * This method searches the selected node and deletes it.
+   	 * The selected node is saved in the property self.selectedNode. It firsts
+   	 * checks whether the first node is the head node of the query.
+   	 * If not, then it searches for the node in the query relationship tree and deletes it.
+     */
 	self.deleteSelectedNode = function(){
 		//if node is head
 		if(self.query.node ===  self.selectedNode){
@@ -534,6 +596,16 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		$scope.$apply();
 	}
 
+	/**
+   	 * This method deletes the $nodeToDelete in the $nodeToCheck tree.
+   	 * It goes along each relationship and searches for the right node.
+   	 *
+   	 * @param {Object} $nodeToCheck - The node tree.
+     * @param {Object} $nodeToDelete - The node which should be deleted.
+     * @return {number} O if this is the node which should be deleted. 
+     *					1 if the node was deleted. 
+     *					2 if the node was not found.
+     */
 	self.deleteRecursion = function($nodeToCheck, $nodeToDelete){
 		if($nodeToCheck === $nodeToDelete){
 			return 0; //delte node;
@@ -558,15 +630,38 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	/**
 	Vis settings
 	*/
+	 /**
+     * The network used in vis.js.
+     * @type {Object}
+     */
 	self.network = undefined;
+	 /**
+     * The representation of the nodes in vis.js.
+     * @type {Object}
+     */
 	self.nodes = new vis.DataSet();
+	 /**
+     * The representation of the edges in vis.js.
+     * The edges represnt the relationships.
+     * @type {Object}
+     */
     self.edges = new vis.DataSet();
 
+    /**
+     * The date for the vis.js network. 
+     * @type {Object}
+     */
     self.network_data = {
         nodes: self.nodes,
         edges: self.edges
     };
 
+     /**
+     * The options for the vis.js network.
+     * For further documentation, please look at the vis.js website.
+     * http://visjs.org/docs/network/
+     * @type {Object}
+     */
     self.network_options = {
     	
     	width:  '100%',
@@ -601,6 +696,13 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	};
 
 
+     /**
+     * This method is called whenever a node or an edge was double clicked.
+     * It opens the edge or the node dialog.
+     *
+     * @param {Object} params - The parameters from the vis.js double click event. Further information: http://visjs.org/docs/network/
+     * @param {Object} network - The actual network, which is displayed in the query builder.
+     */
 	self.onDoubleClick = function(params, network){
 		var openNodeDialog = false;
 		var openEdgeDialog = false;
@@ -619,7 +721,13 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 			self.openEdgeDialog (params, network);
 		}
 	}
-
+	/**
+     * This method is called whenever a node or an edge was selected.
+     * It saves the selected node and the selected edge.
+	 *
+     * @param {Object} params - The parameters from the vis.js Select click event. Further information: http://visjs.org/docs/network/
+     * @param {Object} network - The actual network, which is displayed in the query builder.
+     */
 	self.onSelectClick = function(params, network){
 		if(params.nodes.length > 0){
 			self.selectedNode = self.nodeIDStore[params.nodes[0]];
@@ -639,9 +747,18 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	}
 
 
+   /********
+   Dilaog in vis.js
+   *********/
    /**
-	Open Dilaog
-   */
+    *
+    * This method checks whether the brackets of the filter attributes were set correctly.
+    * e.g. There must be as many opening brackets as closing brackets. One cannot start with a closing
+    * bracket.
+    * 
+    * @param {Object} filterAttributes - The filter attributes.
+    * @return {string} Returns a list of wrong attributes (attributes where the brackets were not set correctly). 
+    */
    self.checkBrackets = function(filterAttributes){
 		var wrongAttributesNames = "";
 		if(filterAttributes != undefined){
@@ -676,7 +793,14 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	    return wrongAttributesNames;
    }
 
-
+      /**
+     * This method opens a new node dialog.
+     * In order to find the right node, it uses the id provided by vis.js.
+     * With this id the actual node can by found based on the self.nodeIDStore.
+     *
+     * @param {Object} params - The parameters from the vis.js click event. Further information: http://visjs.org/docs/network/
+     * @param {Object} network - The actual network, which is displayed in the query builder.
+     */
     self.openNodeDialog = function(params, network){
     	var $network = network;
     	var params = params;
@@ -711,6 +835,14 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		});
     };
 
+     /**
+     * This method opens a new relationship dialog.
+     * In order to find the right relationship, it uses the id provided by vis.js.
+     * With this id the actual relationship can by found based on the self.relationshipIDStore.
+     *
+     * @param {Object} params - The parameters from the vis.js click event. Further information: http://visjs.org/docs/network/
+     * @param {Object} network - The actual network, which is displayed in the query builder.
+     */
     self.openEdgeDialog = function(params, network){
     		 var edgeId =params["edges"][0];
     		 var relationship =  self.relationshipIDStore[edgeId];
@@ -746,7 +878,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     }
 
 	/**
-	 * Load old query from $rootScope if it is available.
+	 * Loads the old query from $rootScope if it is available.
+	 * If there is no old query available then load the nodes to initialize the query.
 	 */
 	if($rootScope.queryBuilderOldQuery !== undefined){
         self.loadQueryLogic($rootScope.queryBuilderOldQuery);

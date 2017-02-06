@@ -6,6 +6,13 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 	/**
    * The controller which handles the configuration of a node.
    * It will be opened when a node will be clicked.
+   *
+   * In general, this controller helps to add or remove return attributes,
+   * orderby attributes and filter attributes.
+   * Every certain key (attribute) of a node can have a return, orderby or 
+   * filter attribute. If such a attribute is required the json will be 
+   * added with the set method.
+   * The possible attributes are first loaded into the keys array.
    * 
    * @version 1.0.0
    */
@@ -52,7 +59,8 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 		};
 		 /**
          * This method loads all keys.
-         * The keys are all possible attributes where one can apply a filter.
+         * The keys are all possible attributes where one can apply a filter, set it as return attribue or
+         * order the results according to it.
          */
 		$requests.getKeys(self.node['type'], self.getKeysCB);
 
@@ -113,16 +121,14 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 		}
 
 		/******************************
-		PROPETY SETTING
+		Return Attributes
 		/******************************/
 
-		// RETURN ATTRIBUTES
-
 		/**
-        * This method searches for a certain return attribute with a certain key.
+        * This method searches for a certain return attribute with a certain the attribute name.
         *
-        * @param {string} $key - The returnattribute key. The key is the same as the property name.
-        * @return {Object} The selected return attribute.
+        * @param {string} $key - The key of the return attribute. The key is the same as the attribute name.
+        * @return {Object} The given return attribute or undefined.
         */
 		self.getReturnAttributes = function($key){
 			var returnAttribute = undefined;
@@ -136,9 +142,10 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 		};
 
 		/**
-        * Checks whether a certain return attribute exists or not.
+        * Checks whether a certain return attribute with a certain key (attribute name) exists or not.
         *
-        * @param {string} $key - The returnattribute key. The key is the same as the property name.
+        * @param {string} $key - The return attribute key. The key is the same as the attribute name.
+        * @return {boolean} True if the attribute with the given key exists, otherwise false.
         */
 		self.isReturnAttributesChecked = function($key){
 			if(self.getReturnAttributes($key) === undefined){
@@ -147,12 +154,20 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			return true;
 		};
 		/**
-		Toggles the value every time the checkbox is klicked.
-		*/
+        * Checks whether a certain return attribute with a certain key exists or not.
+        * If it exists it removes the return attribute, if not it creates a return attribute with 
+        * the given key. 
+        * Every call toggles a certain return attribute with a certain key.
+        * This is necessary because only the keys which should be returned should have an 
+        * entry in the returnAttributes array. For one key (attribute name)
+        * there can be only one return attribute.
+        *
+        * @param {string} $key - The key of the property which should be added or deleted.
+        */
 		self.setReturnAttributes = function($key){
 			var returnAttribute = self.getReturnAttributes($key);
 			if(returnAttribute !== undefined){
-				//lösche return Attribute
+				//Deletes the return attribute
 				var index = self.node['returnAttributes'].indexOf(returnAttribute);
 				self.node['returnAttributes'].splice(index, 1);	
 
@@ -162,7 +177,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			}
 			else
 			{
-				//füge attribut hinzu
+				//adds a return attribute
 				self.node['returnAttributes'].push({
 					"attributeName":$key,
 					"aggregation" : "NONE"
@@ -170,6 +185,14 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			}
 		};
 
+		/**
+        * This method sets a property of a certain return attribute identified by 
+        * the key (attribute name).
+        *
+        * @param {string} $key - The key of the return attribute. The key is the same as the attribute name.
+        * @param {string} $type - The property which should be set. 
+        * @param {Object} $value - The characteristic of the property ($type).
+        */
 		self.setReturnAttributesValue = function($key, $type, $value){
 			var returnAttribute = self.getReturnAttributes($key);
 			if(returnAttribute !== undefined){
@@ -177,8 +200,16 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			}
 		};
 
-		// ORDER BY ATTRIBUTES 
+		/******************************
+		ORDER BY ATTRIBUTES 
+		/******************************/
 
+		/**
+        * This method searches for a certain orderby attribute with a certain attribute name (key).
+        *
+        * @param {string} $key - The key of the orderby attribute. The key is the same as the attribute name.
+        * @return {Object} The given orderby attribute or undefined.
+        */
 		self.getOrderByAttributes = function($key){
 			var orderByAttribute = undefined;
 			for (var i = self.node['orderByAttributes'].length - 1; i >= 0; i--) {
@@ -190,20 +221,35 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			return orderByAttribute;
 		};
 
+		/**
+        * Checks whether a certain orberby attribute with a certain key (attribute name) exists or not.
+        *
+        * @param {string} $key - The orberby attribute key. The key is the same as the attribute name.
+        * @return {boolean} True if the attribute with the given key exists, otherwise false.
+        */
 		self.isOrderByAttributesChecked = function($key){
 			if(self.getOrderByAttributes($key) === undefined){
 				return false;
 			}
 			return true;
 		};
+
 		/**
-		Toggles the value every time the checkbox is klicked.
-		*/
+        * Checks whether a certain orberby attribute with a certain key exists or not.
+        * If it exists it removes the orberby attribute, if not it creates a orberby attribute with 
+        * the given key. 
+        * Every call toggles a certain orberby attribute with a certain key.
+        * This is necessary because only the keys which should be returned should have an 
+        * entry in the returnAttributes array. For one key (attribute name)
+        * there can be only one orberby attribute.
+        *
+        * @param {string} $key - The key of the property which should be added or deleted.
+        */
 		self.setOrderByAttributes = function($key){
 			var orderByAttribute = self.getOrderByAttributes($key);
 			//Toggle attribute
 			if(orderByAttribute !== undefined){
-				//lösche return Attribute
+				//Deletes the orderby attribute
 				var index = self.node['orderByAttributes'].indexOf(orderByAttribute);
 				self.node['orderByAttributes'].splice(index, 1);	
 			}
@@ -212,7 +258,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				if(self.getReturnAttributes($key) === undefined){
 					self.setReturnAttributes($key);
 				}
-				//füge attribut hinzu
+				//Adds the orderby attribute
 				self.node['orderByAttributes'].push({
 					"attributeName":$key,
 					"id": 1,
@@ -221,15 +267,31 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			}
 		};
 
+		/**
+        * This method sets a property of a certain orderby attribute identified by 
+        * the key (attribute name).
+        *
+        * @param {string} $key - The key of the orderby attribute. The key is the same as the attribute name.
+        * @param {string} $type - The property which should be set. 
+        * @param {Object} $value - The characteristic of the property ($type).
+        */
 		self.setOrderByAttributesValue = function($key, $type, $value){
 			var orderByAttribute = self.getOrderByAttributes($key);
 			if(orderByAttribute !== undefined){
 				orderByAttribute[$type] = $value;
 			}
 		};
-		
-		//FILTER ATTRIBUTES
+	
 
+		/******************************
+		FILTER ATTRIBUTES
+		/******************************/
+		/**
+        * This method searches for a certain filter attribute with a certain attribute name (key).
+        *
+        * @param {string} $key - The key of the filter attribute. The key is the same as the attribute name.
+        * @return {Object} The given filter attribute or undefined.
+        */
 		self.getFilterAttributes = function($key){	
 			for (var i = self.node['filterAttributes'].length - 1; i >= 0; i--) {
 				if(self.node['filterAttributes'][i]['attributeName'] === $key){
@@ -240,7 +302,12 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			return undefined;
 		};
 
-
+		/**
+        * Checks whether a certain filter attribute with a certain key (attribute name) exists or not.
+        *
+        * @param {string} $key - The filter attribute key. The key is the same as the attribute name.
+        * @return {boolean} True if the attribute with the given key exists, otherwise false.
+        */
 		self.isFilterAttributesChecked = function($key){
 			if(self.getFilterAttributes($key) === undefined){
 				return false;
@@ -248,8 +315,27 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			return true;
 		};
 		/**
-		Toggles the value every time the checkbox is klicked.
-		*/
+        * Checks whether a certain filter attribute with a certain key exists or not.
+        * If it exists it removes the filter attribute, if not it creates a filter attribute with 
+        * the given key. 
+        * Every call toggles a certain filter attribute with a certain key.
+        * This is necessary because only the keys which should be returned should have an 
+        * entry in the returnAttributes array. For one key (attribute name)
+        * there can be only one filter attribute.
+		*
+		* Because a filter attribute can also have relations between each other, this 
+		* method handles the relations by setting the logic attribute. If two attributes are
+		* combined by this logic, the first holds the logic.
+		* 
+		* If a new attribute is added, 
+		* this method also adds the logic to the previous attribute. 
+		* If the last attribute is removed the logic
+		* of the attribute before it is also removed.
+		* 
+        * This works because the filter attributes are ordered alphabetically.
+        * 
+        * @param {string} $key - The key of the property which should be added or deleted.
+        */
 		self.setFilterAttributes = function($key){
 			var filterAttribute = self.getFilterAttributes($key);
 			if(filterAttribute !== undefined){
@@ -307,6 +393,14 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			console.log(self.node);
 		};
 
+		/**
+        * This method sets a property of a certain filter attribute identified by 
+        * the key (attribute name).
+        *
+        * @param {string} $key - The key of the filter attribute. The key is the same as the attribute name.
+        * @param {string} $type - The property which should be set. 
+        * @param {Object} $value - The characteristic of the property ($type).
+        */
 		self.setFilterAttributesValue = function($key, $type, $value){
 			var filterAttributes = self.getFilterAttributes($key);
 
@@ -319,6 +413,16 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 							+ ", id: " + $id + ", value: " + $value );
 		};
 
+		/**
+        * A filter attribute contains multiple (at least one) filter. Each filter is 
+        * identified by an id. 
+        * This method searches for a certain filter identified by an id
+        * in a certain filter attribute identified a certain attribute name (key).
+        *
+        * @param {string} $key - The key of the filter attribute. The key is the same as the attribute name.
+        * @param {string} $id - The id of the specific filter. 
+        * @return {Object} The given filter attribute or undefined.
+        */
 		self.getFilterAttributesFilter = function($key, $id){
 			var filterAttributes = self.getFilterAttributes($key);
 
@@ -335,8 +439,15 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 		}
 
 		
-
-
+		/**
+        * This method sets a property of a certain filter identified by an id in
+        * a certain filter attribute identified by an attribute name (key).
+        *
+        * @param {string} $key - The key of the filter attribute. The key is the same as the attribute name.
+        * @param {string} $id - The id of the specific filter. 
+        * @param {string} $type - The property which should be set. 
+        * @param {Object} $value - The characteristic of the property ($type).
+        */
 		self.setFilterAttributesFilterValue = function($key, $id, $type, $value){
 			var filterAttributesFilter = self.getFilterAttributesFilter($key, $id);
 
@@ -354,6 +465,15 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 
 		};
 
+		/**
+        * This method adds a filter to a filter attribute.
+        * The new filter will have a unique id.
+        * This method also sorts the filter attributes by the id.
+        * The filter attributes were combined with a certain logic (AND, OR) within  
+        * a certain filter attributes. This method initializes also the logic.
+        *
+        * @param {string} $key - The key of the filter attribute in which the filter should be added.
+        */
 		self.addFilterAttributesFilter = function($key){
 			var filterAttributes = self.getFilterAttributes($key);
 
@@ -392,6 +512,17 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			}
 		}
 
+
+		/**
+        * This method removes a filter identified by an id of a filter attribute
+        * identified by the attribute name (key).
+        *
+        * The filter attributes werew combined with a certain logic (AND, OR). 
+        * If required, this method deletes this logic too.
+        *
+        * @param {string} $key - The key of the filter attribute in which the filter should be removed.
+        * @param {string} $id - The id of the specific filter which should be removed. 
+        */
 		self.deleteFilterAttributesFilter = function($key, $id){
 			var filterAttributes = self.getFilterAttributes($key);
 
