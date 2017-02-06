@@ -56,6 +56,11 @@ var app = angular.module('queryBuilder', [
    *  @type {string}
    */
   $rootScope.queryBuilderOldQuery = undefined;
+ /**
+   *  Holds the query of the expert mode.
+   *  @type {string}
+   */
+  $rootScope.expertQuery  = undefined;
 });
 
 /**

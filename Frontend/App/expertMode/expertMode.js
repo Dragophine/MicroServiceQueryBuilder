@@ -36,6 +36,7 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
     self.myCodeMirror.on('change',function(cMirror){
     	  	// Parameter werden aktuell durch { erkannt, eventuell gibt es noch ein schönere Lösung...
     		var query = cMirror.getValue();
+    		$rootScope.expertQuery = query;
 //    		var keys = query.split(/[{}]/);
     		var paramcnt = query.split("{").length - 1;
     		var keys = '';
@@ -74,10 +75,15 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	self.description = "";
 	self.category = "";
 
+	//sets actual query from expert mode
+	if(	$rootScope.expertQuery !== undefined){
+		self.myCodeMirror.setValue($rootScope.expertQuery);
+	}
 	//set query from querybuilder to expertmode
-	if($rootScope.queryBuilderQueryInCypher !== undefined){
+	else if($rootScope.queryBuilderQueryInCypher !== undefined){
 		self.myCodeMirror.setValue($rootScope.queryBuilderQueryInCypher );
 	}
+
 	/**
 	 * Parameter fields
 	 */
