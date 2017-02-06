@@ -1,15 +1,9 @@
 angular.module('queryBuilder.services', ['ngCookies'])
-
-.service('$projectIDService',['$cookieStore', function($cookieStore){
-    return {
-        get: function () {
-            return $cookieStore.get('projectID');
-        },
-        set: function(value) {
-            $cookieStore.put('projectID', value);
-        }
-    };
-}])
+/**
+   * This service provides the actual server location.
+   * 
+   * @version 1.0.0
+   */
 .service('$serverRestLocation',  function() {
     var serverRestLocation = "http://localhost:8080";
 
@@ -17,9 +11,11 @@ angular.module('queryBuilder.services', ['ngCookies'])
         return serverRestLocation;
     };
 })
-
-
-
+/**
+   * This servicesprovides all possible requests to the application.
+   * 
+   * @version 1.0.0
+   */
 .service('$requests', ['$serverRestLocation', '$http', function($serverRestLocation, $http) {
     //execute query
     this.getResultFromQuery = function($query, $params, $callback) {
@@ -45,7 +41,15 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
-    //Execute Query with Querybuilder
+    /**
+     * Execute Query with Querybuilder.
+     * It should return the table or an error message.
+     * 
+     * @param {Object} $query - the query which should be executed.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status t
+     *              to the calling function.
+     */
     this.getResultFromQueryQueryBuilder = function($query, $callback) {
         $http({
             method : 'POST',
@@ -67,7 +71,16 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
-    //Execute Query with Querybuilder
+     /**
+     * This method should return the query in cypher.
+     * It can be used to convert a query in the querybuilder
+     * from the internal representation to cypher.
+     *
+     * @param {Object} $query - the query which should be converted.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.getQueryFromQueryQueryBuilder = function($query, $callback) {
         $http({
             method : 'POST',
@@ -112,7 +125,13 @@ angular.module('queryBuilder.services', ['ngCookies'])
         };
 
 
-    //getNodes 
+    /**
+     * This method should return all nodes in the database.
+     *
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.getNodes = function($callback) {
         $http({
             method : 'GET',
@@ -129,7 +148,15 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
-    //get Keys
+    /**
+     * This method should return all keys (attribute names) for a certain node (as label)
+     * from the database.
+     *
+     * @param {string} $label -  The name of the node.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.getKeys = function($label, $callback) {
         $http({
             method : 'GET',
@@ -146,7 +173,15 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
-    //get Keys
+     /**
+     * This method should return all keys (attribute names) for a certain relationship (as label)
+     * from the database.
+     *
+     * @param {string} $label -  The name of the relationship.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.getRelationshipKeys = function($label, $callback) {
         $http({
             method : 'GET',
@@ -163,7 +198,15 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
     
-    //getRelations with nodes
+      /**
+     * This method returns all relationships with their corresponding nodes for 
+     * a certain node (as $label).
+     *
+     * @param {string} $label -  The name of the node.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.getRelationsWithNodes = function($label, $callback) {
         $http({
             method : 'GET',
@@ -208,6 +251,16 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
+    /**
+     * This method saves a query from the query builder. 
+     * Only new queries can be saved. If an existing should be saved an
+     * update needs to be done.
+     *
+     * @param {Object} $query - the query which should be saved.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.saveQueryInBuilder = function($query, $callback) {
         $http({
             method : 'POST',
@@ -227,6 +280,15 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
+    /**
+     * This method updates a query from the query builder.
+     * Before one can do an update, the query must be saved first.
+     *
+     * @param {Object} $query - the query which should be updated.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.updateQueryInBuilder = function($query, $id, $callback) {
         $http({
             method : 'PUT',
@@ -274,6 +336,15 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };    
 
+    /**
+     * This method deletes a query from the query builder.
+     * The query is referenced by the id.
+     *
+     * @param {number} $id - the id of the query which should be deleted.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
      this.deleteQueryInBuilder = function( $id, $callback) {
        $http({
             method : 'DELETE',
@@ -309,6 +380,13 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
+    /**
+     * This method loads all saved query builder queries from the database .
+     *
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.loadAllQueriesInBuilder = function($callback) {
         $http({
             method : 'GET',
@@ -325,6 +403,14 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
+      /**
+     * This method filters the query builder queries which are saved in the database.
+     * One can filter the attributes by name, category and description.
+     *
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.loadSomeQueriesInBuilder = function($callback, $name, $category, $description) {
         var filter = "?";
         if($name !== null && $name !== undefined && $name !== ""){
@@ -506,7 +592,13 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };   
 
-          //get all already existing categories
+    /**
+     * This method gets all exsiting categories.
+     *
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.getAllCategories = function($callback) {
         $http({
             method : 'GET',

@@ -485,7 +485,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 	/**
 	 * This method deletes a certain query.
-	 * It takes the id from the actual query.
+	 * It needs the id from the actual query.
 	 */
 	self.deleteQuery = function(){
 		$requests.deleteQueryInBuilder(self.query.id, self.deleteQueryCallback);

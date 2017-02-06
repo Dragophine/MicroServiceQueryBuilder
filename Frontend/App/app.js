@@ -58,6 +58,15 @@ var app = angular.module('queryBuilder', [
   $rootScope.queryBuilderOldQuery = undefined;
 });
 
+/**
+ * This directive handles the content behind the vis.js network.
+ * The options of the network, the data of the network must be
+ * provided by the caller.
+ * Furthermore, function can be defined which are called when 
+ * a user clicks a node or a edge or a user double clicks a item.
+ * 
+ * @version 1.0.0
+ */
 app.directive('visNetwork', function() {
     return {
         restrict: 'E',
@@ -101,6 +110,14 @@ app.directive('visNetwork', function() {
     }
 });
 
+/**
+ *
+ * With this directive one can watch not only the changes of the model
+ * but also the changes within a certain model (subproberty of the model).
+ * If there was a change the visualisation will be updated.
+ *
+ * @version 1.0.0
+ */
 app.directive('ngWatch', function() {
     return {
         restrict: 'A',
