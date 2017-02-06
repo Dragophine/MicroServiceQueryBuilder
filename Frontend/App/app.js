@@ -46,6 +46,16 @@ var app = angular.module('queryBuilder', [
     }
 
   });
+  /**
+   *  Holds the query of the query builder in cypher language. 
+   *  @type {string}
+   */
+  $rootScope.queryBuilderQueryInCypher = undefined;
+  /**
+   *  Holds the old query of the query builder.
+   *  @type {string}
+   */
+  $rootScope.queryBuilderOldQuery = undefined;
 });
 
 app.directive('visNetwork', function() {

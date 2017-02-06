@@ -320,6 +320,18 @@
                       </input>
                       <div class="col-xs-3">COUNT</div>
                     </div>
+                    <div class="row">
+                      <input  class="col-xs-2" 
+                              style="margin-left: 8.8%" type="radio" 
+                            name="{{'radio' + key + 'aggregation'}}"
+                            value="AVG"
+                            ng-model="aggregation"
+                            ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
+                            ng-watch='ctrl.getReturnAttributes(key)'
+                            ng-watch-object-value="aggregation">
+                      </input>
+                      <div class="col-xs-3">AVG</div>
+                    </div>
                   </div>
                 </div>
               </div>

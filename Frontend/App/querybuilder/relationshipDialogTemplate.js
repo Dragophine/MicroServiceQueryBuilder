@@ -3,7 +3,12 @@
 angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
 
 
-
+/**
+   * The controller which handles the relationship configuration.
+   * It will be opened when a relationship was clicked.
+   * 
+   * @version 1.0.0
+   */
 .controller('queryBuilderRelationshipDialogCtrl', ['$requests', '$scope', 
     function($requests, $scope) {
         var self = this;
@@ -24,8 +29,13 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
         /******************************
         LOADING 
         /******************************/
-        /***
-        This methods load the keys for a specific node.
+        /**
+        * The callback when the requested keys were loaded.
+        * The keys are all possible attributes where one can apply a filter.
+        *
+        * @param {boolean} $success - true when there are no errors.
+        * @param {Object} $data - the requested data (In this case the keys).
+        * @param {number} $status - the actual server status.
         */
         self.getRelationshipKeyCB = function($success, $data, $status){
             self.hasError = !$success;
@@ -75,7 +85,7 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
             }
             else
             {
-                //füge attribut hinzu
+                //Adds an attribute
                 self.relationship['returnAttributes'].push({
                     "attributeName":$key,
                     "aggregation" : "NONE"
@@ -199,7 +209,7 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                             }
                         ]   //ist der Parameter fix oder in der Verwaltung veränderbar?
                 };
-                //füge attribut hinzu
+                //add an attribute
                 self.relationship['filterAttributes'].push(
                     newFilterAttribute
                 );
@@ -290,9 +300,9 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                 id = id +1;
                 filterAttributes.filters.push(
                 {
-                    "id":id,            //Fuer Frontend
+                    "id":id,            //for Frontend
                     "type":"string",    //int, string...
-                    "filterType": "=",  //sowas wie "in","like","=",">"
+                    "filterType": "=",  //like "in","like","=",">"
                     "value":"", 
                     "changeable":false,
                     "isBracketOpen": false,

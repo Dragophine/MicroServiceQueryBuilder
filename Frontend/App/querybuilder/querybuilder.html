@@ -108,7 +108,7 @@
           <h3>Order by Attributes</h3>
           <ul>
             <li ng-repeat="attribute in ctrl.selectedNode.orderByAttributes">
-              {{attribute.attributeName}} {{attribute.direction}}
+              {{attribute.attributeName}} {{attribute.direction}}, ID: {{attribute.id}}
             </li>
           </ul>   
         </div>
@@ -139,7 +139,7 @@
           <h3>Order by Attributes</h3>
           <ul>
             <li ng-repeat="attribute in ctrl.selectedRelation.orderByAttributes">
-              {{attribute.attributeName}} {{attribute.direction}}
+              {{attribute.attributeName}} {{attribute.direction}}, ID: {{attribute.id}}
             </li>
           </ul>
         </div>
@@ -176,9 +176,6 @@
       <div class="container" ng-controller="Controller">
         <div outputtable table="ctrl.table"></div> 
       </div>
-
-       <h1>Result JSON</h1>
-       {{ctrl.table}}
 
     </div>
   </div>

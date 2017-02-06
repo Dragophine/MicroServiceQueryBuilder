@@ -7,8 +7,8 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
     templateUrl: 'expertMode/expertMode.html'
   });
 }])
-.controller('expertModeCtrl', ['$requests',
-	function($requests) {
+.controller('expertModeCtrl', ['$requests','$rootScope',
+	function($requests, $rootScope) {
     var self = this;
     
     // textArea mit syntax highlighting
@@ -71,7 +71,11 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	self.name = "";
 	self.description = "";
 	self.category = "";
-	
+
+	//set query from querybuilder to expertmode
+	if($rootScope.queryBuilderQueryInCypher !== undefined){
+		self.myCodeMirror.setValue($rootScope.queryBuilderQueryInCypher );
+	}
 	/**
 	 * Parameter fields
 	 */

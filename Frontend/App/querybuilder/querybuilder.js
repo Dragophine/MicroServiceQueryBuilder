@@ -7,10 +7,15 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     templateUrl: 'querybuilder/querybuilder.html'
   });
 }])
-.controller('queryBuilderCtrl', ['$requests', '$scope','ngDialog',
-	function($requests, $scope, ngDialog) {
+.controller('queryBuilderCtrl', ['$requests', '$rootScope', '$scope','ngDialog',
+	function($requests, $rootScope, $scope, ngDialog) {
     var self = this;
 
+     /**
+     * The query which will be built with the query builder.
+     * This saves the core information about the query.
+     * @type {Object}
+     */
     self.query = {
     	"id":"",
     	"name":"",
@@ -21,34 +26,81 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	"node":""          
     }
 
+
+    /**
+     * The cypher query which is displayed to the user.
+     * @type {string}
+     */
    	self.displayQuery = "";
 
+   	/**
+     * The node ID Store saves the id of the node in the vis.js network with
+     * the corresponding node in the query.
+     * @type {Object}
+     */
     self.nodeIDStore = {};
+    /**
+     * The relationship ID Store saves the id of the relationship
+     * in the vis.js network with
+     * the corresponding relationship in the query.
+     * @type {Object}
+     */
     self.relationshipIDStore = {};
     /**
-	holdes the selected node in the vis network
-    */
+     * Holds the selected node from the vis network.
+     * @type {Object}
+     */
     self.selectedNode = undefined;
+
     /**
-	holdes the selected node in the vis network
-    */
+     * Holds the selected releation from the vis network.
+     * @type {Object}
+     */
     self.selectedRelation = undefined;
-	/**
-	Holdes the available nodes at the beginning of the selection prozess.
-	*/
+	 /**
+     * Holds the selected releation from the vis network.
+     * @type {Object}
+     */
 	self.availableNodes = "";
 
-	/**
-		Result Properties
-	*/
-
+	 /**
+     * Holds the data for the output table in the querybuilder network.
+     * The table is only shown when the hasError property is set to FALSE.
+     * @type {Object}
+     */
 	self.table = "";
+	 /**
+     * If there was an error during the execution of the query this is set to 
+     * true and the error will be displyed. Otherwise the table will be displayed.
+     * @type {boolean}
+     */
 	self.hasError = false;
+	 /**
+     * Holds the error string which is displayed to the user.
+     * The table is only shown when the hasError property is set to TRUE.
+     * @type {string}
+     */
 	self.error = "";
-    /**
-	Transfair changes to graph
-    */
-    self.transfairToGraph = function($network){
+
+	 /**
+     * Holds all available categories.
+     * @type {Object}
+     */
+	self.availableCategories = [];
+   
+   	/**
+   	 * Transfers the actual query into a graph 
+   	 * which can be displayed with vis.js.
+	 * This method will be called whenever the self.query property
+     * changes. 
+     * Furthermore, this method creates the ids for the nodes and for the 
+     * relationships which are required for the vis.js network.
+   	 * In order to find out, which id corresponds to which node or to which relationship in 
+   	 * the query a relationshipIDStore and a nodeIDStore is needed.
+   	 *
+   	 * @param {visnetwork} $network - the network behind the vis graph (optional).
+   	 */
+    self.transfersToGraph = function($network){
     	var $nodeID = 1;
     	var $relationshipID = 0;
 
@@ -67,8 +119,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	self.nodeIDStore = {};
     	self.relationshipIDStore = {};
 
-    	//reset
-    	function transfairToGraphRecursion($parrentid, $relationship){
+    	function transfersToGraphRecursion($parrentid, $relationship){
     		var $node = $relationship['node'];
 
     		if($node != undefined){
@@ -94,7 +145,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     			if($node["relationship"] != undefined){
     				for (var i = 0; i < $node["relationship"].length; i++){
 					    var rel = $node["relationship"][i];
-					    transfairToGraphRecursion($nID, rel);
+					    transfersToGraphRecursion($nID, rel);
 					}
     			}
     		}
@@ -111,7 +162,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     			 if($rootNode["relationship"] != undefined){
     				for (var i = 0; i < $rootNode["relationship"].length; i++){
 					    var rel = $rootNode["relationship"][i];
-					    transfairToGraphRecursion(1, rel);
+					    transfersToGraphRecursion(1, rel);
 					}
     			}
     	}
@@ -122,28 +173,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	
     };
 
-   
-    /**
-	 self.nodes.add([
-    	 {id: 1, label: 'Node 4'},
-        
-        {id: 2, label: 'Node 2'},
-        {id: 3, label: 'Node 3'},
-
-        {id: 5, label: 'Node 5'},
-        {id: 6, label: 'Node 1'}]);
-
-
-    self.edges.add([
-    	{id: 1, from: 1, to: 6, label: 'Edge 1'},
-        {id: 2, from: 6, to: 2, label: 'Edge 1'},
-        {id: 3, from: 6, to: 3, label: 'Edge 1'}
-
-    ]);
-    */
-
-
-
+  
     self.showInfoDialog = function($data, infoClosePromis){
     	var dialog = ngDialog.open({ template: 'querybuilder/infoDialog.html',
         				className: 'ngdialog-theme-default custom-width',
@@ -157,25 +187,41 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     }
 	
 
-	/**
-	Query Operations
-	*/
+	  /**
+        * The callback when the requested query was loaded.
+        * The query is the cypher query which is displayed to the user.
+        *
+        * @param {boolean} $success - true when there are no errors.
+        * @param {Object} $data - the requested data (In this case the query).
+        * @param {number} $status - the actual server status.
+        */
 	self.getQueryCallback = function($success, $data, $status){
 		if($success){
 			self.displayQuery = $data;
+			$rootScope.queryBuilderQueryInCypher = $data.query;
 		}
 		else
 		{
 			self.displayQuery = "";
+			$rootScope.queryBuilderQueryInCypher = undefined;
 		}
     }
 
-    self.getQuery = function(){
+    self.onQueryChanged = function(){
+    	$rootScope.queryBuilderOldQuery = self.query;
     	$requests.getQueryFromQueryQueryBuilder(self.query, self.getQueryCallback);
     }
 
    
-
+ 	/**
+    * The callback is executed when the query is executed.
+    * If there is an error in the query the error will be displayed otherwise the
+    * result.
+    *
+    * @param {boolean} $success - true when there are no errors.
+    * @param {Object} $data - the requested data (The error or the result of the query.).
+    * @param {number} $status - the actual server status.
+    */
 	self.executeQueryCallback = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
@@ -188,10 +234,20 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	}
 
 	self.executeQuery = function() {
-		self.getQuery();
+		self.onQueryChanged();
 		$requests.getResultFromQueryQueryBuilder(self.query, self.executeQueryCallback);
 	}
 
+	  /**.
+        * The callback when user requested to save the query.
+        * This method displays a success or an error message to the user.
+        * Only new queries can be saved. If an existing should be saved an
+        * update needs to be done.
+        *
+        * @param {boolean} $success - true when there are no errors.
+        * @param {Object} $data -. the requested data (The new id of the query).
+        * @param {number} $status - the actual server status.
+        */
 	self.saveQueryCallback = function($success, $data, $status) {
 		var $dataForDialog = undefined;
 		if($success){
@@ -225,9 +281,18 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	{
     		self.showInfoDialog($data);
     	}
-		self.getQuery();
+		self.onQueryChanged();
 	}
 
+	  /**.
+        * The callback when user requested to update the query.
+        * This method displays a success or an error message to the user.
+        * Before one can do an update, the query must be saved first.
+        *
+        * @param {boolean} $success - true when there are no errors.
+        * @param {Object} $data - useless, because no data was requested.
+        * @param {number} $status - the actual server status.
+        */
 	self.updateQueryCallback = function($success, $data, $status) {
 		var $data = undefined;
 		if($success){
@@ -256,7 +321,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	{
     		self.showInfoDialog($data);
     	}
-		self.getQuery();
+		self.onQueryChanged();
 	}
 
 	self.checkInputData = function(){
@@ -292,6 +357,35 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     	return $data;
 	}
 
+	self.loadQueryLogic = function($query){
+		if( $query !== undefined &&
+    		$query.name !== undefined &&
+    		$query.description !== undefined &&
+    		$query.category !== undefined)
+    	{
+    		self.query = $query;
+    		self.selectedNode = undefined;
+    		self.selectedRelation = undefined;
+    		self.table = "";
+    		self.onQueryChanged();
+    		self.hasError = false;
+
+    		//checks weather query has already properties or is empty
+    		if(
+    		   $query.node !== undefined &&
+    		   $query.node !== "" &&
+    		   $query.node.type !== undefined &&
+    		   $query.node.type !== "" )
+    		{
+    		   	self.availableNodes =  [];
+    		}
+    		else{
+    			$requests.getNodes(self.getNodesCB);
+    		}
+	     	self.transfersToGraph(self.network);
+    	}
+	}
+
 	self.loadQuery = function(){
 		var dialog = ngDialog.open({ template: 'querybuilder/loadDialog.html',
 	        				className: 'ngdialog-theme-default custom-width',
@@ -300,35 +394,24 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 
 
         dialog.closePromise.then(function ($data) {
-        	if($data !== undefined &&
-        		$data.value !== undefined &&
-        		$data.value.name !== undefined &&
-        		$data.value.description !== undefined &&
-        		$data.value.category !== undefined)
+        	if($data !== undefined)
         	{
-        		self.query = $data.value;
-        		self.selectedNode = undefined;
-        		self.selectedRelation = undefined;
-        		self.table = "";
-        		self.getQuery();
-        		self.hasError = false;
-
-        		if(
-        		   $data.value.node !== undefined &&
-        		   $data.value.node !== "" &&
-        		   $data.value.node.type !== undefined &&
-        		   $data.value.node.type !== "" )
-        		{
-        		   	self.availableNodes =  [];
-        		}
-        		else{
-        			$requests.getNodes(self.getNodesCB);
-        		}
-		     	self.transfairToGraph(self.network);
+        		self.loadQueryLogic($data.value);
         	}
 		});
 	}
+
+
 	
+
+   /**.
+    * The callback when user requested to delete the query.
+    * This method displays a success or an error message to the user.
+    *
+    * @param {boolean} $success - true when there are no errors.
+    * @param {Object} $data - useless, because no data was requested.
+    * @param {number} $status - the actual server status.
+    */
 	self.deleteQueryCallback = function($success, $data, $status) {
 		var $data = undefined;
 		if($success){
@@ -336,6 +419,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 				"head":"Successfully deleted",
 				"content":"The query was saved successfully deleted."
 			};
+			self.newQuery();
 		}
 		else
 		{
@@ -344,7 +428,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 				"content":"Error when deleting the query. Info: " + $data
 			};
 		}
-		self.getQuery();
+		
 		 self.showInfoDialog($data);
 	}
 
@@ -352,6 +436,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		$requests.deleteQueryInBuilder(self.query.id, self.deleteQueryCallback);
 		
 	}
+
 
 	self.newQuery = function(){
 		self.query = {
@@ -365,16 +450,36 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	    self.selectedNode = undefined;
 		self.selectedRelation = undefined;
 		self.table = "";
-		self.getQuery();
+		self.onQueryChanged();
 		self.hasError = false;
 
 	    $requests.getNodes(self.getNodesCB);
-		self.transfairToGraph(self.network);
+		self.transfersToGraph(self.network);
 	}
 
+
 	/**
-	Methods on node
-	*/
+    * The callback when the requested categories were loaded
+    *
+    * @param {boolean} $success - true when there are no errors.
+    * @param {Object} $data - the requested data (In this case the categories).
+    * @param {number} $status - the actual server status.
+    */
+	self.getCategoriesCallback = function($success, $data, $status){
+		if($success){
+			self.availableCategories = $data;
+		}
+	}
+	$requests.getAllCategories(self.getCategoriesCallback);
+
+	 /**
+   	 * The callback when the requested nodes were loaded.
+     * The nodes are all node types that exist in the database.
+     *
+     * @param {boolean} $success - true when there are no errors.
+     * @param {Object} $data - the requested data (In this case the nodes).
+     * @param {number} $status - the actual server status.
+     */
 	self.getNodesCB = function($success, $data, $status){
 		self.hasError = !$success;
 		if($success){
@@ -386,7 +491,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		}
 	}
 
-	$requests.getNodes(self.getNodesCB);
+	
 
 	self.addNode = function($node){
 		/**
@@ -402,39 +507,9 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 		
 
 		self.availableNodes = [];
-		self.getQuery();
-		self.transfairToGraph(self.network);
+		self.onQueryChanged();
+		self.transfersToGraph(self.network);
 	}
-
-
-	/***
-	This methods load the relationships for a specific node.
-	*/
-	self.loadKeysForNodeCB = function($success, $data, $status){
-		self.hasError = !$success;
-		if($success){
-			self.selectedNodesAndRelation[self.selectedNodesAndRelation.length - 1]["keys"] = $data; 
-		}
-		else
-		{
-			self.error = $data;
-		}
-	}
-
-	self.loadKeysForNode = function($node){
-		$requests.getKeys($node, self.loadKeysForNodeCB);
-	}
-
-	
-
-//	$scope.highlight = function(haystack) {
-//
-//		for (var i = 0; i < self.highlightWords.length; i++) {
-//			$scope.trustAsHtml(haystack.replace(new RegExp(self.highlightWords[i], "gi"), function(match) {
-//			        return '<span class="highlightedText">' + match + '</span>';
-//			}
-//	    }));
-//	};
 
 
 	self.deleteSelectedNode = function(){
@@ -454,8 +529,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 				self.selectedRelation = undefined;
 			};
 		}
-		self.getQuery();
-		self.transfairToGraph(self.network);
+		self.onQueryChanged();
+		self.transfersToGraph(self.network);
 		$scope.$apply();
 	}
 
@@ -630,8 +705,8 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 				self.showInfoDialog($dataForDialog, infoClosePromis);
 	    		
 	    	}
-	    	self.getQuery();
-			self.transfairToGraph($network);
+	    	self.onQueryChanged();
+			self.transfersToGraph($network);
 			 
 		});
     };
@@ -665,28 +740,20 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 					self.showInfoDialog($dataForDialog, infoClosePromis);
 		    		
 		    	}
-		    	self.getQuery();
-				self.transfairToGraph($network);
+		    	self.onQueryChanged();
+				self.transfersToGraph($network);
 			});
     }
 
-
-	self.availableCategories = [];
-
-			/**
-	Method for categories
-	*/
-	self.getCategories = function($success, $data, $status){
-		self.hasError = !$success;
-		if($success){
-			self.availableCategories = $data;
-		}
-		else
-		{
-			self.error = $data;
-		}
-	}
-	$requests.getAllCategories(self.getCategories);
+	/**
+	 * Load old query from $rootScope if it is available.
+	 */
+	if($rootScope.queryBuilderOldQuery !== undefined){
+        self.loadQueryLogic($rootScope.queryBuilderOldQuery);
+    }
+    else{
+    	$requests.getNodes(self.getNodesCB);
+    }
 
 
 }]);

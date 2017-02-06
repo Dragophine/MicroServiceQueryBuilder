@@ -3,33 +3,69 @@
 angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 
 
-
+	/**
+   * The controller which handles the configuration of a node.
+   * It will be opened when a node will be clicked.
+   * 
+   * @version 1.0.0
+   */
 .controller('queryBuilderNodeDialogCtrl', ['$requests', '$scope', 
     function($requests, $scope) {
         var self = this;
 	    
+	     /**
+	     * The property contains all informations about the node.
+	     * This information is handed in from the query builder.
+	     * @type {Object}
+	     */	
         self.node = $scope.ngDialogData;
+         /**
+	     * The name of the node.
+	     * @type {Object}
+	     */	
         self.name = self.node['type'];
+         /**
+	     *The keys are all possible attributes where one can apply a filter.
+	     * @type {Object}
+	     */	
         self.keys = [];
+         /**
+	     * The relations are all existing incoming and outgoing relationship types of a 
+         * certain node.
+	     * @type {Object}
+	     */	
         self.relationships = [];
-        /******************************
-		LOADING 
-		/******************************/
-        /***
-		This methods load the keys for a specific node.
-		*/
+
+        /**
+        * The callback when the requested keys were loaded.
+        * The keys are all possible attributes where one can apply a filter.
+        *
+        * @param {boolean} $success - true when there are no errors.
+        * @param {Object} $data - the requested data (In this case the keys).
+        * @param {number} $status - the actual server status.
+        */
 		self.getKeysCB = function($success, $data, $status){
 			self.hasError = !$success;
 			if($success){
 				self.keys = $data; 
 			}
 		};
-
+		 /**
+         * This method loads all keys.
+         * The keys are all possible attributes where one can apply a filter.
+         */
 		$requests.getKeys(self.node['type'], self.getKeysCB);
 
+		
 		/**
-		This method load the relationships for a specific node.
-		*/
+        * The callback when the requested relations were loaded.
+        * The relations are all existing incoming and outgoing relationship types of this 
+        *  node.
+        *
+        * @param {boolean} $success - true when there are no errors.
+        * @param {Object} $data - the requested data (In this case the relations).
+        * @param {number} $status - the actual server status.
+        */
 		self.getRelationsWithNodesCB = function($success, $data, $status){
 			self.hasError = !$success;
 			if($success){
@@ -37,12 +73,25 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			}
 		};
 
+		 /**
+         * This method loads all relations.
+         * The relations are all existing incoming and outgoing relationship types of 
+         * this node.
+         */
 		$requests.getRelationsWithNodes(self.node['type'], self.getRelationsWithNodesCB);
 
 
 		/******************************
 		ADD RELATIONSHIP
 		/******************************/
+
+		/**
+        * This method adds an relationship to this node.
+        *
+        * @param {string} $type - the relationshiptype.
+        * @param {string} $direction - The direction of the relationship (ingoing or outgoing).
+        * @param {Object} $node - The node type where the relationship comes from ore goes to.
+        */
 		self.addRelationship = function($type, $direction, $node){
 			self.node['relationship'].push({
 					"relationshipType" :$type, 	//hasMethod, hasInstance
@@ -69,6 +118,12 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 
 		// RETURN ATTRIBUTES
 
+		/**
+        * This method searches for a certain return attribute with a certain key.
+        *
+        * @param {string} $key - The returnattribute key. The key is the same as the property name.
+        * @return {Object} The selected return attribute.
+        */
 		self.getReturnAttributes = function($key){
 			var returnAttribute = undefined;
 			for (var i = self.node['returnAttributes'].length - 1; i >= 0; i--) {
@@ -80,6 +135,11 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			return returnAttribute;
 		};
 
+		/**
+        * Checks whether a certain return attribute exists or not.
+        *
+        * @param {string} $key - The returnattribute key. The key is the same as the property name.
+        */
 		self.isReturnAttributesChecked = function($key){
 			if(self.getReturnAttributes($key) === undefined){
 				return false;
@@ -193,8 +253,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 		self.setFilterAttributes = function($key){
 			var filterAttribute = self.getFilterAttributes($key);
 			if(filterAttribute !== undefined){
-				//lösche return Attribute
-				//lösche return Attribute
+				
 				var index = self.node['filterAttributes'].indexOf(filterAttribute);
 				
 				if(self.node['filterAttributes'].length - 1 === index && index !== 0){
@@ -210,9 +269,9 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 						"logic":"",
 						"filters": [
 							{
-								"id":0,			//Fuer Frontend
+								"id":0,			//for Frontend
 								"type":"string",		 //int, string...
-								"filterType": "=", 	//sowas wie "in","like","=",">"
+								"filterType": "=", 	// "in","like","=",">"
 								"value":"", 
 								"changeable":true,
 								"isBracketOpen": false,
@@ -222,7 +281,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 						]	//ist der Parameter fix oder in der Verwaltung veränderbar?
 				};
 
-				//füge attribut hinzu
+				//adds and attribute
 				self.node['filterAttributes'].push(
 					newFilterAttribute
 				);
@@ -319,9 +378,9 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				id = id +1;
 				filterAttributes.filters.push(
 				{
-					"id":id,			//Fuer Frontend
+					"id":id,			//for Frontend
 					"type":"string",	//int, string...
-					"filterType": "=", 	//sowas wie "in","like","=",">"
+					"filterType": "=", 	//"in","like","=",">"
 					"value":"", 
 					"changeable":false,
 					"isBracketOpen": false,
