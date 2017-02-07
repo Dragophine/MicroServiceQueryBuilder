@@ -99,6 +99,10 @@ public class QueryBuilderWriterBusiness {
 		query += " LIMIT " + queryBuilder.getLimitCount();
 	}
 	
+	if (queryBuilder.getSkip() != "") {
+		query += " SKIP " + queryBuilder.getSkip();
+	}
+	
 	//erstellen des results
 //	Result result = null;
 //	result = neo4jOperations.query(query, paramsMap, true);
@@ -271,9 +275,10 @@ public class QueryBuilderWriterBusiness {
 				}
 			}
 			//TODO eventuell eigenes Attribut für die ALIAS
-			
+		
 			returnStatement += (" AS " + type + r.getAttributeName() + i);
 			i++;
+		//	returnStatement += (" AS " + r.getAlias());
 			returnStatements.add(returnStatement);
 		}
 	}

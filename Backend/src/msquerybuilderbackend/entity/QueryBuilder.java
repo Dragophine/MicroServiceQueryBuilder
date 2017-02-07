@@ -24,6 +24,7 @@ private String description;
 //later to change to type Category
 private String category;
 private String limitCount;
+private String skip;
 private boolean distinct;
 
 
@@ -100,6 +101,14 @@ public boolean getDistinct() {
 
 public void setDistinct(boolean distinct) {
 	this.distinct = distinct;
+}
+
+public String getSkip() {
+	return skip;
+}
+
+public void setSkip(String skip) {
+	this.skip = skip;
 }
 
 //public void addParameter(Parameter p){
