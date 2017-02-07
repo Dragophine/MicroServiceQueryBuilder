@@ -222,10 +222,10 @@
                       <input  class="col-xs-2" 
                               style="margin-left: 8.8%"
                               type="radio" 
-                            name="{{'radio' + key  + 'andOR'}}"
+                            name="{{'radio' + key + filter.id, + 'andOR'}}"
                             value="AND"
                             ng-model="logic"
-                            ng-click="ctrl.setFilterAttributesValue(key, 'logic', logic)"
+                            ng-click="ctrl.setFilterAttributesValue(key,'logic', logic)"
                             ng-watch='ctrl.getFilterAttributes(key)'
                             ng-watch-object-value="logic"
                             ng-disabled="!ctrl.hasPermissions('filter', key)">
