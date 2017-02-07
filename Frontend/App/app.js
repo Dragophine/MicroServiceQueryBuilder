@@ -19,6 +19,7 @@ var app = angular.module('queryBuilder', [
   'queryBuilder.alerting',
   'queryBuilder.alertingStatistics',
   'queryBuilder.category',
+  'queryBuilder.user',
   'expertMode.loadDialogExpertMode'
 ])
 .config(['$routeProvider', function($routeProvider) {
@@ -40,9 +41,24 @@ var app = angular.module('queryBuilder', [
 .run(function ($rootScope, $cookies, $location) {
   $rootScope.$on("$locationChangeStart", function (event, next, current) {
       //console.log("AUTH"+$rootScope.authenticated);
-    if (!$rootScope.authenticated && ($location.path() == "/expertmode" || $location.path() == "/querybuilder" || 
+    if (!$rootScope.authenticated && ( $location.path() == "/querybuilder" || 
     $location.path() == "/category" || $location.path() == "/alerting" || $location.path() == "/alertingStatistics")) {
       $location.path("/login");
+    }
+    if (!$rootScope.admin && ($location.path() == "/user" )) {
+         $location.path("/querybuilder");
+    }
+    if (!$rootScope.expertMode && !$rootScope.admin && ($location.path() == "/expertmode" )) {
+         $location.path("/querybuilder");
+    }
+    if (!$rootScope.category && !$rootScope.admin && ($location.path() == "/category" )) {
+         $location.path("/querybuilder");
+    }
+    if (!$rootScope.alert && !$rootScope.admin && ($location.path() == "/alerting" )) {
+         $location.path("/querybuilder");
+    }
+    if (!$rootScope.alertStatistic && !$rootScope.admin &&  ($location.path() == "/alertingStatistics" )) {
+         $location.path("/querybuilder");
     }
 
   });

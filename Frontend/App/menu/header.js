@@ -14,7 +14,8 @@ angular.module('queryBuilder.header',[])
 		{'name': 'Alert statistics', 'link' : 'alertingStatistics', "needAuthentication": true},
         {'name': 'Register', 'link' : 'register', "needAuthentication": false},
         {'name': 'Login', 'link' : 'login', "needAuthentication": false},
-		{'name': 'Logout', 'link' : 'login', "needAuthentication": true}  
+		{'name': 'Logout', 'link' : 'login', "needAuthentication": true},
+		{'name': 'User', 'link' : 'user', "needAuthentication": true}    
     ];
 
 
@@ -26,6 +27,24 @@ angular.module('queryBuilder.header',[])
     });
 
 	$scope.condition = function(item) { 
+		if( item.name == "User") {
+			return $rootScope.admin
+		}
+		if( item.name == "Expertmode") {
+			return $rootScope.expertMode || $rootScope.admin
+		}
+		if( item.name == "Category") {
+			return $rootScope.category || $rootScope.admin
+		}
+		if( item.name == "Alerting") {
+			return $rootScope.alert || $rootScope.admin
+		}
+		if( item.name == "Alert statistics") {
+			console.log("VVVVVVVVVVVVVVVVV")
+			console.log($rootScope.alertStatistic)
+			return $rootScope.alertStatistic || $rootScope.admin
+		}
+		
 		if( item.name == "Login") {
 			return !self.loggedin
 		} else {
