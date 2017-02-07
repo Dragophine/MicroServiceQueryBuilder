@@ -258,7 +258,7 @@ public class QueryBuilderWriterBusiness {
 	}
 	
 	private void solveReturn (Set<ReturnAttribute> retSet, String type){
-		int i = 1;
+		//int i = 1;
 		//TODO Liste filtern ReturnAttribute
 		for (ReturnAttribute r : retSet){
 			
@@ -277,9 +277,9 @@ public class QueryBuilderWriterBusiness {
 			}
 			//TODO eventuell eigenes Attribut für die ALIAS
 		
-			returnStatement += (" AS " + type + r.getAttributeName() + i);
-			i++;
-		//	returnStatement += (" AS " + r.getAlias());
+//			returnStatement += (" AS " + type + r.getAttributeName() + i);
+//			i++;
+			returnStatement += (" AS " + r.getAlias());
 			returnStatements.add(returnStatement);
 		}
 	}
