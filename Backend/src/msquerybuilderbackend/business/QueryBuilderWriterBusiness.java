@@ -213,10 +213,12 @@ public class QueryBuilderWriterBusiness {
 		Collections.sort(aList);
 		
 		for (FilterAttribute f : aList){
+			String logic = " " + f.getLogic() + " ";
 			
 			Set<Filters> fSet = f.getFilters();
 			List<Filters> list = new ArrayList<Filters>(fSet);
 			Collections.sort(list);
+			int j = 1;
 			
 			for (Filters fil: list){	
 				String paramName = type + f.getAttributeName() + i;
@@ -237,6 +239,8 @@ public class QueryBuilderWriterBusiness {
 				statement += (synonyms.get(type) + "." + f.getAttributeName() + fil.getFilterType() + "{" + paramName + "}");
 				if (fil.getIsBracketClosed()) statement += ")";
 				if (!fil.getLogic().isEmpty()) statement += " " + fil.getLogic() + " ";
+				if (j >= list.size()) statement += logic;
+				j++;
 				filterStatements.add(statement);	
 			}	
 		}
