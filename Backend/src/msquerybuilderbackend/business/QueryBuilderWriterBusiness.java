@@ -142,7 +142,7 @@ public class QueryBuilderWriterBusiness {
 			
 			while (it.hasNext()){
 				actualStatement = it.next();
-				if (actualStatement.contains("AND") || actualStatement.contains("OR")){
+				if (actualStatement.contains(" AND ") || actualStatement.contains(" OR ")){
 					nodeString += actualStatement;
 					i++;
 				} else if (i < filterStatements.size()){
