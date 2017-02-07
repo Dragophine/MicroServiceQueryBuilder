@@ -20,6 +20,11 @@ angular.module('queryBuilder.login', [])
     $rootScope.execlogout = function () {
 
       loginservice.logout();
+      $rootScope.admin = false;
+      $rootScope.expertMode = false;
+      $rootScope.category = false;
+      $rootScope.alert = false;
+      $rootScope.alertStatistic = false;
       updateAuthStatus();
       $location.path("/");
       $rootScope.$broadcast('login');
@@ -34,9 +39,27 @@ angular.module('queryBuilder.login', [])
           if (loginservice.authorities[i].authority == "ROLE_USER") {
             authenticated = true;
           }
+           if (loginservice.authorities[i].authority == "ROLE_ADMIN") {
+             $rootScope.admin = true;
+            authenticated = true;
+          }
+           if (loginservice.authorities[i].authority == "EXPERTMODE") {
+             $rootScope.expertMode = true;
+          }
+          if (loginservice.authorities[i].authority == "CATEGORY") {
+             $rootScope.category = true;
+          }
+          if (loginservice.authorities[i].authority == "ALERT") {
+             $rootScope.alert = true;
+          }
+          if (loginservice.authorities[i].authority == "ALERTSTATISTIC") {
+             $rootScope.alertStatistic = true;
+          }
           i++;
         }
       }
+      console.log("AUTH"+$rootScope.authenticated);
+      console.log($rootScope.admin)
       $rootScope.authenticated = authenticated;
       $rootScope.principal = loginservice.principal;
 

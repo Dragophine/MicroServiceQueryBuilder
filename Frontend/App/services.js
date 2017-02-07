@@ -726,4 +726,102 @@ angular.module('queryBuilder.services', ['ngCookies'])
         }
        
     };
+
+    /**
+     * This method gets all exsiting categories.
+     *
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
+    this.getAllUsers = function($callback) {
+        $http({
+            method : 'GET',
+            url : $serverRestLocation.getValue() + '/users', 
+            headers: { 
+                    'Content-Type':'application/json'
+            }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };
+
+
+      /**
+     * This method gets all exsiting categories.
+     *
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
+    this.getAllAuthorities = function($id, $callback) {
+        $http({
+            method : 'GET',
+            url : $serverRestLocation.getValue() + '/user/'+ $id, 
+            headers: { 
+                    'Content-Type':'application/json'
+            }
+        })
+        .success(function(data, status) {
+            $callback(true, data, status); 
+        })
+        .error(function(data, status) {
+            $callback(false, data, status);
+        });
+    };
+
+            // add category
+    this.addAuthority = function($email, $authority, $callback) {
+        console.log("ADDD")
+        $http({
+            method : 'POST',
+            url : $serverRestLocation.getValue() + '/user/'+ $email+ '/authority', 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+              "authority" : $authority }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    };  
+
+            // delete categories
+    this.deleteAuthority = function($email, $authority, $callback) {
+        $http({
+            method : 'DELETE',
+            url : $serverRestLocation.getValue() + '/user/' + $email + '/authority', 
+            headers: {  'Content-Type':'application/json'},
+            data: { 
+                "authority" : $authority
+                }
+        })
+        .success(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+            $callback(true, data, status);
+            }
+        })
+        .error(function(data, status) {
+            console.log(data);
+            if($callback !== undefined){
+           $callback(false, data, status);
+            }
+        });
+    };   
+
+
+
 }]);
