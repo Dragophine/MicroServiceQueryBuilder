@@ -32,7 +32,11 @@
           <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
       </select>
   </div>
-  
+  <div class="row">
+      <h1>Skip</h1>
+      <input type="textarea" class="form-control" id="query" ng-change="ctrl.getQuery()"
+            ng-model="ctrl.query['skip']"  placeholder="Skip Count" />
+  </div>
   <div class="row">
       <h1>Limit</h1>
       <input type="textarea" class="form-control" id="query" ng-change="ctrl.getQuery()"

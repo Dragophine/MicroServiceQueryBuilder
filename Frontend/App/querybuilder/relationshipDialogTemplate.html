@@ -258,6 +258,12 @@
                     <div class="clearfix"></div>
                   </div>
                   <div class="panel-body" ng-if="ctrl.isReturnAttributesChecked(key)"> 
+                     <h3>Alias</h3>
+                     <input type="textarea" class="form-control" id="query" placeholder="Alias"
+                            ng-model="alias"
+                            ng-change="ctrl.setReturnAttributesValue(key, 'alias', alias)"
+                            ng-watch='ctrl.getReturnAttributes(key)'
+                            ng-watch-object-value="alias"  />
                     <h3>Aggregation</h3>
                     <div class="row">
                       <input  class="col-xs-2" 

@@ -25,7 +25,16 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 	     * This information is handed in from the query builder.
 	     * @type {Object}
 	     */	
-        self.node = $scope.ngDialogData;
+        self.node = $scope.ngDialogData.node;
+
+           /**
+         * The property contains the author of the query in which the
+         * relationship is contained.
+         * This information is handed in from the query builder.
+         * @type {Object}
+         */ 
+        self.author = $scope.ngDialogData.author;
+
          /**
 	     * The name of the node.
 	     * @type {Object}
@@ -180,6 +189,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				//adds a return attribute
 				self.node['returnAttributes'].push({
 					"attributeName":$key,
+					"alias":"",
 					"aggregation" : "NONE"
 				});
 			}
