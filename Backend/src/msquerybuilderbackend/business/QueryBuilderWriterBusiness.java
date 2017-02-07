@@ -95,17 +95,14 @@ public class QueryBuilderWriterBusiness {
 		if (it.hasNext()) query += ", ";
 	}
 	
-	if (queryBuilder.getLimitCount() != "") {
-		query += " LIMIT " + queryBuilder.getLimitCount();
-	}
-	
 	if (queryBuilder.getSkip() != "") {
 		query += " SKIP " + queryBuilder.getSkip();
 	}
 	
-	//erstellen des results
-//	Result result = null;
-//	result = neo4jOperations.query(query, paramsMap, true);
+	if (queryBuilder.getLimitCount() != "") {
+		query += " LIMIT " + queryBuilder.getLimitCount();
+	}
+	
 	expertQuery.setQuery(query);
 	return expertQuery;
 }
@@ -140,10 +137,22 @@ public class QueryBuilderWriterBusiness {
 			
 			if (!filterStatements.isEmpty()) nodeString += " WHERE ";
 			Iterator<String> it = filterStatements.iterator();
+			int i = 1;
+			String actualStatement = "";
+			
 			while (it.hasNext()){
-				nodeString += it.next();
-				//nodeString += "  step  ";
+				actualStatement = it.next();
+				if (actualStatement.contains("AND") || actualStatement.contains("OR")){
+					nodeString += actualStatement;
+					i++;
+				} else if (i < filterStatements.size()){
+					nodeString += actualStatement + " AND ";
+					i++;
+				} else {
+					nodeString += actualStatement;
+				}
 			}
+			
 			cypherquery.add(nodeString);
 			filterStatements.clear();
 			filterStatements.addAll(actualFilterStatements);
@@ -200,11 +209,13 @@ public class QueryBuilderWriterBusiness {
 	
 	private void solveFilter(Set<FilterAttribute> filterSet, String type, ExpertQuery expertQuery) throws Exception{
 		int i = 1;
+		List<FilterAttribute> aList = new ArrayList<FilterAttribute>(filterSet);
+		Collections.sort(aList);
 		
-		for (FilterAttribute f : filterSet){
+		for (FilterAttribute f : aList){
 			
-			Set<Filters> set = f.getFilters();
-			List<Filters> list = new ArrayList<Filters>(set);
+			Set<Filters> fSet = f.getFilters();
+			List<Filters> list = new ArrayList<Filters>(fSet);
 			Collections.sort(list);
 			
 			for (Filters fil: list){	
