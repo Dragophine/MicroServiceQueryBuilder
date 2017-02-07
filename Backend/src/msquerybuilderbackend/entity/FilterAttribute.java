@@ -12,10 +12,9 @@ import java.util.Set;
  * @author drago
  *
  */
-public class FilterAttribute {
+public class FilterAttribute implements Comparable<FilterAttribute>{
 	
 	private String attributeName="";
-
 	private Set<Filters> filters = new HashSet<Filters>(0);
 
 	
@@ -45,6 +44,12 @@ public class FilterAttribute {
 	public void addFilters(Filters filter){
 		if (filter==null) this.filters=new HashSet<Filters>();
 		this.filters.add(filter);
+	}
+
+	@Override
+	public int compareTo(FilterAttribute f1) {
+		// TODO Auto-generated method stub
+		return this.getAttributeName().compareTo(f1.getAttributeName());
 	}
 
 }
