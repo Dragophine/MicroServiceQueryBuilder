@@ -26,6 +26,7 @@ private String category;
 private String limitCount;
 private String skip;
 private boolean distinct;
+private String author;
 
 
 //private Set<Parameter> parameter = new HashSet<Parameter>(0);
@@ -109,6 +110,18 @@ public String getSkip() {
 
 public void setSkip(String skip) {
 	this.skip = skip;
+}
+
+public String getAuthor() {
+	return author;
+}
+
+public void setAuthor(String author) {
+	this.author = author;
+}
+
+public void setLimitCount(String limitCount) {
+	this.limitCount = limitCount;
 }
 
 //public void addParameter(Parameter p){

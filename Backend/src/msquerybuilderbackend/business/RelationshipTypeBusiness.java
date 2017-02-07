@@ -25,7 +25,7 @@ public class RelationshipTypeBusiness {
 	 * @return a Result of the queried relationship types
 	 */
 	public Result getAllRelationshipTypes(){
-		String queryRelations = "MATCH ()-[r]->() where type(r)<>\"HAS_PARAMETER\" and type(r)<>\"HAS_CATEGORY\" AND type(r)<>\"HAS_EXPERTQUERY\"   return distinct type(r) AS Relationship";
+		String queryRelations = "MATCH ()-[r]->() where type(r)<>\"HAS_PARAMETER\" and type(r)<>\"HAS_CATEGORY\" AND type(r)<>\"HAS_EXPERTQUERY\" AND type(r)<>\"HAS_AUTHOR\"  return distinct type(r) AS Relationship";
 		Result result = neo4jOperations.query(queryRelations, new HashMap<String, String>());	
 		return result;
 	}

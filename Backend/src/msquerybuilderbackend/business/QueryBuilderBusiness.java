@@ -36,10 +36,12 @@ import msquerybuilderbackend.entity.QueryBuilder;
 import msquerybuilderbackend.entity.QueryBuilderJsonStringObject;
 import msquerybuilderbackend.entity.Relationship;
 import msquerybuilderbackend.entity.ReturnAttribute;
+import msquerybuilderbackend.entity.User;
 import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
 import msquerybuilderbackend.repository.QueryBuilderJsonStringRepository;
+import msquerybuilderbackend.repository.UserRepository;
 
 /**
  * Class for all activities with neo4j database regarding the entity QueryBuilder in the application and QueryBuilderJsonStringObject in the neo4j database
@@ -53,6 +55,8 @@ public class QueryBuilderBusiness {
 	CategoryRepository categoryRepository;
 	@Autowired
 	ExpertQueryRepository expertQueryRepository;
+	@Autowired
+	UserRepository userRepository;
 	@Autowired
 	ParameterRepository parameterRepository;
 	@Autowired
@@ -99,6 +103,7 @@ public class QueryBuilderBusiness {
 			return 0L;	
 		}else{
 			Category category = categoryRepository.findByName(queryBuilder.getCategory().trim());
+			User author= userRepository.findByEmail(queryBuilder.getAuthor());
 			
 /**
 * Interpretation des Querybuilders wie bei execute ausständig
@@ -114,6 +119,7 @@ public class QueryBuilderBusiness {
 			expertQuery.setName(queryBuilder.getName());
 			expertQuery.setDescription(queryBuilder.getDescription());
 			expertQuery.setCategory(category);
+			expertQuery.setAuthor(author);
 //			expertQuery.setQuery(s);
 //			for (Parameter p: parameter){
 //				expertQuery.addParameter(p);
@@ -126,6 +132,7 @@ public class QueryBuilderBusiness {
 			qbjso.setName(queryBuilder.getName());
 			qbjso.setDescription(queryBuilder.getDescription());
 			qbjso.setCategory(category);
+			qbjso.setAuthor(author);
 			ObjectWriter mapper = new ObjectMapper().writer().withDefaultPrettyPrinter();
 			String queryBuilderJsonString = mapper.writeValueAsString(queryBuilder);
 			System.out.println(queryBuilderJsonString);
@@ -258,9 +265,11 @@ public class QueryBuilderBusiness {
 	//    	updatedQuerySet.add(expertQuery);
 			
 			Category category = categoryRepository.findByName(updatedQuery.getCategory());
+			User author= userRepository.findByEmail(updatedQuery.getAuthor());
 	    	qbjso.setDescription(updatedQuery.getDescription());
 	    	qbjso.setName(updatedQuery.getName());
 	    	qbjso.setCategory(category);
+	    	qbjso.setAuthor(author);
 	    	ObjectWriter mapper = new ObjectMapper().writer().withDefaultPrettyPrinter();
 			String queryBuilderJsonString = mapper.writeValueAsString(updatedQuery);
 			qbjso.setQueryBuilderJson(queryBuilderJsonString);
@@ -279,6 +288,7 @@ public class QueryBuilderBusiness {
 			expertQuery.setName(updatedQuery.getName());
 			expertQuery.setDescription(updatedQuery.getDescription());
 			expertQuery.setCategory(category);
+			expertQuery.setAuthor(author);
 //			expertQuery.setQuery(s);
 //			for (Parameter p: parameter){
 //				expertQuery.addParameter(p);

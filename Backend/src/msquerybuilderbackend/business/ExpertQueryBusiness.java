@@ -13,9 +13,11 @@ import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.ExpertQueryJsonObject;
 import msquerybuilderbackend.entity.Parameter;
+import msquerybuilderbackend.entity.User;
 import msquerybuilderbackend.repository.CategoryRepository;
 import msquerybuilderbackend.repository.ExpertQueryRepository;
 import msquerybuilderbackend.repository.ParameterRepository;
+import msquerybuilderbackend.repository.UserRepository;
 
 /**
  * Class for all activities with neo4j database regarding the entity ExpertQueryJsonObject in the application (ExpertQuery in the neo4j database)
@@ -33,6 +35,8 @@ public class ExpertQueryBusiness {
 	CategoryRepository categoryRepository;
 	@Autowired
 	ParameterRepository parameterRepository;
+	@Autowired
+	UserRepository userRepository;
 	
 	/**
 	 * method which executes the querystring in the neo4j database of a given expertQuery(jsonobject) 
@@ -82,8 +86,10 @@ public class ExpertQueryBusiness {
 			expertQuery.setDescription(expertQueryJsonObject.getDescription());
 			expertQuery.setParameter(expertQueryJsonObject.getParameter());
 			expertQuery.setQuery(expertQueryJsonObject.getQuery());
+			User author= userRepository.findByEmail(expertQueryJsonObject.getAuthor());
 			Category cat= categoryRepository.findByName(expertQueryJsonObject.getCategory().trim());
 			expertQuery.setCategory(cat);
+			expertQuery.setAuthor(author);
 	    	expertQueryRepository.save(expertQuery);
 	    	ExpertQuery newExpertQuery = expertQueryRepository.findByName(expertQueryJsonObject.getName());
 	    	return newExpertQuery.getId();
@@ -170,8 +176,9 @@ public class ExpertQueryBusiness {
 	    	expertQuery.setName(updatedQuery.getName());
 	    	expertQuery.setQuery(updatedQuery.getQuery());
 	    	Category cat = categoryRepository.findByName(updatedQuery.getCategory());
-	    	
+	    	User author= userRepository.findByEmail(updatedQuery.getAuthor());
 	    	expertQuery.setCategory(cat);
+	    	expertQuery.setAuthor(author);
 	    	expertQuery.setParameter(updatedQuery.getParameter());
 	    	
 	    	expertQueryRepository.save(expertQuery);
@@ -199,6 +206,9 @@ public class ExpertQueryBusiness {
 			if(eq.getCategory() != null)
 			{
 				eqjo.setCategory(eq.getCategory().getName());	
+			}
+			if(eq.getAuthor()!=null){
+				eqjo.setAuthor(eq.getAuthor().getEmail());
 			}
 			expertqueriesjson.add(eqjo);
 		}
@@ -243,6 +253,9 @@ public class ExpertQueryBusiness {
 		{
 			eqjo.setCategory(expertQuery.getCategory().getName());	
 		}
+		if(expertQuery.getAuthor()!=null){
+			eqjo.setAuthor(expertQuery.getAuthor().getEmail());
+		}
 
 		return eqjo;
 	}
@@ -285,6 +298,9 @@ public class ExpertQueryBusiness {
 			if(eq.getCategory() != null)
 			{
 				eqjo.setCategory(eq.getCategory().getName());	
+			}
+			if(eq.getAuthor()!=null){
+				eqjo.setAuthor(eq.getAuthor().getEmail());
 			}
 			expertqueriesjson.add(eqjo);
 		}
