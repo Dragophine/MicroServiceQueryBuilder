@@ -142,7 +142,7 @@ public class QueryBuilderWriterBusiness {
 			Iterator<String> it = filterStatements.iterator();
 			while (it.hasNext()){
 				nodeString += it.next();
-				nodeString += "  step  ";
+				//nodeString += "  step  ";
 			}
 			cypherquery.add(nodeString);
 			filterStatements.clear();
@@ -208,27 +208,25 @@ public class QueryBuilderWriterBusiness {
 			Collections.sort(list);
 			
 			for (Filters fil: list){	
-			
-			//hier könnte es eventuell zu einem Problem mit der Parameterbezeichnung kommen!!
-			String paramName = type + f.getAttributeName() + i;
-			i++;
-			
-			Parameter newParam = new Parameter();
-			newParam.setChangeable(fil.getChangeable());
-			newParam.setKey(paramName);
-			newParam.setValue(fil.getValue());
-			newParam.setType(fil.getType());
-//			parameter.add(newParam);
-			expertQuery.addParameter(newParam);
-			AttributeTypes.testTypes(newParam);
-//			paramsMap.put(paramName, newParam.getValue());
-			
-			String statement = "";
-			if (fil.getIsBracketOpen()) statement += "(";
-			statement += (synonyms.get(type) + "." + f.getAttributeName() + fil.getFilterType() + "{" + paramName + "}");
-			if (fil.getIsBracketClosed()) statement += ")";
-			if (!fil.getLogic().isEmpty()) statement += " " + fil.getLogic() + " ";
-			filterStatements.add(statement);	
+				String paramName = type + f.getAttributeName() + i;
+				i++;
+				
+				Parameter newParam = new Parameter();
+				newParam.setChangeable(fil.getChangeable());
+				newParam.setKey(paramName);
+				newParam.setValue(fil.getValue());
+				newParam.setType(fil.getType());
+	//			parameter.add(newParam);
+				expertQuery.addParameter(newParam);
+				AttributeTypes.testTypes(newParam);
+	//			paramsMap.put(paramName, newParam.getValue());
+				
+				String statement = "";
+				if (fil.getIsBracketOpen()) statement += "(";
+				statement += (synonyms.get(type) + "." + f.getAttributeName() + fil.getFilterType() + "{" + paramName + "}");
+				if (fil.getIsBracketClosed()) statement += ")";
+				if (!fil.getLogic().isEmpty()) statement += " " + fil.getLogic() + " ";
+				filterStatements.add(statement);	
 			}	
 		}
 	}
@@ -258,8 +256,7 @@ public class QueryBuilderWriterBusiness {
 	}
 	
 	private void solveReturn (Set<ReturnAttribute> retSet, String type){
-		//int i = 1;
-		//TODO Liste filtern ReturnAttribute
+		int i = 1;
 		for (ReturnAttribute r : retSet){
 			
 			String returnStatement = " ";
@@ -275,14 +272,14 @@ public class QueryBuilderWriterBusiness {
 					returnStatement += ")";
 				}
 			}
-			//TODO eventuell eigenes Attribut für die ALIAS
 		
-//			returnStatement += (" AS " + type + r.getAttributeName() + i);
-//			i++;
-			returnStatement += (" AS " + r.getAlias());
+			if ((r.getAlias().isEmpty() || r.getAlias().equalsIgnoreCase(""))){
+				returnStatement += (" AS " + type + r.getAttributeName() + i);
+				i++;
+			} else {
+				returnStatement += (" AS " + r.getAlias());
+			}		
 			returnStatements.add(returnStatement);
 		}
-	}
-		
-
+	}	
 }
