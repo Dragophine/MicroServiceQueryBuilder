@@ -17,20 +17,67 @@ angular.module('queryBuilder.alerting', ['ngRoute', 'queryBuilder.services'])
 	function($requests) {
 	var self = this;
 	
+    /**
+     * Holds name from alert.
+     * @type {string}
+     */
 	self.name = "";
-	self.type = "";						// int, string...
-	self.filterType = "";				// "in","like","=",">"
+    /**
+     * Holds type from alert. Examples: int, string,...
+     * @type {string}
+     */
+	self.type = "";
+    /**
+     * Holds filter type from alert. Examples: in, like,...
+     * @type {string}
+     */
+	self.filterType = "";
+    /**
+     * Holds email address from alert.
+     * @type {string}
+     */
 	self.email = "";
+    /**
+     * Holds limit value from alert.
+     * @type {string}
+     */
 	self.value = "";
+    /**
+     * If a value from alert is missing or invalid in save dialog a message will be stored
+     * in this array.
+     * @type {array}
+     */
 	self.text = [];
+    /**
+     * Store the name from loaded alert. When an alert has been loaded, you have the option
+     * to create a new alert when saving or to rewrite the loaded alert.
+     * @type {string}
+     */
 	self.selectedAlertName = "";
-	self.executeAlertResult = "";
+    /**
+     * Store all queries which can be selected in alert view.
+     * @type {array}
+     */
 	self.queries = [];
-	self.selectedQuery = "";
-	
+    /**
+     * Holds selected query from alert.
+     * @type {string}
+     */
+	self.selectedQuery = "";	
+	/**
+	 * Modal dialog for missing or invalid data.
+     * @type {object}
+	 */
 	var missingDataModal = document.getElementById('myModalMissingData');
+	/**
+	 * Ok-button from modal dialog for missing or invalid data.
+     * @type {object}
+	 */
 	var missingDataOkButton = document.getElementById("missingDataOk");
 	
+	/**
+	 * Close modal dialog if user select the ok-button in dialog.
+	 */
 	missingDataOkButton.onclick = function() {
 		missingDataModal.style.display = "none";
 	}

@@ -40,7 +40,11 @@
       <h1>Category</h1>
     </div>
   </div>
-  <div class="row top-buffer panel panel-default" ng-repeat="query in ctrl.loadedQueries">
+  
+	<table class="table">
+ 	<tbody>
+  	<tr class="row top-buffer panel panel-default" ng-repeat="query in ctrl.loadedQueries">
+  	<td style="word-wrap: break-word;"> 
     <div class="col-sm-1">
       {{query.id}}
     </div>
@@ -62,7 +66,9 @@
       <button ng-click="ctrl.deleteQuery(query.id)" class="top-buffer-verysmall btn btn-default">
         Delete
       </button>
-    </div>
-  </div>
-   
+	    </div>
+		</td>
+	</tr>
+	</tbody>
+	</table>    
 </div>

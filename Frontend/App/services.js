@@ -223,7 +223,19 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
-    // save query
+    /**
+     * This method saves a query from the expert mode. 
+     * Only new queries can be saved.
+     *
+     * @param {String} $query - the query which should be saved.
+     * @param {Array} $params - the parameters for the query.
+     * @param {String} $name - the entered name for the query.
+     * @param {String} $description - the entered description for the query.
+     * @param {String} $category - the selected category for the query.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.saveQuery = function($query, $params, $name, $description, $category, $callback) {
         console.log($category);
         $http({
@@ -309,7 +321,18 @@ angular.module('queryBuilder.services', ['ngCookies'])
     };
     
     
-    // delete query
+    /**
+     * This method deletes a query from the expert mode. 
+     *
+     * @param {String} $query - the query which should be deleted.
+     * @param {Array} $params - the parameters for the query.
+     * @param {String} $name - the entered name for the query.
+     * @param {String} $description - the entered description for the query.
+     * @param {String} $category - the selected category for the query.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.deleteQuery = function($query, $params, $name, $description, $category, $callback) {
         $http({
             method : 'DELETE',
@@ -363,7 +386,13 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };    
     
-    //load query
+    /**
+     * This method load all queries. 
+     *
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.loadAllQueries = function($callback) {
         $http({
             method : 'GET',
@@ -449,7 +478,14 @@ angular.module('queryBuilder.services', ['ngCookies'])
        
     };
     
-    //get query by name
+    /**
+     * This method returns the query object for a specific query name. 
+     *
+     * @param {String} $name - the entered name for the query.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.getQueryByName = function($name, $callback) {
         $http({
             method : 'GET',
@@ -469,7 +505,13 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
     
-    //get all already existing alerts
+    /**
+     * This method returns all existing query names. 
+     *
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.getAllAlertNames = function($callback) {
         $http({
             method : 'GET',
@@ -486,7 +528,21 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
     
-    // add alert
+    /**
+     * This method creates a new alert. 
+     *
+     * @param {String} $name - the entered name for the alert.
+     * @param {String} $selectedQuery - the selected query for the alert.
+     * @param {String} $type - the selected type for the alert.
+     * Examples: int, string,...
+     * @param {String} $filterType - the selected filter type for the alert.
+     * Examples: in, like,...
+     * @param {String} $email - the entered email address for the alert.
+     * @param {String} $value - the entered limit value for the alert.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.addAlert = function($name, $selectedQuery, $type, $filterType,
     		$email, $value, $callback) {
         $http({
@@ -515,7 +571,22 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
     
-    // save alert
+    /**
+     * This method saves a existing alert. 
+     *
+     * @param {String} $existingName - the name from overridden alert.
+     * @param {String} $name - the entered name for the alert.
+     * @param {String} $selectedQuery - the selected query for the alert.
+     * @param {String} $type - the selected type for the alert.
+     * Examples: int, string,...
+     * @param {String} $filterType - the selected filter type for the alert.
+     * Examples: in, like,...
+     * @param {String} $email - the entered email address for the alert.
+     * @param {String} $value - the entered limit value for the alert.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.saveAlert = function($existingName, $name, $selectedQuery, $type, $filterType,
     		$email, $value, $callback) {
         $http({
@@ -544,7 +615,14 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
     
-    // delete alert
+    /**
+     * This method deletes a existing alert. 
+     *
+     * @param {String} $name - the entered name for the alert.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.deleteAlert = function($name, $callback) {
         $http({
             method : 'DELETE',
@@ -568,7 +646,14 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
         
-    // execute alert
+    /**
+     * This method executes a existing alert. 
+     *
+     * @param {String} $name - the entered name for the alert.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.executeAlert = function($name, $callback) {
         $http({
             method : 'GET',

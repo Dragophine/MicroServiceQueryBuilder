@@ -17,10 +17,19 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 	function($requests) {
 	var self = this;
 	
+    /**
+     * Holds selected alert name.
+     * @type {string}
+     */
 	self.selectedAlert = "";
-	self.dates = [];
+    /**
+     * Stores all dates between min and max date and all counts per day from selected alert.
+     * @type {array}
+     */
 	self.alertDateAndCount = [];
-	
+	/**
+	 * Load google charts
+	 */
 	google.charts.load('current', {packages: ['corechart', 'line']});
 	google.charts.setOnLoadCallback(drawBasic);
 

@@ -42,28 +42,34 @@
       <h1>Category</h1>
     </div>
   </div>
-  <div class="row top-buffer panel panel-default" ng-repeat="query in ctrl.loadedQueries">
-    <div class="col-sm-1">
-      {{query.id}}
-    </div>
-    <div class="col-sm-2">
-      {{query.name}}
-    </div>
-    <div class="col-sm-3">
-      {{query.description}}
-    </div>
-    <div class="col-sm-3">
-      {{query.category}}
-    </div>
 
-    <div class="col-sm-2">
-      <button ng-click="ctrl.selectQuery(query)" class="top-buffer-verysmall">
-        Load
-      </button>
-      <button ng-click="ctrl.deleteSelectedQuery(query)" class="top-buffer-verysmall">
-        Delete
-      </button>
-    </div>
-  </div>
-   
+	<table class="table">
+ 	<tbody>
+  	<tr class="row top-buffer panel panel-default" ng-repeat="query in ctrl.loadedQueries"> 	
+  		<td style="word-wrap: break-word;"> 		
+	    <div class="col-sm-1">
+	      {{query.id}}
+	    </div>
+	    <div class="col-sm-2">
+	      {{query.name}}
+	    </div>
+	    <div class="col-sm-3">
+	      {{query.description}}
+	    </div>
+	    <div class="col-sm-3">
+	      {{query.category}}
+	    </div>
+	
+	    <div class="col-sm-2">
+	      <button ng-click="ctrl.selectQuery(query)" class="top-buffer-verysmall btn btn-default">
+	        Load
+	      </button>
+	      <button ng-click="ctrl.deleteSelectedQuery(query)" class="top-buffer-verysmall btn btn-default">
+	        Delete
+	      </button>
+	    </div>
+		</td>
+	</tr>
+	</tbody>
+	</table>   
 </div>

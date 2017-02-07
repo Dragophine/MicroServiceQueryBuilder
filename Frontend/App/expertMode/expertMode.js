@@ -32,12 +32,18 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
         autofocus: true,
         theme: 'neo',
         viewportMargin: Infinity
-      });
-    
+      });   
+    /**
+     * Store the parameter from selected query in this array.
+     * @type {array}
+     */
 	self.params = [];
+    /**
+     * If a value from expert query is missing or invalid in save dialog
+     * a message will be stored in this array.
+     * @type {array}
+     */
 	self.invalidSaveText = [];
-	
-	self.loadOrDeleteDialog;
 	
 	/**
 	 * Whenever the query changes, the parameters should be adjusted automatically.
@@ -74,11 +80,12 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
         		keys = query.substring(startIndex+1, endIndex);
     		}
     	});
-    
+    /**
+     * Selectable parameter types.
+     */
 	self.paramoptions = ["int", "String"];
-
 	/** 
-	 * The following three variables are query fields.
+	 * The following three variables are query fields in save dialog.
 	 */
 	self.name = "";
 	self.description = "";
@@ -97,40 +104,62 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		Table json (simply the result)
 	*/
 	self.table = "";
-
 	 /**
      * Holds the error string which is displayed to the user.
      * The table is only shown when the hasError property is set to TRUE.
      * @type {string}
      */
 	self.error = "";
-
 	 /**
      * If there was an error during the execution of the query this is set to 
      * true and the error will be displayed. Otherwise the table will be displayed.
      * @type {boolean}
      */
-	self.hasError = false;
-	
-	// load query dialog
+	self.hasError = false;	
+	/**
+	 * All existing queries. This queries will be shown in load/delete dialog.
+     * @type {array}
+	 */
 	self.queries = [];
-
-	// Get the modal
-	var modalSave = document.getElementById('myModalSave');
-	
-	// Get the button that opens the modal
+	/**
+	 * Modal dialog for saving queries.
+     * @type {object}
+	 */
+	var modalSave = document.getElementById('myModalSave');	
+	/**
+	 * Save button which opens save modal dialog.
+     * @type {object} 
+	 */
 	var btnSave = document.getElementById("saveQuery");
+	/**
+	 * Load button which opens load/delete ngDialog.
+     * @type {object} 
+	 */
 	var btnLoad = document.getElementById("loadQuery");
+	/**
+	 * Delete button which opens load/delete ngDialog.
+     * @type {object} 
+	 */
 	var btnDelete = document.getElementById("deleteQuery");
-
+	/**
+	 * cancel-button from modal dialog for missing or invalid data.
+     * @type {object}
+	 */
 	var saveAbbruch = document.getElementById("saveAbbruch");
 
-	// When the user clicks on the button, open the modal 
+	/**
+	 * When the user clicks on the button, open the modal dialog
+	 * for saving queries.
+	 */
 	btnSave.onclick = function() {
 		self.invalidSaveText = [];
 		modalSave.style.display = "block";
 		
-	}	
+	}
+	/**
+	 * When the user clicks on the button, open the ngDialog
+	 * for loading/deleting queries.
+	 */
 	btnLoad.onclick = function() {
 		$requests.loadAllQueries(self.queriesCB);
 		
@@ -139,6 +168,10 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 			controller: 'loadDialogExpertModeCtrl',
 			controllerAs: 'ctrl'});
 		
+		/**
+		 * Close ngDialog is only possible if user select a load button or
+		 * select close button. Check if user has select the load button.
+		 */
 		dialog.closePromise.then(function ($data) {
         	if($data !== undefined && $data.value !== undefined &&
         			$data.value.query !== undefined)
@@ -147,7 +180,10 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
         	}
 		});
 	}
-	
+	/**
+	 * When the user clicks on the button, open the ngDialog
+	 * for loading/deleting queries.
+	 */	
 	btnDelete.onclick = function() {
 		$requests.loadAllQueries(self.queriesCB);
 		
@@ -156,6 +192,10 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 			controller: 'loadDialogExpertModeCtrl',
 			controllerAs: 'ctrl'});
 		
+		/**
+		 * Close ngDialog is only possible if user select a load button or
+		 * select close button. Check if user has select the load button.
+		 */
 		dialog.closePromise.then(function ($data) {
         	if($data !== undefined && $data.value !== undefined &&
         			$data.value.query !== undefined)
@@ -165,8 +205,11 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		});
 	}
 
+	/**
+	 * User has cancelled the save dialog. Reset values, otherwise they will be 
+	 * displayed again by in next save dialog.
+	 */
 	saveAbbruch.onclick = function() {
-		// Reset values, otherwise they will be displayed again by in next save dialog.
 		self.name = "";
 		self.description = "";
 		self.category = "";
@@ -212,28 +255,18 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 			self.error = $data;
 		}
 	}
-	
-	function contains(a, obj)
-	{
-	    for (var i = 0; i < a.length; i++)
-	    {
-	        if (a[i].category === obj.category &&
-	        		a[i].description === obj.description &&
-	        		a[i].name === obj.name)
-	        {
-	            return true;
-	        }
-	    }
-	    return false;
-	}
 
 	/**
-		Start request
-	*/
+	 * Execute actual query.
+	 */
 	self.submitQuery = function() {
 		$requests.getResultFromQuery(self.myCodeMirror.getValue(), self.params, self.callback);
 	}
 	
+	/**
+	 * Save actual query if all fields in save dialog were filled correctly and query name
+	 * do not exists until now.
+	 */
 	self.saveQuery = function()
 	{
 		self.invalidSaveText = [];
@@ -260,6 +293,9 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		}
 	}
 	
+	/**
+	 * Delete actual query.
+	 */
 	self.deleteSelectedQuery = function($query)
 	{
 		$requests.deleteQuery($query.query, $query.parameter, 
@@ -284,6 +320,11 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		}
 	}
 	
+	/**
+	 * Check if the queryName already exists.
+	 * 
+	 * @param {Object} $$queryName - query name which should be checked.
+	 */
 	function existsQueryName($queryName)
 	{
 	    for (var i = 0; i < self.queries.length; i++)
@@ -296,7 +337,15 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	    return false;
 	}
 
+	/**
+	 * Stores all available categories.
+     * @type {array} 
+	 */
 	self.availableCategories = [];
+	/**
+	 * Actual selected category name.
+     * @type {string} 
+	 */
 	self.categoryName = "";
 
 
@@ -320,12 +369,4 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 		}
 	}
 	$requests.getAllCategories(self.getCategories);
-
-	self.changeCategories = function() {
-		self.categoryName = self.categoryName;
-	}
-	self.checkCategory = function($category) {
-
-		return " "+$category+" " == self.categoryName || self.categoryName == ""
-	};
 }]);
