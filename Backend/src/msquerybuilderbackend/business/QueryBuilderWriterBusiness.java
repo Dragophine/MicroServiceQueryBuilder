@@ -142,6 +142,7 @@ public class QueryBuilderWriterBusiness {
 			Iterator<String> it = filterStatements.iterator();
 			while (it.hasNext()){
 				nodeString += it.next();
+				nodeString += "  step  ";
 			}
 			cypherquery.add(nodeString);
 			filterStatements.clear();
