@@ -14,7 +14,7 @@ public class ReturnAttribute {
 
 	private String attributeName ="";
 	private String aggregation="";
-	
+	private String alias="";
 	
 	public ReturnAttribute(){
 		
@@ -38,6 +38,15 @@ public class ReturnAttribute {
 	
 	public void setAttributeName(String at){
 		this.attributeName=at;
+	}
+
+
+	public String getAlias() {
+		return alias;
+	}
+
+	public void setAlias(String alias) {
+		this.alias = alias;
 	}
 	
 }

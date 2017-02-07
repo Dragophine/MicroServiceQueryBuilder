@@ -15,6 +15,7 @@ public class ExpertQueryJsonObject {
 	private Long id;
 	private String name;
 	private String query;
+	private String author;
 	private Set<Parameter> parameter = new HashSet<Parameter>(0);
 	private String description;
 	private String category;
@@ -38,6 +39,15 @@ public String getQuery(){
 
 public Set<Parameter> getParameter(){
 	return this.parameter;
+}
+
+
+public String getAuthor() {
+	return author;
+}
+
+public void setAuthor(String author) {
+	this.author = author;
 }
 
 public String getName(){

@@ -11,7 +11,7 @@ angular.module('queryBuilder.header',[])
 		{'name': 'Expertmode', 'link' : 'expertmode', "needAuthentication": true},
 		{'name': 'Category', 'link' : 'category', "needAuthentication": true},	
 		{'name': 'Alerting', 'link' : 'alerting', "needAuthentication": true},
-		{'name': 'Alerting Statistik', 'link' : 'alertingStatistics', "needAuthentication": true},
+		{'name': 'Alert statistics', 'link' : 'alertingStatistics', "needAuthentication": true},
         {'name': 'Register', 'link' : 'register', "needAuthentication": false},
         {'name': 'Login', 'link' : 'login', "needAuthentication": false},
 		{'name': 'Logout', 'link' : 'login', "needAuthentication": true}  

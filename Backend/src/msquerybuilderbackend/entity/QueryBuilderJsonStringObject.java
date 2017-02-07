@@ -23,7 +23,10 @@ public class QueryBuilderJsonStringObject {
 	@GraphId private Long id;
 	private String name="";
 	private String description="";
-	
+	@Relationship(type = "HAS_AUTHOR", direction = Relationship.OUTGOING)
+	private User author;
+
+
 	private String queryBuilderJson="";
 	@Relationship(type = "HAS_CATEGORY", direction = Relationship.OUTGOING)
 	private Category category;
@@ -53,6 +56,13 @@ public class QueryBuilderJsonStringObject {
 
 	public void setQueryBuilderJson(String queryBuilderJson) {
 		this.queryBuilderJson = queryBuilderJson;
+	}
+	public User getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(User author) {
+		this.author = author;
 	}
 
 //	public void addExpertQuery(ExpertQuery e){

@@ -7,6 +7,12 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
     templateUrl: 'alertingStatistics/alertingStatistics.html'
   });
 }])
+/**
+   * This controller handles the main operation in the user interface.
+   * It configures and handle all actions in the alert statistic view.  
+   * 
+   * @version 1.0.0
+   */
 .controller('alertingStatisticsCtrl', ['$requests',
 	function($requests) {
 	var self = this;
@@ -15,12 +21,14 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 	self.dates = [];
 	self.alertDateAndCount = [];
 	
-	
-	
-	
 	google.charts.load('current', {packages: ['corechart', 'line']});
 	google.charts.setOnLoadCallback(drawBasic);
 
+	/**
+	 * Draw a chart with Google charts. The chart shows how many alerts occured per day.
+	 * The graph shows the period from the first occurrence of an alert to the last appearance 
+	 * of an alert.
+	 */
 	function drawBasic() {
 
 	      var data = new google.visualization.DataTable();
@@ -48,7 +56,15 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 
 	      chart.draw(data, options);
 	    }
-		
+	
+	/**
+	 * Callback from get all alerts call. If query was successful show chart for first alert.
+	 * Otherwise print error.
+	 *
+	 * @param {boolean} $success - true when there are no errors.
+	 * @param {Object} $data - the requested data (In this case the alerts).
+     * @param {number} $status - the actual server status.
+	 */
 	self.getAlertsCB = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
@@ -65,9 +81,16 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 		{
 			self.error = $data;
 		}
-	}	
+	}
+	/**
+	 * When the view is called, all alerts with all data are read from graph DB once,
+	 * no other read tasks necessary.
+	 */
 	$requests.getAllAlertNames(self.getAlertsCB);
 
+	/**
+	 * User select another alert in comboBox.
+	 */
 	self.selectAlert = function()
 	{
 		self.alertDateAndCount = [];
@@ -84,9 +107,16 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 		getDataFromAlert(firstQuery);
 	}
 	
-	function getDataFromAlert($firstQuery)
+	/**
+	 * This method evaluates the timestamp data. A two-dimensional array is generated that contains
+	 * all days from the first appearance of an alert to the last appearance of an alert. The number
+	 * of times an alert occurs per day is also counted and stored in the array.
+	 * 
+     * @param {number} $selectedAlert - the alert which should be shown in chart.
+	 */
+	function getDataFromAlert($selectedAlert)
 	{
-		if($firstQuery != null)
+		if($selectedAlert != null)
 		{
 			var zwischenergebnis = [];
 			var results = {}, i, date;
@@ -94,9 +124,9 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 			var minDate;
 			var maxDate;
 			// count alerts per date, get min and max date
-			for (i=0; i<$firstQuery.dates.length; i++) {
+			for (i=0; i<$selectedAlert.dates.length; i++) {
 			  // get the date without timezone offset
-				var d = new Date($firstQuery.dates[i]);
+				var d = new Date($selectedAlert.dates[i]);
 				d = new Date(d.valueOf() + d.getTimezoneOffset() * 60000);
 			  date = [d.getFullYear(),d.getMonth()+1,d.getDate()].join("-");
 			  results[date] = results[date] || 0;
@@ -133,12 +163,13 @@ angular.module('queryBuilder.alertingStatistics', ['ngRoute', 'queryBuilder.serv
 			    currentDate.setDate(currentDate.getDate() + 1);
 			}
 
-			// you can always convert it into an array of objects, if you must
+			// create a two dimensional array with date and count data
 			for (i in zwischenergebnis) {
 			  if (zwischenergebnis.hasOwnProperty(i)) {
 				  self.alertDateAndCount.push({date:i,counts:zwischenergebnis[i]});
 			  }
 			}
+			// redraw chart
 			drawBasic();
 		}
 	}

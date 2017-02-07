@@ -13,11 +13,7 @@ angular.module('expertMode.loadDialogExpertMode', ['ngRoute'])
         self.category = undefined;
         self.name = undefined;
         self.description = undefined;
-//        self.params = undefined;
-        
-        // textArea mit syntax highlighting
-        self.myCodeMirror = document.getElementById('query');
-        
+
         self.loadedQueries = [ ];    
         self.availableCategories = [];
 
@@ -29,17 +25,7 @@ angular.module('expertMode.loadDialogExpertMode', ['ngRoute'])
 
 	    $requests.loadAllQueries( self.loadQueriesInBuilderCB);
 
-        self.selectQuery = function($query){
-        	self.myCodeMirror.setValue($query.query);
-    		self.params = [];
-    		var arrLength = $query.parameter.length;
-    		var i;
-    		for(i = 0; self.params.length < arrLength; i++)
-    		{
-        		self.params.push.apply(self.params, [{key: $query.parameter[i].key, type : $query.parameter[i].type,
-        			value : $query.parameter[i].value}]);
-    		}
-    		
+        self.selectQuery = function($query){    		
              $scope.closeThisDialog($query);
         };
 
@@ -52,7 +38,7 @@ angular.module('expertMode.loadDialogExpertMode', ['ngRoute'])
 
         self.deleteSelectedQuery = function($query){
     		$requests.deleteQuery($query.query, $query.parameter, 
-    				$query.name, $query.description, $query.category, self.callback);
+    				$query.name, $query.description, $query.category, self.deleteQueryCallback);
         }
 
         /**
@@ -80,8 +66,4 @@ angular.module('expertMode.loadDialogExpertMode', ['ngRoute'])
 
     $requests.getAllCategories(self.getCategoriesCallBack);
 
-
-    
-
-	
 }]);

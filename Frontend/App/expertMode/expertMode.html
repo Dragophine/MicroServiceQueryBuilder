@@ -46,73 +46,16 @@
 	  </div>
 	</div>
 	
-	<!-- Trigger/Open The Modal - Load Query -->
-	<button class="btn btn-default" id="loadQuery">Load Query</button>
-	<!-- The Modal -->
-	<div id="myModalLoad" class="modal">
-	
-	  <!-- Modal content - Load Query -->
-	  <div class="modal-content">
-		<h1>Load Query</h1>
-    <div class="group" >
-        <select ng-model="ctrl.categoryName" ng-change="ctrl.changeCategories()"
-          style="width: 100%; display:block; margin-bottom: 5px">
-          <option value="">All</option>
-          <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
-        </select>
-      </div>
-	    <table class="table">
-     				<tbody >
-      				<tr ng-repeat = "cell in ctrl.queries"> 
 
-           				<td ng-if = "ctrl.checkCategory(cell.category)">
-           				<label>Name: </label>
-             				<button class="btn btn-default" ng-click="ctrl.select(cell)" >{{cell.name}}</button>
-             				<label>Beschreibung: {{cell.description}}</label>
-           				<label>Category: {{cell.category}}</label>
-        					</td>
-        				</tr>
-    				</tbody>
-    			</table>
-		<button class="btn btn-default" id="loadAbbruch">Cancel</button>
-	  </div>
-	</div>
-	
-	<!-- Trigger/Open The Modal - Delete Query -->
+	<button class="btn btn-default" id="loadQuery">Load Query</button>
 	<button class="btn btn-default" id="deleteQuery">Delete Query</button>
-	<!-- The Modal -->
-	<div id="myModalDelete" class="modal">
 	
-	  <!-- Modal content - Load Query -->
-	  <div class="modal-content">
-		<h1>Delete Query</h1>
-     <div class="group" >
-        <select ng-model="ctrl.categoryName" ng-change="ctrl.changeCategories()"
-          style="width: 100%; display:block; margin-bottom: 5px">
-          <option value="">All</option>
-          <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
-        </select>
-      </div>
-	    <table class="table">
-     				<tbody >
-      				<tr ng-repeat = "cell in ctrl.queries"> 
-           				<td ng-if = "ctrl.checkCategory(cell.category)">
-           				<label>Name: </label>
-             				<button class="btn btn-default" ng-click="ctrl.deleteSelectedQuery(cell)" >{{cell.name}}</button>
-             				<label>Description: {{cell.description}}</label>
-           				<label>Category: {{cell.category}}</label>
-           				<!--   <label>Query: {{cell.query}}</label> -->
-        					</td>
-        				</tr>
-    				</tbody>
-    			</table>
-		<button class="btn btn-default" id="deleteAbbruch">Cancel</button>
-	  </div>
-	</div>
-	
+	<br>
   </div>
   <form novalidate class="simple-form">
+  	<br>
   <div>
+  	<br>
     <div ng-repeat="param in ctrl.params">
         <p ng-repeat="(key, val) in param">
           <select ng-if="key == 'type'" ng-model="param.type" ng-options="o as o for o in ctrl.paramoptions">
@@ -122,10 +65,6 @@
           <input ng-if="key == 'value'" class="form-control" ng-model ="param.value" name="value_value"  type="textarea" />
         </p>
     </div>
-
-<!--   <button class="btn btn-default" ng-click="ctrl.ButtonClick()">
-      Add parameter
-    </button> --> 
   </div>  
   </form>
   

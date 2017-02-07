@@ -149,7 +149,11 @@ angular.module('OutputTable', [])
               scope.$watch('table', function(newvalue, oldvalue) {
                 // if(newvalue !== oldvalue){ //everythime--> otherwise there will be an error in the query builder
                    //console.log(newvalue);
-                    thisscope.$parent.setData(newvalue);
+            	  
+            	  if(newvalue !== undefined)
+        		  {
+                      thisscope.$parent.setData(newvalue);
+        		  }
                 //}
 
               }, true);

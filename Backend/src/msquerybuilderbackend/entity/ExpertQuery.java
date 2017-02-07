@@ -19,6 +19,8 @@ public class ExpertQuery{
 	@GraphId private Long id;
 	private String name;
 	private String query;
+	@Relationship(type = "HAS_AUTHOR", direction = Relationship.OUTGOING)
+	private User author;
 	@Relationship(type = "HAS_PARAMETER", direction = Relationship.OUTGOING)
 	private Set<Parameter> parameter = new HashSet<Parameter>(0);
 	private String description;
@@ -71,6 +73,16 @@ public class ExpertQuery{
 		this.description=d;
 	}
 	
+	
+	
+	public User getAuthor() {
+		return author;
+	}
+
+	public void setAuthor(User author) {
+		this.author = author;
+	}
+
 	public void setCategory(Category c){
 		this.category=c;
 	}

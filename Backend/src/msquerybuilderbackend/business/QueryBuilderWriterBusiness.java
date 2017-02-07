@@ -1,6 +1,7 @@
 package msquerybuilderbackend.business;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -8,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 
 import msquerybuilderbackend.entity.ExpertQuery;
 import msquerybuilderbackend.entity.FilterAttribute;
@@ -35,7 +37,7 @@ public class QueryBuilderWriterBusiness {
 	private String query;
 	private LinkedList<String> filterStatements;
 	private LinkedList<String> actualFilterStatements;
-	private LinkedList<String> orderStatements;
+	private HashMap<Integer, String> orderStatements;
 	private LinkedList<String> returnStatements;
 	private LinkedList<String> cypherquery;
 	private Node node;
@@ -52,7 +54,7 @@ public class QueryBuilderWriterBusiness {
 	paramsMap= new HashMap<String,Object>();
 	filterStatements = new LinkedList<String>();
 	actualFilterStatements = new LinkedList<String>();
-	orderStatements = new LinkedList<String>();
+	orderStatements = new HashMap<Integer, String>();
 	returnStatements = new LinkedList<String>();
 	cypherquery = new LinkedList<String>();
 	synonyms= new HashMap<String,String>();
@@ -60,7 +62,7 @@ public class QueryBuilderWriterBusiness {
 	end='z';
 	query = "";
 	distinct = queryBuilder.getDistinct();
-	 node = queryBuilder.getNode();
+	node = queryBuilder.getNode();
 	
 	//TODO erste relation auf optional prüfen!!
 	//build the query
@@ -84,7 +86,10 @@ public class QueryBuilderWriterBusiness {
 	
 	if (!orderStatements.isEmpty()) query += " ORDER BY ";
 	
-	it = orderStatements.iterator();
+	Map<Integer, String> treeMap = new TreeMap<Integer, String>(orderStatements);
+	Collection<String> s = treeMap.values();
+	it = s.iterator();
+	
 	while (it.hasNext()){
 		query += it.next();
 		if (it.hasNext()) query += ", ";
@@ -92,6 +97,10 @@ public class QueryBuilderWriterBusiness {
 	
 	if (queryBuilder.getLimitCount() != "") {
 		query += " LIMIT " + queryBuilder.getLimitCount();
+	}
+	
+	if (queryBuilder.getSkip() != "") {
+		query += " SKIP " + queryBuilder.getSkip();
 	}
 	
 	//erstellen des results
@@ -119,7 +128,7 @@ public class QueryBuilderWriterBusiness {
 		
 		//order zusammenstellen
 		if (!node.getOrderByAttributes().isEmpty()){
-			solveOrder(node.getOrderByAttributes(), node.getType());
+			solveOrder(node.getOrderByAttributes(), node.getType(), node.getReturnAttributes());
 		}
 		
 		//return zusammenstellen
@@ -170,7 +179,7 @@ public class QueryBuilderWriterBusiness {
 		
 		//order zusammenstellen
 		if (!relation.getOrderByAttributes().isEmpty()){
-			solveOrder(relation.getOrderByAttributes(), relation.getRelationshipType());
+			solveOrder(relation.getOrderByAttributes(), relation.getRelationshipType(), relation.getReturnAttributes());
 		}
 		
 		//return zusammenstellen
@@ -183,7 +192,6 @@ public class QueryBuilderWriterBusiness {
 			//dieser Zweig wird nie betreten
 			return;
 		} else {
-			
 			buildNode(relation.getNode(), s + relationship, expertQuery);
 			return;
 		}	
@@ -224,14 +232,27 @@ public class QueryBuilderWriterBusiness {
 		}
 	}
 	
-	private void solveOrder(Set<OrderByAttribute> obSet, String type){
+	private void solveOrder(Set<OrderByAttribute> obSet, String type, Set<ReturnAttribute> rSet){
+		String agg = "";
 		for (OrderByAttribute o : obSet){
 			String dir = "";
 			if (o.getDirection() != ""){
 				dir = " " + o.getDirection();
 			}
-			//TODO evtl noch eine AGGREGATION bei orderby einfügen!!
-			orderStatements.add(synonyms.get(type) + "." + o.getAttributeName() + dir);
+			
+			for (ReturnAttribute r: rSet){
+				if (r.getAttributeName().equals(o.getAttributeName())){
+					if (!r.getAggregation().isEmpty()){
+						agg = r.getAggregation();
+					}
+				}
+			}
+			
+			if (!(agg.equalsIgnoreCase("none") || agg.equalsIgnoreCase(""))){
+					orderStatements.put(o.getId(), agg + "(" +  synonyms.get(type) + "." + o.getAttributeName() + ")" + dir);
+				} else {
+					orderStatements.put(o.getId(), synonyms.get(type) + "." + o.getAttributeName() + dir);	
+			}
 		}
 	}
 	
@@ -241,7 +262,7 @@ public class QueryBuilderWriterBusiness {
 		for (ReturnAttribute r : retSet){
 			
 			String returnStatement = " ";
-//			if (distinct) returnStatement += ("DISTINCT ");
+
 			if (!r.getAggregation().isEmpty()){
 				if (r.getAggregation().equalsIgnoreCase("none") == false){
 					returnStatement += (r.getAggregation() + "(");
@@ -254,9 +275,10 @@ public class QueryBuilderWriterBusiness {
 				}
 			}
 			//TODO eventuell eigenes Attribut für die ALIAS
-			
+		
 			returnStatement += (" AS " + type + r.getAttributeName() + i);
 			i++;
+		//	returnStatement += (" AS " + r.getAlias());
 			returnStatements.add(returnStatement);
 		}
 	}
