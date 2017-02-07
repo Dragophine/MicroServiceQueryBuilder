@@ -1,5 +1,7 @@
 package msquerybuilderbackend.business;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -11,7 +13,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.Assert;
 
+import msquerybuilderbackend.entity.Category;
 import msquerybuilderbackend.entity.User;
+import msquerybuilderbackend.entity.UserAuthority;
 import msquerybuilderbackend.repository.UserRepository;
 import msquerybuilderbackend.repository.UserAuthorityRepository;
 
@@ -124,6 +128,15 @@ public class UserBusiness implements UserDetailsManager {
 	public Iterable<User> getAllUser() {
 		return userRepository.findAll();
 	}
+	
+	/**
+	 * method which queries all the categories from the neo4j database
+	 * @return a list of all categories found in the neo4j database
+	 */
+	public List<User> getAllUsers(){
+		List<User> users= userRepository.getAllUsers();
+		return users;
+	}
 
 	/**
 	 * method which returns a certain user with specific neo4j Id
@@ -132,6 +145,21 @@ public class UserBusiness implements UserDetailsManager {
 	 */
 	public User getUserByid(Long userid) {
 		return userRepository.findOne(userid);
+	}
+	
+	public void addAuthority(String email, String authority) {
+		User user = userRepository.findByEmail(email);
+		user.addAuthority(new UserAuthority (authority));
+		System.out.println(email+ "AAA"+ authority);
+		userAuthorityRepository.addAuthority(email, authority);
+		//userAuthorityRepository.addAuthority();
+	}
+	
+	public void deleteAuthority(String email, String authority) {
+		User user = userRepository.findByEmail(email);
+		user.removeAuthority(new UserAuthority(authority));
+		userAuthorityRepository.deleteAuthority(email, authority);
+		
 	}
 
 

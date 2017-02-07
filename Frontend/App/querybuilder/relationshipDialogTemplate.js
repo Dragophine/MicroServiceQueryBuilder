@@ -395,8 +395,7 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                 filterAttributes[$type] = $value;
             }
 
-            console.log("Set key: " + $key + ", type: " + $type + 
-                            + ", id: " + $id + ", value: " + $value );
+            console.log("Set key: " + $key + ", type: " + $type  + ", value: " + $value );
         };
 
          /**

@@ -15,6 +15,7 @@ import java.util.Set;
 public class FilterAttribute implements Comparable<FilterAttribute>{
 	
 	private String attributeName="";
+	private String logic="";
 	private Set<Filters> filters = new HashSet<Filters>(0);
 
 	
@@ -39,6 +40,14 @@ public class FilterAttribute implements Comparable<FilterAttribute>{
 
 	public void setFilters(Set<Filters> filter) {
 		this.filters = filter;
+	}
+
+	public String getLogic() {
+		return logic;
+	}
+
+	public void setLogic(String logic) {
+		this.logic = logic;
 	}
 
 	public void addFilters(Filters filter){

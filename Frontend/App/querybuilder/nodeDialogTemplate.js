@@ -439,7 +439,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			}
 
 			console.log("Set key: " + $key + ", type: " + $type + 
-							+ ", id: " + $id + ", value: " + $value );
+							", value: " + $value );
 		};
 
 		/**

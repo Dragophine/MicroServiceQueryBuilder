@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<div  ng-controller="userCtrl as ctrl">
+
+
+	
+
+<table class="table">
+	<tbody >
+		<tr> 
+			<td ng-if = "ctrl.email != ''">
+			<h1>Authorities</h1>
+            <table class="table">
+				<tbody >
+				<tr  ng-repeat = "role in ctrl.roles"> 
+					<td>
+					<input  type="checkbox" ng-checked="ctrl.isFilterAttributesChecked(role)"
+                           ng-click="ctrl.setFilterAttributes(role)">> {{role}}
+						</td>
+					</tr>
+				</tbody>
+			</table>
+  
+
+			</td>
+			<td>
+			
+			<h1>Existing Users</h1>
+			
+			 <table class="table">
+				<tbody >
+				<tr ng-repeat = "cell in ctrl.existingUsers"> 
+					<td>
+					<label>Email: {{cell.email}} </label>
+						<button ng:click="ctrl.selectLoad(cell)"> Select User </button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+			
+			</td>
+		</tr>
+	</tbody>
+</table>
+
+</div>
