@@ -18,35 +18,41 @@
   <div class="row">
       <h1>Name</h1>
       <input type="textarea" class="form-control" id="name" 
-            ng-model="ctrl.query['name']"   placeholder="Name" />
+            ng-model="ctrl.query['name']"   placeholder="Name" 
+            ng-disabled="!ctrl.hasPermissions"/>
   </div>
   <div class="row">
       <h1>Description</h1>
       <input type="textarea" class="form-control" id="description" 
-            ng-model="ctrl.query['description']"  placeholder="Description" />
+            ng-model="ctrl.query['description']"  placeholder="Description" 
+            ng-disabled="!ctrl.hasPermissions"/>
   </div>
   <div class="row">
       <h1>Category</h1>
-      <select  ng-model="ctrl.query['category']" ng-change="ctrl.query['category']"
-      style="width: 100%; display:block; margin-bottom: 5px">
+      <select   ng-disabled="!ctrl.hasPermissions"
+       ng-model="ctrl.query['category']" ng-change="ctrl.query['category']"
+      style="width: 100%; display:block; margin-bottom: 5px" >
           <option ng-repeat="category in ctrl.availableCategories"> {{category.name}} </option>
       </select>
   </div>
   <div class="row">
       <h1>Skip</h1>
       <input type="textarea" class="form-control" id="query" ng-change="ctrl.getQuery()"
-            ng-model="ctrl.query['skip']"  placeholder="Skip Count" />
+            ng-model="ctrl.query['skip']"  placeholder="Skip Count"
+            ng-disabled="!ctrl.hasPermissions" />
   </div>
   <div class="row">
       <h1>Limit</h1>
       <input type="textarea" class="form-control" id="query" ng-change="ctrl.getQuery()"
-            ng-model="ctrl.query['limitCount']"  placeholder="Limit Count" />
+            ng-model="ctrl.query['limitCount']"  placeholder="Limit Count" 
+            ng-disabled="!ctrl.hasPermissions"/>
   </div>
   <div class="row">
       <h1>
         <div class="panel-title pull-left" style="width:15px;">
           <input  type="checkbox" ng-change="ctrl.getQuery()"
-                  ng-model="ctrl.query['distinct']">
+                  ng-model="ctrl.query['distinct']"
+                  ng-disabled="!ctrl.hasPermissions">
           </input>
         </div> Distinct
        </h1>
@@ -55,7 +61,8 @@
   <div class="row" ng-if="ctrl.availableNodes.length > 0">
       <h1>Choose Node</h1>
         <div ng-repeat="node in ctrl.availableNodes" style="display: inline;">
-          <button ng-repeat="nodeText in node['Label']" ng-click="ctrl.addNode(nodeText)" class="btn btn-default">
+          <button ng-repeat="nodeText in node['Label']" ng-click="ctrl.addNode(nodeText)" class="btn btn-default"
+          ng-disabled="!ctrl.hasPermissions">
           {{nodeText}}
           </button>
         </div>
@@ -88,7 +95,8 @@
           <h1>
             <span>{{ctrl.selectedNode['type']}}</span>
             <button class="btn btn-primary pull-right" 
-              ng-click="ctrl.deleteSelectedNode()">
+              ng-click="ctrl.deleteSelectedNode()"
+              ng-disabled="!ctrl.hasPermissions">
               Delete
             </button>
           </h1>

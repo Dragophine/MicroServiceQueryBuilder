@@ -431,6 +431,7 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     			$requests.getNodes(self.getNodesCB);
     		}
 	     	self.transfersToGraph(self.network);
+            self.hasPermissions = (self.query.author === $rootScope.principal.username);
     	}
 	}
 
@@ -902,6 +903,13 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     else{
     	$requests.getNodes(self.getNodesCB);
     }
+
+
+     /**
+      * This property holdes if a user is allowed to edit the query.
+      * @type {boolean}  if the user is allowed to edit.
+      */ 
+      self.hasPermissions = (self.query.author === $rootScope.principal.username);
 
 
 }]);

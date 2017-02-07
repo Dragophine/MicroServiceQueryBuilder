@@ -11,6 +11,7 @@
                   <div class="panel-heading">
                         <div class="pull-left" style="width:15px;">
                           <input id="inlineradio0" type="checkbox" 
+                           ng-disabled="!ctrl.hasPermissions('filter', key)"
                            ng-checked="ctrl.isFilterAttributesChecked(key)"
                            ng-click="ctrl.setFilterAttributes(key)">
                         </div>
@@ -25,6 +26,7 @@
                         <div class="col-xs-2 ck-container">
                           <input class="ck-element ck-box" 
                             type="checkbox"
+                            ng-disabled="!ctrl.hasPermissions('filter', key)"
                             ng-model="isBracketOpen"
                             ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'isBracketOpen', isBracketOpen)" 
                             ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
@@ -42,7 +44,8 @@
                         <div class="panel-body">
                           <button ng-if="ctrl.getFilterAttributes(key).filters.length > 1"
                                   class="btn pull-right" 
-                                  ng-click="ctrl.deleteFilterAttributesFilter(key, filter.id)"> 
+                                  ng-click="ctrl.deleteFilterAttributesFilter(key, filter.id)"
+                                  ng-disabled="!ctrl.hasPermissions('filter', key)"> 
                            Remove
                           </button>
                           
@@ -53,7 +56,8 @@
                             ng-model="type"
                             ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'type', type)" 
                             ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
-                            ng-watch-object-value="type">
+                            ng-watch-object-value="type"
+                            ng-disabled="!ctrl.hasPermissions('filter', key, {'id':filter.id})">
                             <option value="string">STRING</option> 
                             <option value="integer">INT</option>
                             <option value="double">DOUBLE</option>
@@ -68,7 +72,8 @@
                           ng-model="filterType"
                           ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'filterType', filterType)" 
                           ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
-                          ng-watch-object-value="filterType">
+                          ng-watch-object-value="filterType"
+                          ng-disabled="!ctrl.hasPermissions('filter', key, {'id':filter.id})">
                             <option value="=">EQUALS</option> 
                             <option value=">">GREATER</option>
                             <option value="<">SMALLER</option>
@@ -84,7 +89,8 @@
                               ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'value', value)" 
                               ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
                               ng-watch-object-value="value"
-                              ng-model="value"/>
+                              ng-model="value"
+                              ng-disabled="!ctrl.hasPermissions('filter', key, {'id':filter.id, 'type':'filterText'})"/>
                          
                           <div class="form-group"
                                   ng-class="(
@@ -98,6 +104,7 @@
                               ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
                               ng-watch-object-value="value"
                               ng-model="value"
+                              ng-disabled="!ctrl.hasPermissions('filter', key, {'id':filter.id, 'type':'filterText'})"
                               placeholder="0"/>
                             <!--DOUBLE-->
                             <input ng-if="(ctrl.getFilterAttributesFilter(key, filter.id)).type === 'double' ||
@@ -109,6 +116,7 @@
                               ng-model="value"
                               value="0" 
                               placeholder="0.0"
+                               ng-disabled="!ctrl.hasPermissions('filter', key, {'id':filter.id, 'type':'filterText'})"
                               ng-pattern="/^[0-9]+\.?[0-9]{0,15}$/"/>
                            <!--DATE-->
                             <input type="textarea" class="form-control" id="query" 
@@ -119,6 +127,7 @@
                               ng-model="value"
                               name="date" 
                               placeholder="dd.mm.yyyy"
+                               ng-disabled="!ctrl.hasPermissions('filter', key, {'id':filter.id, 'type':'filterText'})"
                               ng-pattern="/^([0-2][1-9]|10|20|30|31).(01|02|03|04|05|06|07|08|09|10|11|12).[0-9]{4}$/"
                                 />
                                 <!--Boolean-->
@@ -127,6 +136,7 @@
                               ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'value', value)" 
                               ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
                               ng-watch-object-value="value"
+                               ng-disabled="!ctrl.hasPermissions('filter', key, {'id':filter.id, 'type':'filterText'})"
                               ng-model="value">
                               <option value="true">TRUE</option> 
                               <option value="false">FALSE</option>
@@ -140,7 +150,8 @@
                                  ng-model="changeable"
                                  ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'changeable', changeable)"
                                  ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
-                                 ng-watch-object-value="changeable">
+                                 ng-watch-object-value="changeable"
+                                 ng-disabled="!ctrl.hasPermissions('filter', key, {'id':filter.id, 'type':'changeable'})">
                               </input>
                             </div>
                             <div class="panel-title pull-left left-buffer ">
@@ -158,7 +169,8 @@
                             ng-change="ctrl.setFilterAttributesFilterValue(key, filter.id, 'isBracketClosed', isBracketClosed)" 
                             ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
                             ng-watch-object-value="isBracketClosed"
-                           autocomplete="off"> 
+                           autocomplete="off"
+                           ng-disabled="!ctrl.hasPermissions('filter', key)"> 
                            </input>
                            <div class="ck-element ck-content">
                               <span> ) </span>
@@ -175,7 +187,8 @@
                                 ng-model="logic"
                                 ng-click="ctrl.setFilterAttributesFilterValue(key, filter.id, 'logic', logic)"
                                 ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
-                                ng-watch-object-value="logic">
+                                ng-watch-object-value="logic"
+                                ng-disabled="!ctrl.hasPermissions('filter', key)">
                           </input>
                           <div class="col-xs-3">AND</div>
                         </div>
@@ -188,14 +201,16 @@
                                 ng-model="logic"
                                 ng-click="ctrl.setFilterAttributesFilterValue(key, filter.id, 'logic', logic)"
                                 ng-watch='ctrl.getFilterAttributesFilter(key, filter.id)'
-                                ng-watch-object-value="logic">
+                                ng-watch-object-value="logic"
+                                ng-disabled="!ctrl.hasPermissions('filter', key)">
                           </input>
                           <div class="col-xs-3">OR</div>
                         </div>
                       </div>
                     </div>
                     <button class="btn" 
-                        ng-click="ctrl.addFilterAttributesFilter(key)"> 
+                        ng-click="ctrl.addFilterAttributesFilter(key)"
+                        ng-disabled="!ctrl.hasPermissions('filter', key)"> 
                         ADD
                     </button>
                   </div>
@@ -212,7 +227,8 @@
                             ng-model="logic"
                             ng-click="ctrl.setFilterAttributesValue(key, 'logic', logic)"
                             ng-watch='ctrl.getFilterAttributes(key)'
-                            ng-watch-object-value="logic">
+                            ng-watch-object-value="logic"
+                            ng-disabled="!ctrl.hasPermissions('filter', key)">
                       </input>
                       <div class="col-xs-3">AND</div>
                     </div>
@@ -225,7 +241,8 @@
                             ng-model="logic"
                             ng-click="ctrl.setFilterAttributesValue(key, 'logic', logic)"
                             ng-watch='ctrl.getFilterAttributes(key)'
-                            ng-watch-object-value="logic">
+                            ng-watch-object-value="logic"
+                            ng-disabled="!ctrl.hasPermissions('filter', key)">
                       </input>
                       <div class="col-xs-3">OR</div>
                     </div>
@@ -238,7 +255,8 @@
                     <div class="panel-title pull-left" style="width:15px;">
                       <input id="inlineradio1" type="checkbox"
                               ng-checked="ctrl.isReturnAttributesChecked(key)"
-                              ng-click="ctrl.setReturnAttributes(key)">
+                              ng-click="ctrl.setReturnAttributes(key)"
+                              ng-disabled="!ctrl.hasPermissions('return', key)">
                       </input>
                     </div>
                     <div class="panel-title pull-left left-buffer">
@@ -252,7 +270,8 @@
                             ng-model="alias"
                             ng-change="ctrl.setReturnAttributesValue(key, 'alias', alias)"
                             ng-watch='ctrl.getReturnAttributes(key)'
-                            ng-watch-object-value="alias"  />
+                            ng-watch-object-value="alias"  
+                            ng-disabled="!ctrl.hasPermissions('return', key)"/>
                     <h3>Aggregation</h3>
                     <div class="row">
                       <input  class="col-xs-2" 
@@ -263,7 +282,8 @@
                             ng-model="aggregation"
                             ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
                             ng-watch='ctrl.getReturnAttributes(key)'
-                            ng-watch-object-value="aggregation">
+                            ng-watch-object-value="aggregation"
+                            ng-disabled="!ctrl.hasPermissions('return', key)">
                       </input>
                       <div class="col-xs-3">NONE</div>
                     </div>
@@ -275,7 +295,8 @@
                             ng-model="aggregation"
                             ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
                             ng-watch='ctrl.getReturnAttributes(key)'
-                            ng-watch-object-value="aggregation">
+                            ng-watch-object-value="aggregation"
+                            ng-disabled="!ctrl.hasPermissions('return', key)">
                       </input>
                       <div class="col-xs-3">MIN</div>
                     </div>
@@ -287,7 +308,8 @@
                             ng-model="aggregation"
                             ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
                             ng-watch='ctrl.getReturnAttributes(key)'
-                            ng-watch-object-value="aggregation">
+                            ng-watch-object-value="aggregation"
+                            ng-disabled="!ctrl.hasPermissions('return', key)">
                       </input>
                       <div class="col-xs-3">MAX</div>
                     </div>
@@ -299,7 +321,8 @@
                             ng-model="aggregation"
                             ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
                             ng-watch='ctrl.getReturnAttributes(key)'
-                            ng-watch-object-value="aggregation">
+                            ng-watch-object-value="aggregation"
+                            ng-disabled="!ctrl.hasPermissions('return', key)">
                       </input>
                       <div class="col-xs-3">SUM</div>
                     </div>
@@ -311,7 +334,8 @@
                             ng-model="aggregation"
                             ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
                             ng-watch='ctrl.getReturnAttributes(key)'
-                            ng-watch-object-value="aggregation">
+                            ng-watch-object-value="aggregation"
+                            ng-disabled="!ctrl.hasPermissions('return', key)">
                       </input>
                       <div class="col-xs-3">COUNT</div>
                     </div>
@@ -323,7 +347,8 @@
                             ng-model="aggregation"
                             ng-click="ctrl.setReturnAttributesValue(key, 'aggregation', aggregation)"
                             ng-watch='ctrl.getReturnAttributes(key)'
-                            ng-watch-object-value="aggregation">
+                            ng-watch-object-value="aggregation"
+                            ng-disabled="!ctrl.hasPermissions('return', key)">
                       </input>
                       <div class="col-xs-3">AVG</div>
                     </div>
@@ -336,7 +361,8 @@
                       <div class="panel-title pull-left" style="width:15px;">
                         <input  type="checkbox" 
                         ng-checked="ctrl.isOrderByAttributesChecked(key)"
-                        ng-click="ctrl.setOrderByAttributes(key)">
+                        ng-click="ctrl.setOrderByAttributes(key)"
+                        ng-disabled="!ctrl.hasPermissions('orderby', key)">
                         </input>
                       </div>
                       <div class="panel-title pull-left left-buffer" >
@@ -354,7 +380,8 @@
                             ng-model="value"
                             ng-click="ctrl.setOrderByAttributesValue(key,'direction', value)"
                             ng-watch='ctrl.getOrderByAttributes(key)'
-                            ng-watch-object-value="direction">
+                            ng-watch-object-value="direction"
+                            ng-disabled="!ctrl.hasPermissions('orderby', key)">
                           </input>
                           <div class="col-xs-3">ASC</div>
                         </div>
@@ -367,7 +394,8 @@
                             ng-model="value"
                             ng-click="ctrl.setOrderByAttributesValue(key, 'direction', value)"
                             ng-watch='ctrl.getOrderByAttributes(key)'
-                            ng-watch-object-value="direction">
+                            ng-watch-object-value="direction"
+                            ng-disabled="!ctrl.hasPermissions('orderby', key)">
                             <div class="col-xs-3">DESC</div>
                           </input>
                         </div>
@@ -379,7 +407,7 @@
                               ng-watch='ctrl.getOrderByAttributes(key)'
                               ng-watch-object-value="id"
                               ng-model="id"
-                              
+                              ng-disabled="!ctrl.hasPermissions('orderby', key)"
                               min="1" max="99"/>
                         </div>
                       </div>
@@ -394,7 +422,8 @@
       <div style="display: inline;" >
           <div ng-repeat="relationship in ctrl.relationships"  style="display: inline;" >
               <button ng-repeat="label in relationship['Labels']"  class="btn btn-default"
-                      ng-click="ctrl.addRelationship(relationship['Relation'], relationship['Direction'], label)">
+                      ng-click="ctrl.addRelationship(relationship['Relation'], relationship['Direction'], label)"
+                      ng-disabled="!ctrl.hasPermissions('relation', key)">
                   {{relationship['Relation']}}
                 <span ng-if="relationship['Direction'] == 'OUTGOING'"
                     class="glyphicon glyphicon-arrow-down"></span>

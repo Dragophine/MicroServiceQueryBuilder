@@ -16,8 +16,8 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
    * 
    * @version 1.0.0
    */
-.controller('queryBuilderNodeDialogCtrl', ['$requests', '$scope', 
-    function($requests, $scope) {
+.controller('queryBuilderNodeDialogCtrl', ['$requests', '$scope', '$rootScope','ngDialog',
+    function($requests, $scope, $rootScope, ngDialog) {
         var self = this;
 	    
 	     /**
@@ -128,6 +128,25 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 			);
 
 		}
+
+		/**
+	    * This method opens an info dialog. It displays a certain data (head and content)
+	    * given in the $data. Furthermore, a callback can be specified, when the dialg is closed.
+	    *
+	    * @param {!Object} $data - the head an the content for the info dialog.
+	    * @param {?function} infoClosePromis - The function which should be called when the dialog is closed.
+	    */
+	    self.showInfoDialog = function($data, infoClosePromis){
+	    	var dialog = ngDialog.open({ template: 'querybuilder/infoDialog.html',
+	        				className: 'ngdialog-theme-default custom-width',
+	        				controller: 'querybuilderInfoDialogCtrl',
+	        				controllerAs: 'ctrl',
+	        				data:$data
+	        		 });
+	    	if(infoClosePromis !== undefined){
+	    		dialog.closePromise.then(infoClosePromis);
+	    	}
+	    }
 
 		/******************************
 		Return Attributes
@@ -472,7 +491,6 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 
 			console.log("Set key: " + $key + ", type: " + $type + 
 							+ ", id: " + $id + ", value: " + $value );
-
 		};
 
 		/**
@@ -485,6 +503,7 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
         * @param {string} $key - The key of the filter attribute in which the filter should be added.
         */
 		self.addFilterAttributesFilter = function($key){
+
 			var filterAttributes = self.getFilterAttributes($key);
 
 			if(	filterAttributes !== undefined &&
@@ -510,15 +529,13 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				{
 					"id":id,			//for Frontend
 					"type":"string",	//int, string...
-					"filterType": "=", 	//"in","like","=",">"
+					"filterType": "=", 	//like "in","like","=",">"
 					"value":"", 
 					"changeable":false,
 					"isBracketOpen": false,
 					"isBracketClosed": false,
 					"logic":""  		//“AND/OR”
 				});
-
-
 			}
 		}
 
@@ -553,4 +570,35 @@ angular.module('queryBuilder.querybuildernodedialog', ['ngRoute'])
 				}	
 			}
 		}
+
+		 /**
+         * This function checks wheather a user has the  
+         * permission to edit the items or not.
+         *
+         * @param {string} $attributeType - The type of the attribute -> "filter", "return", "orderby"
+         * @param {string} $key - The key of the attribute for which the permissions should be cheked. 
+         * @param {Object} $additionalInfo - Additional informations.
+         * @return {boolean} Returns optional property.
+         */ 
+        self.hasPermissions = function($attributeType, $key, $additionalInfo){
+            if(self.author === $rootScope.principal.username){
+            	//the author can do everything
+                return true;
+            }
+            else {
+            	//permission is only granted to filter attributes
+            	if($attributeType === "filter" && $additionalInfo != undefined &&
+            		$additionalInfo.type != undefined && $additionalInfo.id != undefined &&
+            		$additionalInfo.type != "changeable"){
+
+            		var filterAttributesFilter = self.getFilterAttributesFilter($key, $additionalInfo.id);
+            		if(filterAttributesFilter.changeable){
+            			return true;
+            		}
+            		return false;
+            		
+            	}
+                return false;
+            }
+        }
 }]);

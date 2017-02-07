@@ -16,10 +16,11 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
    * 
    * @version 1.0.0
    */
-.controller('queryBuilderRelationshipDialogCtrl', ['$requests', '$scope', 
-    function($requests, $scope) {
+.controller('queryBuilderRelationshipDialogCtrl', ['$requests', '$scope', '$rootScope', 'ngDialog',
+    function($requests, $scope, $rootScope, ngDialog) {
         var self = this;
 
+        
          /**
          * The property contains all informations about the relationship.
          * This information is handed in from the query builder.
@@ -63,6 +64,24 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
         	return self.relationship['optional'] = value;
         }
 
+         /**
+        * This method opens an info dialog. It displays a certain data (head and content)
+        * given in the $data. Furthermore, a callback can be specified, when the dialg is closed.
+        *
+        * @param {!Object} $data - the head an the content for the info dialog.
+        * @param {?function} infoClosePromis - The function which should be called when the dialog is closed.
+        */
+        self.showInfoDialog = function($data, infoClosePromis){
+            var dialog = ngDialog.open({ template: 'querybuilder/infoDialog.html',
+                            className: 'ngdialog-theme-default custom-width',
+                            controller: 'querybuilderInfoDialogCtrl',
+                            controllerAs: 'ctrl',
+                            data:$data
+                     });
+            if(infoClosePromis !== undefined){
+                dialog.closePromise.then(infoClosePromis);
+            }
+        }
 
         /******************************
         LOADING 
@@ -439,6 +458,7 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
         * @param {string} $key - The key of the filter attribute in which the filter should be added.
         */
         self.addFilterAttributesFilter = function($key){
+
             var filterAttributes = self.getFilterAttributes($key);
 
             if( filterAttributes !== undefined &&
@@ -451,12 +471,13 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                     else if (parseInt(x['id']) < parseInt(y['id'])) return -1;
                     else return 1;
                 });
+                //there must be at least one filter in the filters array
+                //otherwise: invalid state
 
                 if(filterAttributes.filters.length > 0){
                     filterAttributes.filters[filterAttributes.filters.length - 1].logic = "AND";
                 }
-                //there must be at least one filter in the filters array
-                //otherwise: invalid state
+
                 var id = filterAttributes.filters[filterAttributes.filters.length - 1].id;
                 id = id +1;
                 filterAttributes.filters.push(
@@ -468,7 +489,7 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                     "changeable":false,
                     "isBracketOpen": false,
                     "isBracketClosed": false,
-                    "logic":""       //“AND/OR”
+                    "logic":""          //“AND/OR”
                 });
             }
         }
@@ -494,13 +515,44 @@ angular.module('queryBuilder.querybuilderrelationshipdialog', ['ngRoute'])
                     var filterAttributesFilter = self.getFilterAttributesFilter($key, $id);
                     if(filterAttributesFilter != undefined){
                         var index = filterAttributes.filters.indexOf(filterAttributesFilter);
-                        if(filterAttributes.filters.length - 1 === index  && index !== 0){
+                        if(filterAttributes.filters.length - 1 === index && index !== 0){
                             filterAttributes.filters[index - 1].logic = "";
                         }
                         
                         filterAttributes.filters.splice(index, 1);  
                     }
                 }   
+            }
+        }
+
+       /**
+         * This function checks wheather a user has the  
+         * permission to edit the items or not.
+         *
+         * @param {string} $attributeType - The type of the attribute -> "filter", "return", "orderby"
+         * @param {string} $key - The key of the attribute for which the permissions should be cheked. 
+         * @param {Object} $additionalInfo - Additional informations.
+         * @return {boolean} Returns optional property.
+         */ 
+        self.hasPermissions = function($attributeType, $key, $additionalInfo){
+            if(self.author === $rootScope.principal.username){
+                //the author can do everything
+                return true;
+            }
+            else {
+                //permission is only granted to filter attributes
+                if($attributeType === "filter" && $additionalInfo != undefined &&
+                    $additionalInfo.type != undefined && $additionalInfo.id != undefined &&
+                    $additionalInfo.type != "changeable"){
+
+                    var filterAttributesFilter = self.getFilterAttributesFilter($key, $additionalInfo.id);
+                    if(filterAttributesFilter.changeable){
+                        return true;
+                    }
+                    return false;
+                    
+                }
+                return false;
             }
         }
 	
