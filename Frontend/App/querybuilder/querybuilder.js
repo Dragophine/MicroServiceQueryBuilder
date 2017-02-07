@@ -26,9 +26,11 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
     self.query = {
     	"id":"",
     	"name":"",
+        "author":  $rootScope.principal.username,
     	"description":"",
     	"category":"",
     	"limitCount": "",
+        "skip":"",
     	"distinct":false,
     	"node":""          
     }
@@ -498,11 +500,14 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	self.newQuery = function(){
 		var query = {
 			"id":"",
-	    	"name":"",
-	    	"description":"",
-	    	"category":"",
-	    	"limitCount": "",
-	    	 "node":""
+            "name":"",
+            "author":  $rootScope.principal.username,
+            "description":"",
+            "category":"",
+            "limitCount": "",
+            "skip":"",
+            "distinct":false,
+            "node":""      
 	    }
 	    self.loadQueryLogic(query);
 	}
@@ -810,7 +815,12 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
         				className: 'ngdialog-theme-default custom-width',
         				controller: 'queryBuilderNodeDialogCtrl',
         				controllerAs: 'ctrl',
-        				data: node});
+        				data: 
+                        {
+                            "node": node,
+                            "author": self.query.author
+                        }
+                    });
 
 
 	    dialog.closePromise.then(function (data) {
@@ -853,7 +863,12 @@ angular.module('queryBuilder.querybuilder', ['ngRoute', 'queryBuilder.services']
 	        				className: 'ngdialog-theme-default custom-width',
 	        				controller: 'queryBuilderRelationshipDialogCtrl',
 	        				controllerAs: 'ctrl',
-	        				data:relationship});
+	        				data:
+                            {
+                                "relationship": relationship,
+                                "author": self.query.author
+                            }
+                        });
 
 
 	        dialog.closePromise.then(function (data) {
