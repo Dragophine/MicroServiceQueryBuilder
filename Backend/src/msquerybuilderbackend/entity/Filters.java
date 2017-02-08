@@ -12,7 +12,6 @@ public class Filters implements Comparable<Filters>{
 	private long id;
 	
 	private String filterType="";
-//	private String key;
 	private String type="";
 	private String value="";
 	private Boolean changeable;
@@ -20,9 +19,7 @@ public class Filters implements Comparable<Filters>{
 	private Boolean isBracketClosed;
 	private String logic="";
 	
-	public Filters(){
-		
-	}
+	public Filters(){}
 	
 	public long getId() {
 		return id;
