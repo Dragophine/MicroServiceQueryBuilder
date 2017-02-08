@@ -35,7 +35,7 @@ import io.swagger.annotations.ApiParam;
 import springfox.documentation.spring.web.json.Json;
 
 /** Service class/controller for User REST services
-* @author 
+* @author Roman
 *
 */
 @RestController

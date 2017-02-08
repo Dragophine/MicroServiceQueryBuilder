@@ -4,6 +4,7 @@
    <div class="row">
       <div class="col-md-1">
       </div>
+      <!--
       <input id="inlineradio0" type="checkbox" class="col-md-1"
               ng-model="optional"
                ng-checked="ctrl.isOptionalChecked()"
@@ -11,7 +12,7 @@
                ng-disabled="!ctrl.hasPermissions('optional', key)">
       <div  class="col-md-9">
           OPTIONAL
-       </div>
+       </div>-->
     </div>
     <div ng-repeat="keyNode in ctrl.keys track by $index" >
          <div ng-repeat="key in keyNode['Keys']" ng-init="parentIndex = $index">
@@ -88,8 +89,9 @@
                              <option value="=">EQUALS</option> 
                             <option value=">">GREATER</option>
                             <option value="<">SMALLER</option>
-                           <option value=">=">GREATER EQUAL</option>
+                            <option value=">=">GREATER EQUAL</option>
                             <option value="<=">SMALLER EQUAL</option>
+                            <option value="<>">NOT EQUALS</option>
                           </select>
                           <div class="top-buffer-small">
                              Filter

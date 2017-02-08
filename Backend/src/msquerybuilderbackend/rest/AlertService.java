@@ -51,11 +51,6 @@ public class AlertService {
 	 * @return a list of all alerts
 	 */
 	@CrossOrigin 
-	//CrossOrigin request allow to call a different server from
-	//a certain frontend hosted on a certain address.
-	//This means that the address of the server and 
-	//the address of client must not be the same.
-	//Please add @CrossOrigin to every request.
 	@RequestMapping(value="/alerts",  method=RequestMethod.GET)
 	@ApiOperation(value = "Returns all alerts",
 	notes = "place for notes", response = Alert.class, responseContainer="List")

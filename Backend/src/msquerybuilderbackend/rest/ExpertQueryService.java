@@ -124,29 +124,7 @@ public class ExpertQueryService {
 				if(updatedObject==null) return new ResponseEntity<Result>(HttpStatus.CONFLICT);
 				return new ResponseEntity<Result>(HttpStatus.OK);
 		    }
-			
-//			@Deprecated
-//			@CrossOrigin 
-//			@Transactional
-//		    @RequestMapping(value="/expertqueriesold",  method=RequestMethod.GET)
-//		    public ResponseEntity<Result> getQueriesOld() throws Exception	{
-////		    public ResponseEntity<List<ExpertQuery>> getQueries() throws Exception	{
-////				List<ExpertQuery> expertQueries=expertQueryRepository.getAllExpertQueries();
-////		
-////			return new ResponseEntity<List<ExpertQuery>>(expertQueries,HttpStatus.OK);
-//				
-//				/**
-//				 * Workaround: Wenn auch die Parameter aufgelöst und returniert werden in der Query,
-//				 * dann sind die dazugehörigen Parameter aller Queries die returniert werden auch sichtbar.
-//				 */
-//				String queryNodesQuery = "MATCH (n:ExpertQuery) OPTIONAL MATCH (m:ExpertQuery)-[e:HAS_PARAMETER]-(x) RETURN n,m,e,x";			
-//				Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
-//	
-//	//			String queryNodesQuery = "MATCH (n:ExpertQuery) RETURN n";			
-//	//			Result resultQuery = neo4jOperations.query(queryNodesQuery, new HashMap<String, String>());
-//	
-//			return new ResponseEntity<Result>(resultQuery, HttpStatus.OK);
-//		    }
+
 			
 			
 			/**

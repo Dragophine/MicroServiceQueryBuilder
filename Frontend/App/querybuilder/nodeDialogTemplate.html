@@ -77,8 +77,9 @@
                             <option value="=">EQUALS</option> 
                             <option value=">">GREATER</option>
                             <option value="<">SMALLER</option>
-                           <option value=">=">GREATER EQUAL</option>
+                            <option value=">=">GREATER EQUAL</option>
                             <option value="<=">SMALLER EQUAL</option>
+                            <option value="<>">NOT EQUAL</option>
                           </select>
                           <div class="top-buffer-small">
                              Filter
@@ -222,7 +223,7 @@
                       <input  class="col-xs-2" 
                               style="margin-left: 8.8%"
                               type="radio" 
-                            name="{{'radio' + key + filter.id, + 'andOR'}}"
+                            name="{{'radio' + key + filter.id + 'andOR'}}"
                             value="AND"
                             ng-model="logic"
                             ng-click="ctrl.setFilterAttributesValue(key,'logic', logic)"

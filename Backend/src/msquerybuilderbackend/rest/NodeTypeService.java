@@ -19,7 +19,6 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import msquerybuilderbackend.business.ExpertQueryBusiness;
 import msquerybuilderbackend.business.NodeTypeBusiness;
-import msquerybuilderbackend.entity.ListEntity;
 import msquerybuilderbackend.repository.AlertRepository;
 
 

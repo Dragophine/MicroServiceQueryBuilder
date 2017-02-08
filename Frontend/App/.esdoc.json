@@ -1,0 +1,7 @@
+{
+	"source": 
+	"/Users/johannstoebich/Documents/workspaceNew/GIT/MicroServiceQueryBuilderBackend/Frontend/App/", 
+	"destination": "/Users/johannstoebich/Documents/workspaceNew/GIT/MicroServiceQueryBuilderBackend/Frontend/doc",
+	"includes": ["\\.(js|es6)$"],
+	"excludes": ["(node_modules|bower_components|codemirror-5.20.2)"]
+}
