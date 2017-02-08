@@ -23,19 +23,30 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     
 	@Autowired
 	private UserBusiness userBusiness;
-
+	
+	/**
+	 * method which defines where the users can be found
+	 * @param auth
+	 * @throws Exception
+	 */
 	@Autowired
 	public void configureGlobal(AuthenticationManagerBuilder auth) throws Exception {
 		auth.userDetailsService(userBusiness).passwordEncoder(encoder());
 
 	}
-
+	
+	/**
+	 * method to get a PasswordEncoder
+	 * @return a new PasswordEncoder
+	 */
 	@Bean
 	public BCryptPasswordEncoder encoder() {
 		return new BCryptPasswordEncoder();
 	}
 	
-	
+	/**
+	 * method to configure the security configuration
+	 */
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
     	  	
@@ -49,7 +60,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	}
     
 
-    
+    /**
+     * method to create a WebMvcConfigurer
+     * @return a WebMvcConfigurer
+     */
 	@Bean
     public WebMvcConfigurer corsConfigurer() {
         return new WebMvcConfigurerAdapter() {

@@ -80,10 +80,6 @@ public class UserService {
 		System.out.println(user.getEmail().equals("admin@admin.com"));
 		if(user.getEmail().equals("admin@admin.com")) {
 			user.addAuthority(new UserAuthority("ROLE_ADMIN"));
-			/*userAuthorityRepository.save(new UserAuthority("CATEGORY"));
-			userAuthorityRepository.save(new UserAuthority("EXPERTMODE"));
-			userAuthorityRepository.save(new UserAuthority("ALERT"));
-			userAuthorityRepository.save(new UserAuthority("ALERTSTATISTIC"));*/
 			user.addAuthority(new UserAuthority("CATEGORY"));
 			user.addAuthority(new UserAuthority("EXPERTMODE"));
 			user.addAuthority(new UserAuthority("ALERT"));
@@ -105,21 +101,17 @@ public class UserService {
 		return new ResponseEntity<List<User>>(userBusiness.getAllUsers(), HttpStatus.OK);
     }
 	
-	/*@CrossOrigin 
-	@Transactional
-    @RequestMapping(value="/users/{userId}",  method=RequestMethod.GET)	 
-	@ApiOperation(value = "deletes a certain expertQuery with a specific ID",
-	notes = "place for notes", response = UserAuthority.class, responseContainer="List")
-    public ResponseEntity<Collection<? extends GrantedAuthority>> getAuthorities(@PathVariable String userId) throws Exception	{
-		User user = userBusiness.getUserByEmail(userId);
-		System.out.println(userId);
-		return new ResponseEntity<Collection<? extends GrantedAuthority>>(user.getAuthorities(), HttpStatus.OK);
-    }*/
-	
+	/**
+	 * method which gets the GET-request for a specific user and calls the UserBusiness method
+	 * gets the existing authorities of a user and returns them
+	 * @param userId email address of the user for which the authorities should be returned
+	 * @return Collection of UserAuthorities
+	 * @throws Exception
+	 */
 	@CrossOrigin 
 	@Transactional
     @RequestMapping(value="/user/{userId:.+}",  method=RequestMethod.GET)	 
-	@ApiOperation(value = "deletes a certain expertQuery with a specific ID",
+	@ApiOperation(value = "gets all authorities for a specific user",
 	notes = "place for notes", response = UserAuthority.class, responseContainer="List")
     public ResponseEntity<Collection<? extends GrantedAuthority>> getAuthorities (@PathVariable String userId) throws Exception	{
 		User user = userBusiness.getUserByEmail(userId);
@@ -127,6 +119,14 @@ public class UserService {
 		return new ResponseEntity<Collection<? extends GrantedAuthority>>(user.getAuthorities(), HttpStatus.OK);
     }
 	
+	/**
+	 * method which gets the POST-request for a specific user and calls the UserBusiness method
+	 * creates a new user authority for the specific user
+	 * @param userId email address of the user for which the authority should be added
+	 * @param json json which contains the authority which should be added
+	 * @return 
+	 * @throws Exception
+	 */
 	@CrossOrigin 
 	@Transactional
 	@RequestMapping(value="/user/{userId:.+}/authority",  method=RequestMethod.POST)
@@ -143,6 +143,14 @@ public class UserService {
 		
 	}
 	
+	/**
+	 * method which gets the DELETE-request for a specific user and calls the UserBusiness method
+	 * deletes a  user authority from the specific user 
+	 * @param userId email address of the user for which the authority should be deleted
+	 * @param json json which contains the authority which should be deleted
+	 * @return
+	 * @throws Exception
+	 */
 	@CrossOrigin 
 	@RequestMapping(value="/user/{userId:.+}/authority",  method=RequestMethod.DELETE)
 	@Transactional

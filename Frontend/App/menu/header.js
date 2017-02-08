@@ -4,8 +4,17 @@ angular.module('queryBuilder.header',[])
 .controller('headerCtrl',  function($rootScope, $scope){
 	
 	var self = this;
+
+	/**
+     * Stores the authentication status.
+     * @type {boolean}
+     */
 	self.loggedin = $rootScope.authenticated;
-	console.log(self.loggedin);
+
+	/**
+     * Stores the different header items.
+     * @type {array}
+     */
 	 $scope.items = [
 		{'name': 'Query Builder', 'link' : 'querybuilder', "needAuthentication": true},
 		{'name': 'Expertmode', 'link' : 'expertmode', "needAuthentication": true},
@@ -18,13 +27,18 @@ angular.module('queryBuilder.header',[])
 		{'name': 'User', 'link' : 'user', "needAuthentication": true}    
     ];
 
-
-
-	$scope.$on('login', function () {
-		
+	/**
+     * Listens to the login broadcast, if authentication changes the header is changed.
+     */
+	$scope.$on('login', function () {	
 	self.loggedin = $rootScope.authenticated;
-        // handle login event here
     });
+
+	/**
+	 * Checks if a specific header item should be shown or not.
+	 * 
+	 * @param {String} item - Name of the item which should be checked.
+	 */
 
 	$scope.condition = function(item) { 
 		if( item.name == "User") {
@@ -50,20 +64,3 @@ angular.module('queryBuilder.header',[])
 	}
 
 });
-
-/*'use strict';
-
-angular.module('queryBuilder.header',[])
-.controller('headerCtrl', function ($rootScope, $scope) {
-	var self = this;
-	 self.loggedin = rootScope.authenticated;
-	 console.log(self.loggedin);
-    $scope.items = [
-        {'name': 'Home', "needAuthentication": false},
-        {'name': 'About', "needAuthentication": false},
-        {'name': 'Settings', "needAuthentication": true},
-        {'name': 'Logout', "needAuthentication": true}
-    ];
-
-	$scope.condition = function(item) { return item.needAuthentication == false || (item.needAuthentication == true && self.loggedin); };
-});*/
