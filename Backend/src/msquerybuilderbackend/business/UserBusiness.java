@@ -21,7 +21,7 @@ import msquerybuilderbackend.repository.UserAuthorityRepository;
 
 /**
  * Class for all activities with neo4j database regarding the entity User and its authorities
- * @author 
+ * @author Roman
  *
  */
 @Component

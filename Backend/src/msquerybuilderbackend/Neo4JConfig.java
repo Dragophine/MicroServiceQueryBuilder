@@ -15,10 +15,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
 @Configuration
 @EnableNeo4jRepositories(basePackages = "repository")
-// @EnableScheduling
-// @EnableAutoConfiguration
 @EnableTransactionManagement
-// @ComponentScan("at.jku.se.dedoc")
 public class Neo4JConfig extends  Neo4jConfiguration {
 
 	/**

@@ -12,7 +12,7 @@ import msquerybuilderbackend.entity.UserAuthority;
 
 /**
  * Repository for UserAuthority objects  in the neo4j database
- * @author 
+ * @author Roman
  *
  */
 public interface UserAuthorityRepository extends GraphRepository<UserAuthority> {

@@ -10,7 +10,7 @@ import org.springframework.data.neo4j.repository.GraphRepository;
 
 /**
  * Repository for User objects in the neo4j database
- * @author 
+ * @author Roman
  *
  */
 public interface UserRepository extends GraphRepository<User> {

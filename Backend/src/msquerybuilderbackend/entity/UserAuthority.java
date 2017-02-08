@@ -9,7 +9,7 @@ import org.springframework.security.core.GrantedAuthority;
  * entity class of UserAuthority with getter and setter
  * UserAuthority is an entity with userspecific data saved in the neo4j database with an relationship to the nodetype User
  * the entity is relevant for authority management
- * @author drago
+ * @author Roman
  *
  */
 @NodeEntity

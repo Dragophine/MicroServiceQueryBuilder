@@ -32,14 +32,7 @@ public class QueryBuilderJsonStringObject {
 	private Category category;
 	@Relationship(type = "HAS_EXPERTQUERY", direction = Relationship.OUTGOING)
 	private ExpertQuery expertQuery;
-//	private Set<ExpertQuery> expertQuery = new HashSet<ExpertQuery>(0);
-	
-//	public Set<ExpertQuery> getExpertQuery() {
-//		if (this.expertQuery==null){
-//			return new HashSet<ExpertQuery>(0);
-//		}
-//		return this.expertQuery;
-//	}
+
 	
 	
 	public String getQueryBuilderJson() {
@@ -65,16 +58,7 @@ public class QueryBuilderJsonStringObject {
 		this.author = author;
 	}
 
-//	public void addExpertQuery(ExpertQuery e){
-//		if (this.expertQuery==null){
-//			this.expertQuery= new HashSet<ExpertQuery>(0);
-//		}
-//		this.expertQuery.add(e);
-//	}
 
-//	public void setExpertQuery(Set<ExpertQuery> expertquery) {
-//		this.expertQuery = expertquery;
-//	}
 
 	public String getName() {
 		return name;
