@@ -147,19 +147,28 @@ public class UserBusiness implements UserDetailsManager {
 		return userRepository.findOne(userid);
 	}
 	
+	
+	/**
+	 * method to add a authority to a specific user
+	 * @param email of the user to who the authority should be added
+	 * @param authority which should be added to the user
+	 */
 	public void addAuthority(String email, String authority) {
 		User user = userRepository.findByEmail(email);
 		user.addAuthority(new UserAuthority (authority));
 		System.out.println(email+ "AAA"+ authority);
 		userAuthorityRepository.addAuthority(email, authority);
-		//userAuthorityRepository.addAuthority();
 	}
 	
+	/**
+	 * method to delete a authority from a specific user
+	 * @param email of the user from who the authority should be deleted
+	 * @param authority which should be deleted from the user
+	 */
 	public void deleteAuthority(String email, String authority) {
 		User user = userRepository.findByEmail(email);
 		user.removeAuthority(new UserAuthority(authority));
-		userAuthorityRepository.deleteAuthority(email, authority);
-		
+		userAuthorityRepository.deleteAuthority(email, authority);	
 	}
 
 

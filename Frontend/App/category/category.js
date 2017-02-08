@@ -89,7 +89,7 @@ angular.module('queryBuilder.category', ['ngRoute', 'queryBuilder.services'])
 	 * Otherwise print error.
 	 * 
 	 * @param {boolean} $success - true when there are no errors.
-	 * @param {Object} $data - the requested data (In this case the alert names).
+	 * @param {Object} $data - the requested data (In this case the categories).
      * @param {number} $status - the actual server status.
 	 */
 	self.getCategories = function($success, $data, $status) {

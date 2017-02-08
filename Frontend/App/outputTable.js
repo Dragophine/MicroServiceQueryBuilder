@@ -3,40 +3,40 @@
 angular.module('OutputTable', [])
   .controller('Controller', ['$scope', function($scope) {
 
-    $scope.input="B";
-
+    /**
+	  * Function for changing the data from which the table should be built.
+	  * 
+    * @param {Object} $data - Data from which the ouptput table should be built.
+	  */
     $scope.setData = function (data) {
         $scope.input = data;
-       // console.log($scope.input);
         $scope.data = convertTableWidgetData(data);
     }
-    //console.log($scope.input);
 
-            
-    var widgetData = $scope.input;
-    //var data = "";
-    //console.log($scope.json);
-
-        
-    function convertTableWidgetData(widgetData, div) {
+    /**
+	  * Function for converting the Data from the database to a table.
+	  * 
+    * @param {Object} $widgetData - Data from which the ouptput table should be built.
+	  */                
+    function convertTableWidgetData(widgetData) {
       var headerData = getTableHeader(widgetData);
       var bodyData = getTableBody(widgetData);
       return {tableHeader:headerData, tableBody:bodyData};
     }
 
+    /**
+	  * Function creating the header of the table.
+	  * 
+    * @param {Object} $widgetData - Data from which the ouptput table should be built.
+	  */  
     function getTableHeader(data){
-      // convert header data
-      //console.log(data[0]);
-      //console.log(data[1]);
       var headerData = convertTableHeader(data[0], 1);
-      // get max level
       var maxLevel = 0;
       for(var i=0;i<headerData.length;i++){
         if(headerData[i].level>maxLevel){
           maxLevel = headerData[i].level;
         }
       }
-      // generate headlines
       var tableColumns = [];
       for (var level = 1; level <= maxLevel; level++) {
         var headerRow = [];
@@ -53,13 +53,17 @@ angular.module('OutputTable', [])
       }
       return tableColumns;
     }
-        
+
+    /**
+	  * Function for converting the data to headings for the output table.
+	  * 
+    * @param {Object} $data - Data from which the ouptput table should be built.
+    * @param {Object} $level - Level of the table in which the heading should be.
+	  */      
     function convertTableHeader(data, level) {
       var headerData = [];
       for (var prop in data) {
-          //console.log(data[prop]);
         if (typeof data[prop] == 'object' && data[prop] != null) {
-          //console.log(data[prop][0]);
           var subHeaderData = convertTableHeader(data[prop], level + 1);                
           var colspan = 0;
           for(var i=0;i<subHeaderData.length;i++){
@@ -75,18 +79,21 @@ angular.module('OutputTable', [])
       return headerData;
     }
 
+    /**
+	  * Function creating the body of the table.
+	  * 
+    * @param {Object} $widgetData - Data from which the ouptput table should be built.
+	  */  
     function getTableBody(data){
       var tableRows = [];
       for(var j = 0;j < data.length; j++){
         var bodyData = convertTableBody(data[j], 1);
-        // get max level
         var maxLevel = 0;
         for(var i=0;i<bodyData.length;i++){
           if(bodyData[i].level>maxLevel){
             maxLevel = bodyData[i].level;
           }
         }
-        // generate rows
         for (var level = 1; level <= maxLevel; level++) {
           var row = [];
           for (var i = 0; i < bodyData.length; i++) {
@@ -104,36 +111,38 @@ angular.module('OutputTable', [])
       return tableRows;
     }
 
+    /**
+	  * Function for converting the data to body rows and columns for the output table.
+	  * 
+    * @param {Object} $data - Data from which the ouptput table should be built.
+    * @param {Object} $level - Level of the table in which the body data should be.
+	  */
     function convertTableBody(data, level) {
-      //console.log(data);
       var bodyData = [];
       for (var prop in data) {
-          //console.log(prop);
         if (typeof data[prop] == "object" && data[prop] != null) {
           var subBodyData;
-          //console.log(data[prop]);
-          //console.log(data[prop].length);
-          //for(var i=0;i<data[prop].length;i++){
             subBodyData = convertTableBody(data[prop], level + 1);             
             var colspan = 0;
             for(var j=0;j<subBodyData.length;j++){
               colspan += subBodyData[j].colspan;
               subBodyData[j].elementType = "object";
               bodyData.push(subBodyData[j]);
-            }
-          //}   
+            }  
         }
         else{
           bodyData.push({ title: data[prop], level: level, colspan: 1, elementType: "primitive"});
         }
       }
-      //console.log(bodyData);
       return bodyData;
     }
   }]
 )
 
-
+  /**
+	* Directive to denote how the table should look like.
+	* 
+	*/
  .directive('outputtable', function() {
      return {
         scope: {
@@ -146,20 +155,18 @@ angular.module('OutputTable', [])
         link: function(scope, el, attr) {
               var thisscope = scope;
 
+              /**
+	            * Function to watch for changes on the data, if changes happens the data is set to the new data.
+	            * 
+              * @param {Object} $newvalue - new value of the data.
+              * @param {Object} $oldvalue - old value of the data.
+	            */
               scope.$watch('table', function(newvalue, oldvalue) {
-                // if(newvalue !== oldvalue){ //everythime--> otherwise there will be an error in the query builder
-                   //console.log(newvalue);
-            	  
             	  if(newvalue !== undefined)
         		  {
-                      thisscope.$parent.setData(newvalue);
+                    thisscope.$parent.setData(newvalue);
         		  }
-                //}
-
               }, true);
-
-              
-
         }
       };
  });

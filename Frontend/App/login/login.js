@@ -49,6 +49,9 @@ angular.module('queryBuilder.login', [])
       $rootScope.$broadcast('login');
     };
 
+    /**
+	  * Updates the Authorization and Authentication status of the application, depending on the logged in user
+	  */
     var updateAuthStatus = function () {
       var authenticated = false;
       if (loginservice.principal && loginservice.authorities) {
@@ -80,6 +83,9 @@ angular.module('queryBuilder.login', [])
       $rootScope.authenticated = authenticated;
       $rootScope.principal = loginservice.principal;
 
+      /**
+	    * Broadcasts the authentication change for other functions controllers
+	    */
       $rootScope.$broadcast('authenticationChanged');
       if ($rootScope.authenticated) {
         $rootScope.$broadcast('login');

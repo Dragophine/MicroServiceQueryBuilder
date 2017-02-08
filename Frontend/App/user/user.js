@@ -11,56 +11,60 @@ angular.module('queryBuilder.user', ['ngRoute', 'queryBuilder.services'])
 	function($requests) {
 	var self = this;
 	
-	self.email = "";
-	self.firstName = "";	
-  self.lastName = "";	
-  self.existingUsers = [];
-  self.authorities = [];
 
-
-   self.roles = [
-    'EXPERTMODE', 
-    'CATEGORY', 
-    'ALERT', 
-    'ALERTSTATISTIC'
-  ];
-
-
-  
-
-	
-	/*var missingDataModal = document.getElementById('myModalMissingData');
-	var missingDataOkButton = document.getElementById("missingDataOk");*/
-	
-	/*missingDataOkButton.onclick = function() {
-		missingDataModal.style.display = "none";
-	}*/
-	
 	/**
-		Refres to the json response when an error occured
-	*/
+     * Holds email of selected user.
+     * @type {string}
+     */
+	self.email = "";
+
+	 /**
+     * Stores all Users which exists.
+     * @type {array}
+     */	
+  	self.existingUsers = [];
+
+	/**
+     * Store all authorities of selected user.
+     * @type {array}
+     */
+  	self.authorities = [];
+
+	/**
+     * Store all roles of the user which can be selected and changed.
+     * @type {array}
+     */
+   	self.roles = [
+   	 'EXPERTMODE', 
+  	 'CATEGORY', 
+   	 'ALERT', 
+   	 'ALERTSTATISTIC'
+  	];
+
+	/**
+     * Holds the error string which is displayed to the user.
+     * The table is only shown when the hasError property is set to TRUE.
+     * @type {string}
+     */
 	self.error = "";
 	/**
-		Bolean which concludes if the query has errors
-	*/
+     * If there was an error during the execution of the query this is set to 
+     * true and the error will be displayed. Otherwise the table will be displayed.
+     * @type {boolean}
+     */
 	self.hasError = false;
 	
+	/**
+	 * Callback from delete/save category call. If query was successful refresh category names.
+	 * Otherwise print error.
+	 *
+	 * @param {boolean} $success - true when there are no errors.
+	 * @param {Object} $data - the requested data.
+     * @param {number} $status - the actual server status.
+	 */
 	self.callback = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
-			// self.existingCategories = $data;
-			$requests.getAllCategories(self.getCategories);
-		}
-		else
-		{
-			self.error = $data;
-		}
-	}
-
-	self.callback = function($success, $data, $status) {
-		self.hasError = !$success;
-		if($success){
-			// self.existingCategories = $data;
 			$requests.getAllUsers(self.getUsers);
 		}
 		else
@@ -68,14 +72,19 @@ angular.module('queryBuilder.user', ['ngRoute', 'queryBuilder.services'])
 			self.error = $data;
 		}
 	}
-	
-
-	
+	/**
+	 * Callback from get all users call. If query was successful save data in variable self.existingUsers.
+	 * Otherwise print error.
+	 * 
+	 * @param {boolean} $success - true when there are no errors.
+	 * @param {Object} $data - the requested data (In this case the users).
+     * @param {number} $status - the actual server status.
+	 */
 	self.getUsers = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
 			self.existingUsers = $data;
-			
+
 		}
 		else
 		{
@@ -84,132 +93,77 @@ angular.module('queryBuilder.user', ['ngRoute', 'queryBuilder.services'])
 	}	
 	$requests.getAllUsers(self.getUsers);
 
+	/**
+    * This method searches for a certain role with a certain role name (key).
+    *
+    * @param {string} $key - The key of the role. The key is the same as the role name.
+    * @return {Object} The given role name or undefined.
+    */
+	self.getRoles = function($key){	
+		for (var i = 0; i < self.authorities.length; i++) {
+			if(self.authorities[i].authority === $key){
+				return $key;	
+			}
+		}
+		return undefined;
+	};
 
+	/**
+    * Checks whether a certain role with a role name (key) exists or not.
+    *
+    * @param {string} $key - The role key. The key is the same as the role name.
+    * @return {boolean} True if the role with the given key exists, otherwise false.
+    */
+	self.isRoleChecked = function($key){
+		if(self.getRoles($key) === undefined){
+			return false;
+		}
+		return true;
+	};
+
+	/**
+        * Checks whether a certain role with a certain key exists or not.
+        * If it exists it removes the role, if not it creates the role.
+        * 
+        * @param {string} $key - The key of the property which should be added or deleted.
+        */
+    self.setFilterAttributes = function($key){
+        var filterAttribute = self.getRoles($key);
+			if(filterAttribute !== undefined){
+                $requests.deleteAuthority(self.email, $key, self.callback)
+
+            } else {
+                $requests.addAuthority(self.email, $key, self.callback)
+            }
+
+    }
+
+	/**
+	 * Callback from get all authorities call. If query was successful save data in variable self.authorities.
+	 * Otherwise print error.
+	 * 
+	 * @param {boolean} $success - true when there are no errors.
+	 * @param {Object} $data - the requested data (In this case the authorities).
+     * @param {number} $status - the actual server status.
+	 */
     self.getAuthorities = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
 			self.authorities = $data;
-            
-            //console.log("BBB"+$data);
 		}
 		else
 		{
 			self.error = $data;
 		}
 	}
-	self.getFilterAttributes = function($key){	
-			for (var i = 0; i < self.authorities.length; i++) {
-				if(self.authorities[i].authority === $key){
-					return $key;
-					
-				}
-			}
-			return undefined;
-		};
 
-
-	self.isFilterAttributesChecked = function($key){
-			if(self.getFilterAttributes($key) === undefined){
-				console.log("AAAA"+$key+"BBBBBB")
-				return false;
-			}
-			return true;
-		};
-
-    self.setFilterAttributes = function($key){
-        var filterAttribute = self.getFilterAttributes($key);
-			if(filterAttribute !== undefined){
-                console.log("DELETE AUTHORITY")
-                $requests.deleteAuthority(self.email, $key, self.callback)
-
-            } else {
-                console.log("NEW AUTHORITY")
-                $requests.addAuthority(self.email, $key, self.callback)
-            }
-
-    }
-
+	/**
+	 * Load selected authorities of selected user.
+	 * 
+	 * @param {Object} $query - Load this query.
+	 */
     self.selectLoad = function($query) {
-        //console.log("AAA"+$query.email);
         $requests.getAllAuthorities($query.email, self.getAuthorities);
         self.email = $query.email;
-
-
-
     }		
-		/*self.name = $query.name;
-		self.description = $query.description;
-    self.id = $query.id;*/
-
-
-   /* self.addCategory = function (ev) {
-    	checkAllFieldsValidate(true);
-        if(self.text != ""){
-            missingDataModal.style.display = "block";
-        }
-        else
-		{
-            $requests.addCategory(self.name, self.description, self.callback);
-        }
-    };
-    
-    self.updateCategory = function (ev) {
-    	checkAllFieldsValidate(false);
-        if(self.text != ""){
-            missingDataModal.style.display = "block";
-        }
-        else
-		{
-			$requests.updateCategory(self.id, self.name, self.description, self.callback);
-        }
-    };
-	
-
-	
-	function existsNameAlready() {
-		$requests.getAllCategories(self.getCategories);
-
-		for (var i = 0; i < self.existingCategories.length; i++)
-	    {
-	        if (self.existingCategories[i].name === self.name)
-	        {
-	            return true;
-	        }
-	    }
-	    return false;
-		
-	}
-	
-	function checkAllFieldsValidate($checkIfNameExists) {
-    	self.text = [];
-		if($checkIfNameExists && (self.name === null || self.name === ""))
-		{
-            self.text.push("Bitte geben Sie einen Namen ein.");
-        }
-		else if($checkIfNameExists && existsNameAlready())
-		{
-			self.text.push("Der angegebene Name existiert bereits, geben Sie bitte einen anderen Namen an.");
-		}
-        
-	}
-	
-	self.selectLoad = function($query) {		
-		self.name = $query.name;
-		self.description = $query.description;
-    self.id = $query.id;
-		
-
-	
-		self.selectedAlertName = self.name;
-	}
-	
-	self.selectDelete = function($query) {		
-		$requests.deleteCategory($query.id, self.callback);
-	}
-	
-*/
-	
-
-
-	
 }]);

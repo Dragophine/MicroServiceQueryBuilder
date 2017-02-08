@@ -678,7 +678,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
     };   
 
     /**
-     * This method gets all exsiting categories.
+     * This method gets all existing categories.
      *
      * @param {function($success: number, $data: string, $status: number)} $callback - 
      *            This function is called after the execution in order to send data and the status 
@@ -700,7 +700,15 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };   
 
-        // add category
+    /**
+     * This method adds a new category.
+     *
+     * @param {string} $name -  The name of the category.
+     * @param {string} $description -  The description of the category.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.addCategory = function($name, $description, $callback) {
         $http({
             method : 'POST',
@@ -725,7 +733,16 @@ angular.module('queryBuilder.services', ['ngCookies'])
     }; 
 
         
-    // update category
+    /**
+     * This method updates a existing category.
+     *
+     * @param {string} $id -  The id of the category which should be changed.
+     * @param {string} $name -  The name of the category.
+     * @param {string} $description -  The description of the category.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.updateCategory = function($id, $name, $description, $callback) {
         $http({
             method : 'PUT',
@@ -749,7 +766,14 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
-        // delete categories
+    /**
+     * This method deletes a existing category.
+     *
+     * @param {string} $id -  The id of the category which should be deleted.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.deleteCategory = function($id, $callback) {
         $http({
             method : 'DELETE',
@@ -813,7 +837,7 @@ angular.module('queryBuilder.services', ['ngCookies'])
     };
 
     /**
-     * This method gets all exsiting categories.
+     * This method gets all existing users.
      *
      * @param {function($success: number, $data: string, $status: number)} $callback - 
      *            This function is called after the execution in order to send data and the status 
@@ -836,9 +860,10 @@ angular.module('queryBuilder.services', ['ngCookies'])
     };
 
 
-      /**
-     * This method gets all exsiting categories.
+    /**
+     * This method gets all existing authorities of a specific user.
      *
+     * @param {string} $id -  The id of the user for who the authorities should be returned.
      * @param {function($success: number, $data: string, $status: number)} $callback - 
      *            This function is called after the execution in order to send data and the status 
      *              to the calling function.
@@ -859,9 +884,16 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };
 
-            // add category
+    /**
+     * This method adds a authority to a specific user.
+     *
+     * @param {string} $email -  The email of the user to who the authorities should be added.
+     * @param {string} $authority -  The authority which should be added.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.addAuthority = function($email, $authority, $callback) {
-        console.log("ADDD")
         $http({
             method : 'POST',
             url : $serverRestLocation.getValue() + '/user/'+ $email+ '/authority', 
@@ -883,7 +915,15 @@ angular.module('queryBuilder.services', ['ngCookies'])
         });
     };  
 
-            // delete categories
+    /**
+     * This method deletes a authority from a specific user.
+     *
+     * @param {string} $email -  The email of the user from who the authorities should be deleted.
+     * @param {string} $authority -  The authority which should be deleted.
+     * @param {function($success: number, $data: string, $status: number)} $callback - 
+     *            This function is called after the execution in order to send data and the status 
+     *              to the calling function.
+     */
     this.deleteAuthority = function($email, $authority, $callback) {
         $http({
             method : 'DELETE',

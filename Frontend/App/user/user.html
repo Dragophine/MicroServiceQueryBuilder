@@ -13,7 +13,7 @@
 				<tbody >
 				<tr  ng-repeat = "role in ctrl.roles"> 
 					<td>
-					<input  type="checkbox" ng-checked="ctrl.isFilterAttributesChecked(role)"
+					<input  type="checkbox" ng-checked="ctrl.isRoleChecked(role)"
                            ng-click="ctrl.setFilterAttributes(role)">> {{role}}
 						</td>
 					</tr>
