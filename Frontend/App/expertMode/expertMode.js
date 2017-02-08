@@ -32,7 +32,9 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
         autofocus: true,
         theme: 'neo',
         viewportMargin: Infinity
-      });   
+      });
+    
+    self.query = "";
     /**
      * Store the parameter from selected query in this array.
      * @type {array}
@@ -52,9 +54,9 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	 * @param {Object} cMirror - is the "CodeMirror" textarea from view.
 	 */
     self.myCodeMirror.on('change',function(cMirror){
-    		var query = cMirror.getValue();
+    		self.query = cMirror.getValue();
     		$rootScope.expertQuery = query;
-    		var paramcnt = query.split("{").length - 1;
+    		var paramcnt = self.query.split("{").length - 1;
     		var keys = '';
     		var startIndex = 0;
     		var endIndex = 0;
@@ -67,19 +69,22 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
     		 * be present at position 0, although this will not be a correct 
     		 * statement ...
     		 */
-    		startIndex = query.indexOf("{", startIndex);
-    		endIndex = query.indexOf("}", startIndex);
-    		keys = query.substring(startIndex+1, endIndex);
+    		startIndex = self.query.indexOf("{", startIndex);
+    		endIndex = self.query.indexOf("}", startIndex);
+    		keys = self.query.substring(startIndex+1, endIndex);
     		    		
     		var i;
     		for(i = 0; self.params.length < paramcnt; i++)
     		{
-        		self.params.push.apply(self.params, [{key: keys, type : "int", value : ""}]);
-        		startIndex = query.indexOf("{", startIndex+1);
-        		endIndex = query.indexOf("}", startIndex+1);
-        		keys = query.substring(startIndex+1, endIndex);
+    			self.params.push.apply(self.params, [{key: keys, type : "int", value : ""}]);
+        		startIndex = self.query.indexOf("{", startIndex+1);
+        		endIndex = self.query.indexOf("}", startIndex+1);
+        		keys = self.query.substring(startIndex+1, endIndex);
     		}
+//    		self.myCodeMirror.refresh();
+        	$rootScope.$apply();
     	});
+    	
     /**
      * Selectable parameter types.
      */

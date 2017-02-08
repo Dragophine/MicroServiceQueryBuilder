@@ -156,9 +156,9 @@ public class AlertService {
 	/**
 	 * method which executes all alerts periodically
 	 */
-	// Alle 24 Stunden werden die Alerts überprüft
-//	@Scheduled(fixedRate = 5000)
-	@Scheduled(fixedRate = 86400000)
+	// Alle 6 Stunden werden die Alerts überprüft
+	@Scheduled(fixedRate = 21600000)
+//	@Scheduled(fixedRate = 86400000) --> 24 Stunden
 	public void executeAllAlerts()
 	{
 		alertBusiness.executeAllAlerts();
