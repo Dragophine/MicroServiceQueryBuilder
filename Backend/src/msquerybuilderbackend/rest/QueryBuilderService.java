@@ -223,13 +223,7 @@ public class QueryBuilderService {
 				return new ResponseEntity<ExpertQuery>(queryBuilderBusiness.getQueryBuilderQueryString(queryId),HttpStatus.OK);
 		    }
 			
-//			@CrossOrigin 
-//			@Transactional
-//		    @RequestMapping(value="/queryBuilder",  method=RequestMethod.GET, params={"category","name","description"})	 
-//		    public ResponseEntity<List<QueryBuilder>> getQueryBuilderBySearch(@RequestParam(value="category") String category,@RequestParam(value="name") String name, @RequestParam(value="description") String description) throws Exception	{
-//				return new ResponseEntity<List<QueryBuilder>>(queryBuilderBusiness.getQueryBuilderBySearch(category,name,description),HttpStatus.OK);
-//		    }
-			
+
 			
 		  
 }

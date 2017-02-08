@@ -125,7 +125,6 @@ public class User implements UserDetails {
 	@JsonIgnore
 	@Override
 	public boolean isEnabled() {
-		//return dateActivated>0;
 		return true;
 	}
 

@@ -27,7 +27,6 @@ public class SwaggerConfig {
 	public Docket api() {
 		return new Docket(DocumentationType.SWAGGER_2).select()
 				.apis(RequestHandlerSelectors.basePackage("msquerybuilderbackend.rest"))
-				//.paths(PathSelectors.ant("/api/*"))
 				.build()
 				.apiInfo(apiInfo());
 	}
