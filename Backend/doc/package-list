@@ -1,0 +1,7 @@
+msquerybuilderbackend
+msquerybuilderbackend.business
+msquerybuilderbackend.entity
+msquerybuilderbackend.exception
+msquerybuilderbackend.repository
+msquerybuilderbackend.rest
+msquerybuilderbackend.security
