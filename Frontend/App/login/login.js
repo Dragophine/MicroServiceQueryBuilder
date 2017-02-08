@@ -8,6 +8,7 @@ angular.module('queryBuilder.login', [])
     $scope.password;
     vm.loggedin = $rootScope.authenticated;
 
+
     $rootScope.execlogin = function () {
 
       loginservice.login(vm.username, vm.password).then(function () {
@@ -58,8 +59,6 @@ angular.module('queryBuilder.login', [])
           i++;
         }
       }
-      console.log("AUTH"+$rootScope.authenticated);
-      console.log($rootScope.admin)
       $rootScope.authenticated = authenticated;
       $rootScope.principal = loginservice.principal;
 

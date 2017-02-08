@@ -40,8 +40,6 @@ angular.module('queryBuilder.header',[])
 			return $rootScope.alert || $rootScope.admin
 		}
 		if( item.name == "Alert statistics") {
-			console.log("VVVVVVVVVVVVVVVVV")
-			console.log($rootScope.alertStatistic)
 			return $rootScope.alertStatistic || $rootScope.admin
 		}
 		

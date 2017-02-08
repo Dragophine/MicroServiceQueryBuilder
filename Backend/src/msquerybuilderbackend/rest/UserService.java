@@ -80,10 +80,14 @@ public class UserService {
 		System.out.println(user.getEmail().equals("admin@admin.com"));
 		if(user.getEmail().equals("admin@admin.com")) {
 			user.addAuthority(new UserAuthority("ROLE_ADMIN"));
-			userAuthorityRepository.save(new UserAuthority("CATEGORY"));
+			/*userAuthorityRepository.save(new UserAuthority("CATEGORY"));
 			userAuthorityRepository.save(new UserAuthority("EXPERTMODE"));
 			userAuthorityRepository.save(new UserAuthority("ALERT"));
-			userAuthorityRepository.save(new UserAuthority("ALERTSTATISTIC"));
+			userAuthorityRepository.save(new UserAuthority("ALERTSTATISTIC"));*/
+			user.addAuthority(new UserAuthority("CATEGORY"));
+			user.addAuthority(new UserAuthority("EXPERTMODE"));
+			user.addAuthority(new UserAuthority("ALERT"));
+			user.addAuthority(new UserAuthority("ALERTSTATISTIC"));
 		} else {
 			user.addAuthority(new UserAuthority("ROLE_USER"));
 		}
