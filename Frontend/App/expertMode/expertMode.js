@@ -81,7 +81,6 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
         		endIndex = self.query.indexOf("}", startIndex+1);
         		keys = self.query.substring(startIndex+1, endIndex);
     		}
-//    		self.myCodeMirror.refresh();
         	$rootScope.$apply();
     	});
     	

@@ -1,5 +1,3 @@
-// WIRD BISHER NICHT VERWENDET, WEIL ES BEIM LADEN UND LÖSCHEN NOCH PROLEME GIBT, WIRD NUR AKTIVIERT WENN GENÜGEND ZEIT ÜBRIG BLEIBT
-
 'use strict';
 
 angular.module('expertMode.loadDialogExpertMode', ['ngRoute'])
