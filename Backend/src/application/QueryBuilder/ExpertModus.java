@@ -1,6 +1,7 @@
 package application.QueryBuilder;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -38,6 +39,7 @@ import static org.hamcrest.CoreMatchers.sameInstance;
 
 import java.lang.reflect.Array;
 import java.lang.reflect.Type;
+import java.text.DateFormat;
 
 
 
@@ -218,7 +220,7 @@ public class ExpertModus {
 	      				throw new InvalidTypeException("parameter with key "+p.getKey()+" is not from Type "+p.getType());
 	    			}
     			break;
-    			
+    			    			
     		case "byte":
     		case "Byte":
     			try{

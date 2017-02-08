@@ -83,7 +83,7 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
     /**
      * Selectable parameter types.
      */
-	self.paramoptions = ["int", "String"];
+	self.paramoptions = ["int", "String", "double", "long", "boolean"];
 	/** 
 	 * The following three variables are query fields in save dialog.
 	 */

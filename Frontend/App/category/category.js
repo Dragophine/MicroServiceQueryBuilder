@@ -11,27 +11,67 @@ angular.module('queryBuilder.category', ['ngRoute', 'queryBuilder.services'])
 	function($requests) {
 	var self = this;
 	
+
+	/**
+     * Holds name from category.
+     * @type {string}
+     */
 	self.name = "";
+	/**
+     * Holds description from category.
+     * @type {string}
+     */
 	self.description = "";	
-  self.id = "";	
-  self.existingCategories = [];
+	/**
+     * Holds id from category.
+     * @type {string}
+     */
+  	self.id = "";
+	  /**
+     * Store all categories which exists.
+     * @type {array}
+     */
+ 	 self.existingCategories = [];
 	
+	/**
+	 * Modal dialog for missing or invalid data.
+     * @type {object}
+	 */
 	var missingDataModal = document.getElementById('myModalMissingData');
+	/**
+	 * Ok-button from modal dialog for missing or invalid data.
+     * @type {object}
+	 */
 	var missingDataOkButton = document.getElementById("missingDataOk");
 	
+	/**
+	 * Close modal dialog if user select the ok-button in dialog.
+	 */
 	missingDataOkButton.onclick = function() {
 		missingDataModal.style.display = "none";
 	}
 	
 	/**
-		Refres to the json response when an error occured
-	*/
+     * Holds the error string which is displayed to the user.
+     * The table is only shown when the hasError property is set to TRUE.
+     * @type {string}
+     */
 	self.error = "";
-	/**
-		Bolean which concludes if the query has errors
-	*/
+	 /**
+     * If there was an error during the execution of the query this is set to 
+     * true and the error will be displayed. Otherwise the table will be displayed.
+     * @type {boolean}
+     */
 	self.hasError = false;
 	
+	/**
+	 * Callback from delete/save category call. If query was successful refresh category names.
+	 * Otherwise print error.
+	 *
+	 * @param {boolean} $success - true when there are no errors.
+	 * @param {Object} $data - the requested data.
+     * @param {number} $status - the actual server status.
+	 */
 	self.callback = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
@@ -44,8 +84,14 @@ angular.module('queryBuilder.category', ['ngRoute', 'queryBuilder.services'])
 		}
 	}
 	
-
-	
+	 /**
+	 * Callback from get all categories call. If query was successful save data in variable self.existingCategories.
+	 * Otherwise print error.
+	 * 
+	 * @param {boolean} $success - true when there are no errors.
+	 * @param {Object} $data - the requested data (In this case the alert names).
+     * @param {number} $status - the actual server status.
+	 */
 	self.getCategories = function($success, $data, $status) {
 		self.hasError = !$success;
 		if($success){
@@ -58,6 +104,9 @@ angular.module('queryBuilder.category', ['ngRoute', 'queryBuilder.services'])
 	}	
 	$requests.getAllCategories(self.getCategories);
 	
+	/**
+	 * Create new category, if all fields are filled correctly.
+	 */
     self.addCategory = function (ev) {
     	checkAllFieldsValidate(true);
         if(self.text != ""){
@@ -69,6 +118,9 @@ angular.module('queryBuilder.category', ['ngRoute', 'queryBuilder.services'])
         }
     };
     
+	/**
+	 * Updates already existing category, if all fields are filled correctly.
+	 */
     self.updateCategory = function (ev) {
     	checkAllFieldsValidate(false);
         if(self.text != ""){
@@ -81,7 +133,9 @@ angular.module('queryBuilder.category', ['ngRoute', 'queryBuilder.services'])
     };
 	
 
-	
+	/**
+	 * Check if the name from category form already exists.
+	 */
 	function existsNameAlready() {
 		$requests.getAllCategories(self.getCategories);
 
@@ -96,6 +150,11 @@ angular.module('queryBuilder.category', ['ngRoute', 'queryBuilder.services'])
 		
 	}
 	
+	/**
+	 * Check if all fields in category form are correctly filled.
+	 * 
+	 * @param {boolean} $checkIfNameExists - Is it necessary to check the name.
+	 */
 	function checkAllFieldsValidate($checkIfNameExists) {
     	self.text = [];
 		if($checkIfNameExists && (self.name === null || self.name === ""))
@@ -109,26 +168,26 @@ angular.module('queryBuilder.category', ['ngRoute', 'queryBuilder.services'])
         
 	}
 	
+
+	/**
+	 * Load selected category.
+	 * 
+	 * @param {Object} $query - Load this query.
+	 */
 	self.selectLoad = function($query) {		
 		self.name = $query.name;
 		self.description = $query.description;
-    self.id = $query.id;
-		/**
-		 * Wenn ein Alert mit einem neuen Node geladen wird, müssen die Attribute
-		 * zum Node ermittelt werden.
-		 */
-
-		
+    	self.id = $query.id;		
 		self.selectedAlertName = self.name;
 	}
 	
+		/**
+	 * Delete selected category.
+	 * 
+	 * @param {Object} $query - Delete this query.
+	 */
 	self.selectDelete = function($query) {		
 		$requests.deleteCategory($query.id, self.callback);
 	}
-	
-
-	
-
-
 	
 }]);

@@ -3,21 +3,39 @@
 angular.module('queryBuilder.login', [])
   .controller('LoginCtrl', function ($rootScope, $scope, $location, $cookies, loginservice) {
 
-    var vm = this;
+    var self = this;
+
+    /**
+     * Stores typed-in username.
+     * @type {string}
+     */
     $scope.username;
+    /**
+     * Stores typed-in password.
+     * @type {string}
+     */
     $scope.password;
-    vm.loggedin = $rootScope.authenticated;
+    /**
+     * Holds if a user is already logged in.
+     * @type {string}
+     */
+    self.loggedin = $rootScope.authenticated;
 
-
+    /**
+	  * Executes the login of the user with the typed in username and password
+	  */
     $rootScope.execlogin = function () {
 
-      loginservice.login(vm.username, vm.password).then(function () {
+      loginservice.login(self.username, self.password).then(function () {
         updateAuthStatus();
       }, function () {
         $("#loginErrorModal").modal();
       });
     };
-
+    
+    /**
+	  * Executes the logout of the actually logged in user
+	  */
     $rootScope.execlogout = function () {
 
       loginservice.logout();
@@ -71,16 +89,6 @@ angular.module('queryBuilder.login', [])
       }
     };
 
-    // Try to login right away - maybe still logged in (Cookie set)
-    //$scope.username = 'user@use.com';
-    //$scope.password = 'password';*/
-    //$scope.username = 
-    /*if($rootScope.principal != undefined) {
-    console.log("ZZZZZZZZ"+$rootScope.principal.username);
-    vm.username = $rootScope.principal.username;
-    }*/
-    //vm.password = $rootScope.principal.password;
-    //$rootScope.execlogin();
 
   });
 
