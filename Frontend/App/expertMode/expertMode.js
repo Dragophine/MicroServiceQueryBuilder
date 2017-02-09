@@ -101,13 +101,12 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	console.log($rootScope.queryBuilderQueryInCypher)
 
 	//sets actual query from expert mode
-	if(	$rootScope.expertQuery !== undefined){
-		self.myCodeMirror.setValue($rootScope.expertQuery);
-	}
+	/*if(	$rootScope.expertQuery !== undefined){
+		//self.myCodeMirror.setValue($rootScope.expertQuery);
+	} */
 	//set query from querybuilder to expertmode
-	else if($rootScope.queryBuilderQueryInCypher !== undefined){
+	if($rootScope.queryBuilderQueryInCypher !== undefined){
 		self.myCodeMirror.setValue($rootScope.queryBuilderQueryInCypher);
-		//self.myCodeMirror.setValue("Match");
 	}
 
 	/** 
