@@ -81,7 +81,10 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
         		endIndex = self.query.indexOf("}", startIndex+1);
         		keys = self.query.substring(startIndex+1, endIndex);
     		}
-        	$rootScope.$apply();
+
+			if (!$rootScope.$$phase && !$rootScope.$root.$$phase){
+				$rootScope.$apply();
+			}
     	});
     	
     /**
@@ -95,13 +98,16 @@ angular.module('queryBuilder.expertMode', ['ngRoute', 'queryBuilder.services'])
 	self.description = "";
 	self.category = "";
 
+	console.log($rootScope.queryBuilderQueryInCypher)
+
 	//sets actual query from expert mode
 	if(	$rootScope.expertQuery !== undefined){
 		self.myCodeMirror.setValue($rootScope.expertQuery);
 	}
 	//set query from querybuilder to expertmode
 	else if($rootScope.queryBuilderQueryInCypher !== undefined){
-		self.myCodeMirror.setValue($rootScope.queryBuilderQueryInCypher );
+		self.myCodeMirror.setValue($rootScope.queryBuilderQueryInCypher);
+		//self.myCodeMirror.setValue("Match");
 	}
 
 	/** 
